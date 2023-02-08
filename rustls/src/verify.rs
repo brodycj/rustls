@@ -14,6 +14,8 @@ use ring::digest::Digest;
 use std::sync::Arc;
 use std::time::SystemTime;
 
+use no_panic::no_panic;
+
 type SignatureAlgorithms = &'static [&'static webpki::SignatureAlgorithm];
 
 /// Which signature verification mechanisms we support.  No particular
@@ -207,6 +209,7 @@ impl fmt::Debug for dyn ServerCertVerifier {
 pub struct DnsName(pub(crate) webpki::DnsName);
 
 impl AsRef<str> for DnsName {
+    #[no_panic]
     fn as_ref(&self) -> &str {
         AsRef::<str>::as_ref(&self.0)
     }
