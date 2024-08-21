@@ -417,14 +417,15 @@ mod ttt {
     }
 }
 
-// XXX TODO SHOULD BE REMOVED & REPLACED BY XXX XXX
-mod apistate {
-    #[cfg(not(feature = "usercalias"))]
-    pub trait ShareableBase: Send + Sync {}
+///// XXX XXX GONE:
+// // XXX TODO SHOULD BE REMOVED & REPLACED BY XXX XXX
+// mod apistate {
+//     #[cfg(not(feature = "usercalias"))]
+//     pub trait ShareableBase: Send + Sync {}
 
-    #[cfg(feature = "usercalias")]
-    pub trait ShareableBase {}
-}
+//     #[cfg(feature = "usercalias")]
+//     pub trait ShareableBase {}
+// }
 
 #[macro_use]
 mod msgs;

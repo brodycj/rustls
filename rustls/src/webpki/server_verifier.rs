@@ -1,5 +1,5 @@
 use crate::aa::Arc;
-use crate::apistate::ShareableBase;
+// use crate::apistate::ShareableBase;
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, ServerName, UnixTime};
@@ -302,7 +302,7 @@ impl ServerCertVerifier for WebPkiServerVerifier {
     }
 }
 
-impl ShareableBase for WebPkiServerVerifier {}
+// impl ShareableBase for WebPkiServerVerifier {}
 
 test_for_each_provider! {
     use std::sync::Arc;
