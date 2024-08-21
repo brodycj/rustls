@@ -226,7 +226,7 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(feature = "std")]
+    #[cfg(all(feature = "arcshare", feature = "std"))]
     pub fn install_default(self) -> Result<(), Arc<Self>> {
         PROCESS_DEFAULT_PROVIDER.set(Arc::new(self))
     }
@@ -238,7 +238,7 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(not(feature = "std"))]
+    #[cfg(all(feature = "arcshare", not(feature = "std")))]
     pub fn install_default(self) -> Result<(), Box<Arc<Self>>> {
         PROCESS_DEFAULT_PROVIDER.set(Box::new(Arc::new(self)))
     }
@@ -246,6 +246,7 @@ impl CryptoProvider {
     /// Returns the default `CryptoProvider` for this process.
     ///
     /// This will be `None` if no default has been set yet.
+    #[cfg(feature = "arcshare")]
     pub fn get_default() -> Option<&'static Arc<Self>> {
         PROCESS_DEFAULT_PROVIDER.get()
     }
@@ -255,16 +256,19 @@ impl CryptoProvider {
     /// - gets the pre-installed default, or
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
-    pub(crate) fn get_default_or_install_from_crate_features() -> &'static Arc<Self> {
+    // #[cfg(feature = "arcshare")]
+    pub(crate) fn get_default_or_install_from_crate_features() -> Arc<Self> {
+        #[cfg(feature = "arcshare")]
         if let Some(provider) = Self::get_default() {
-            return provider;
+            return provider.clone();
         }
 
         let provider = Self::from_crate_features()
             .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point");
         // Ignore the error resulting from us losing a race, and accept the outcome.
-        let _ = provider.install_default();
-        Self::get_default().unwrap()
+        // let _ = provider.install_default();
+        // Self::get_default().unwrap()
+        return Arc::new(provider);
     }
 
     /// Returns a provider named unambiguously by rustls crate features.
@@ -318,9 +322,9 @@ impl CryptoProvider {
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(all(feature = "arcshare", feature = "std"))]
 static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
-#[cfg(not(feature = "std"))]
+#[cfg(all(feature = "arcshare", not(feature = "std")))]
 static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 
 /// A source of cryptographically secure randomness.
