@@ -140,7 +140,7 @@ pub trait ServerCertVerifier: Debug {
 
 /// Something that can verify a client certificate chain
 #[allow(unreachable_pub)]
-pub trait ClientCertVerifier: Debug + Send + Sync {
+pub trait ClientCertVerifier: Debug {
     /// Returns `true` to enable the server to request a client certificate and
     /// `false` to skip requesting a client certificate. Defaults to `true`.
     fn offer_client_auth(&self) -> bool {
