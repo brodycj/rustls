@@ -54,7 +54,7 @@ use crate::x509;
 /// [`ResolvesServerCertUsingSni`]: crate::server::ResolvesServerCertUsingSni
 /// [`ResolvesServerCert`]: crate::server::ResolvesServerCert
 /// [`ResolvesClientCert`]: crate::client::ResolvesClientCert
-pub trait SigningKey: Debug + Send + Sync {
+pub trait SigningKey: Debug {
     /// Choose a `SignatureScheme` from those offered.
     ///
     /// Expresses the choice by returning something that implements `Signer`,
