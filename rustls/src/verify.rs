@@ -64,10 +64,11 @@ impl ClientCertVerified {
     }
 }
 
+///// XXX TODO XXX XXX DOC XXX XXX
 /// Something that can verify a server certificate chain, and verify
 /// signatures made by certificates.
 #[allow(unreachable_pub)]
-pub trait ServerCertVerifier: Debug + ShareableBase {
+tttt!(ServerCertVerifier, {
     /// Verify the end-entity certificate `end_entity` is valid for the
     /// hostname `dns_name` and chains to at least one trust anchor.
     ///
@@ -137,11 +138,12 @@ pub trait ServerCertVerifier: Debug + ShareableBase {
     ///
     /// This should be in priority order, with the most preferred first.
     fn supported_verify_schemes(&self) -> Vec<SignatureScheme>;
-}
+});
 
+///// XXX TODO XXX XXX DOC XXX XXX
 /// Something that can verify a client certificate chain
 #[allow(unreachable_pub)]
-pub trait ClientCertVerifier: Debug + ShareableBase {
+tttt!(ClientCertVerifier, {
     /// Returns `true` to enable the server to request a client certificate and
     /// `false` to skip requesting a client certificate. Defaults to `true`.
     fn offer_client_auth(&self) -> bool {
@@ -250,7 +252,7 @@ pub trait ClientCertVerifier: Debug + ShareableBase {
     ///
     /// This should be in priority order, with the most preferred first.
     fn supported_verify_schemes(&self) -> Vec<SignatureScheme>;
-}
+});
 
 /// Turns off client authentication. In contrast to using
 /// `WebPkiClientVerifier::builder(roots).allow_unauthenticated().build()`, the `NoClientAuth`
@@ -299,8 +301,6 @@ impl ClientCertVerifier for NoClientAuth {
         unimplemented!();
     }
 }
-
-impl ShareableBase for NoClientAuth {}
 
 /// This type combines a [`SignatureScheme`] and a signature payload produced with that scheme.
 #[derive(Debug, Clone)]

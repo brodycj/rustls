@@ -399,7 +399,25 @@ mod aa {
     pub(crate) use alloc::rc::Rc as Arc;
 }
 
-// XXX TODO RECONSIDER NAMING & MOVE TO SEPARATE SOURCE FILE
+// XXX TODO IMPROVE NAMING HERE
+#[macro_use]
+mod ttt {
+    #[cfg(not(feature = "usercalias"))]
+    macro_rules! tttt {
+        ($name:ident,$body:tt) => {
+            pub trait $name: core::fmt::Debug + Send + Sync $body
+        }
+    }
+
+    #[cfg(feature = "usercalias")]
+    macro_rules! tttt {
+        ($name:ident,$body:tt) => {
+            pub trait $name: core::fmt::Debug $body
+        }
+    }
+}
+
+// XXX TODO SHOULD BE REMOVED & REPLACED BY XXX XXX
 mod apistate {
     #[cfg(not(feature = "usercalias"))]
     pub trait ShareableBase: Send + Sync {}

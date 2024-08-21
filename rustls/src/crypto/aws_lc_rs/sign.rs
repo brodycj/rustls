@@ -393,8 +393,6 @@ impl Signer for Ed25519Signer {
     }
 }
 
-impl ShareableBase for Ed25519Signer {}
-
 impl Debug for Ed25519Signer {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.debug_struct("Ed25519Signer")

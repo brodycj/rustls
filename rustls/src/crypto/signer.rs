@@ -72,8 +72,9 @@ pub trait SigningKey: Debug + ShareableBase {
     fn algorithm(&self) -> SignatureAlgorithm;
 }
 
+///// XXX TODO XXX XXX DOC XXX XXX
 /// A thing that can sign a message.
-pub trait Signer: Debug + ShareableBase {
+tttt!(Signer, {
     /// Signs `message` using the selected scheme.
     ///
     /// `message` is not hashed; the implementer must hash it using the hash function
@@ -84,7 +85,7 @@ pub trait Signer: Debug + ShareableBase {
 
     /// Reveals which scheme will be used when you call [`Self::sign()`].
     fn scheme(&self) -> SignatureScheme;
-}
+});
 
 /// A packaged-together certificate chain, matching `SigningKey` and
 /// optional stapled OCSP response.
