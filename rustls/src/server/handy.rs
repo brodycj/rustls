@@ -204,8 +204,8 @@ impl server::ResolvesServerCert for AlwaysResolvesChain {
 
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod sni_resolver {
-    use alloc::string::{String, ToString};
     use crate::aa::Arc;
+    use alloc::string::{String, ToString};
     // use crate::apistate::ShareableBase;
     use core::fmt::Debug;
 
