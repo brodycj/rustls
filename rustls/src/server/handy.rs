@@ -1,5 +1,5 @@
 use crate::aa::Arc;
-use crate::apistate::ArcShareable;
+use crate::apistate::ShareableBase;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
@@ -200,13 +200,13 @@ impl server::ResolvesServerCert for AlwaysResolvesChain {
     }
 }
 
-impl ArcShareable for AlwaysResolvesChain {}
+impl ShareableBase for AlwaysResolvesChain {}
 
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod sni_resolver {
     use alloc::string::{String, ToString};
     use crate::aa::Arc;
-    use crate::apistate::ArcShareable;
+    use crate::apistate::ShareableBase;
     use core::fmt::Debug;
 
     use pki_types::{DnsName, ServerName};
@@ -277,7 +277,7 @@ mod sni_resolver {
         }
     }
 
-    impl ArcShareable for ResolvesServerCertUsingSni {}
+    impl ShareableBase for ResolvesServerCertUsingSni {}
 
     #[cfg(test)]
     mod tests {

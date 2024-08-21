@@ -402,10 +402,10 @@ mod aa {
 // XXX TODO RECONSIDER NAMING & MOVE TO SEPARATE SOURCE FILE
 mod apistate {
     #[cfg(feature = "arcshare")]
-    pub trait ArcShareable: Send + Sync {}
+    pub trait ShareableBase: Send + Sync {}
 
     #[cfg(not(feature = "arcshare"))]
-    pub trait ArcShareable {}
+    pub trait ShareableBase {}
 }
 
 #[macro_use]

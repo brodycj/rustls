@@ -3,7 +3,7 @@
 use alloc::boxed::Box;
 use alloc::string::ToString;
 use crate::aa::Arc;
-use crate::apistate::ArcShareable;
+use crate::apistate::ShareableBase;
 use alloc::vec::Vec;
 use alloc::{format, vec};
 use core::fmt::{self, Debug, Formatter};
@@ -143,7 +143,7 @@ impl SigningKey for RsaSigningKey {
     }
 }
 
-impl ArcShareable for RsaSigningKey {}
+impl ShareableBase for RsaSigningKey {}
 
 impl Debug for RsaSigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -195,7 +195,7 @@ impl Signer for RsaSigner {
     }
 }
 
-impl ArcShareable for RsaSigner {}
+impl ShareableBase for RsaSigner {}
 
 impl Debug for RsaSigner {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -276,7 +276,7 @@ impl SigningKey for EcdsaSigningKey {
     }
 }
 
-impl ArcShareable for EcdsaSigningKey {}
+impl ShareableBase for EcdsaSigningKey {}
 
 impl Debug for EcdsaSigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -305,7 +305,7 @@ impl Signer for EcdsaSigner {
     }
 }
 
-impl ArcShareable for EcdsaSigner {}
+impl ShareableBase for EcdsaSigner {}
 
 impl Debug for EcdsaSigner {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -368,7 +368,7 @@ impl SigningKey for Ed25519SigningKey {
     }
 }
 
-impl ArcShareable for Ed25519SigningKey {}
+impl ShareableBase for Ed25519SigningKey {}
 
 impl Debug for Ed25519SigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -393,7 +393,7 @@ impl Signer for Ed25519Signer {
     }
 }
 
-impl ArcShareable for Ed25519Signer {}
+impl ShareableBase for Ed25519Signer {}
 
 impl Debug for Ed25519Signer {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
