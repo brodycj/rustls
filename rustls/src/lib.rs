@@ -392,19 +392,19 @@ mod test_macros;
 
 // XXX TODO RECONSIDER MODULE NAMING & MOVE TO SEPARATE SOURCE FILE
 mod aa {
-    #[cfg(feature = "arcshare")]
+    #[cfg(not(feature = "usercalias"))]
     pub(crate) use alloc::sync::Arc;
 
-    #[cfg(not(feature = "arcshare"))]
+    #[cfg(feature = "usercalias")]
     pub(crate) use alloc::rc::Rc as Arc;
 }
 
 // XXX TODO RECONSIDER NAMING & MOVE TO SEPARATE SOURCE FILE
 mod apistate {
-    #[cfg(feature = "arcshare")]
+    #[cfg(not(feature = "usercalias"))]
     pub trait ShareableBase: Send + Sync {}
 
-    #[cfg(not(feature = "arcshare"))]
+    #[cfg(feature = "usercalias")]
     pub trait ShareableBase {}
 }
 

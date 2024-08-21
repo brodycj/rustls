@@ -3,9 +3,9 @@ use crate::aa::Arc;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
-#[cfg(not(feature = "std"))]
+#[cfg(all(feature = "arcshare", not(feature = "std")))]
 use once_cell::race::OnceBox;
-#[cfg(feature = "std")]
+#[cfg(all(feature = "arcshare", feature = "std"))]
 use once_cell::sync::OnceCell;
 use pki_types::PrivateKeyDer;
 use zeroize::Zeroize;
