@@ -72,7 +72,7 @@ pub trait SigningKey: Debug {
 }
 
 /// A thing that can sign a message.
-pub trait Signer: Debug + Send + Sync {
+pub trait Signer: Debug {
     /// Signs `message` using the selected scheme.
     ///
     /// `message` is not hashed; the implementer must hash it using the hash function
