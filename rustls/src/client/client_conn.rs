@@ -1,5 +1,5 @@
 use crate::aa::Arc;
-use crate::apistate::ApiState;
+use crate::apistate::ArcShareable;
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
@@ -96,7 +96,7 @@ pub trait ClientSessionStore: fmt::Debug + Send + Sync {
 
 /// A trait for the ability to choose a certificate chain and
 /// private key for the purposes of client authentication.
-pub trait ResolvesClientCert: fmt::Debug + ApiState {
+pub trait ResolvesClientCert: fmt::Debug + ArcShareable {
     /// Resolve a client certificate chain/private key to use as the client's
     /// identity.
     ///
