@@ -34,7 +34,7 @@
 
 #[cfg(feature = "std")]
 use alloc::collections::VecDeque;
-use alloc::sync::Arc;
+use crate::aa::Arc;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 #[cfg(feature = "std")]

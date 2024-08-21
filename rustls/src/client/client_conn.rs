@@ -1,4 +1,4 @@
-use alloc::sync::Arc;
+use crate::aa::Arc;
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
@@ -503,7 +503,7 @@ pub enum Tls12Resumption {
 
 /// Container for unsafe APIs
 pub(super) mod danger {
-    use alloc::sync::Arc;
+    use crate::aa::Arc;
 
     use super::verify::ServerCertVerifier;
     use super::ClientConfig;
@@ -603,7 +603,7 @@ impl EarlyData {
 
 #[cfg(feature = "std")]
 mod connection {
-    use alloc::sync::Arc;
+    use crate::aa::Arc;
     use alloc::vec::Vec;
     use core::fmt;
     use core::ops::{Deref, DerefMut};

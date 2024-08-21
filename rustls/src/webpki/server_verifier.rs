@@ -1,4 +1,4 @@
-use alloc::sync::Arc;
+use crate::aa::Arc;
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, ServerName, UnixTime};

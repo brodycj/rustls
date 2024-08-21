@@ -1,5 +1,5 @@
 use alloc::boxed::Box;
-use alloc::sync::Arc;
+use crate::aa::Arc;
 use alloc::vec::Vec;
 use core::fmt;
 use core::fmt::{Debug, Formatter};
@@ -511,7 +511,7 @@ impl ServerConfig {
 #[cfg(feature = "std")]
 mod connection {
     use alloc::boxed::Box;
-    use alloc::sync::Arc;
+    use crate::aa::Arc;
     use alloc::vec::Vec;
     use core::fmt;
     use core::fmt::{Debug, Formatter};
