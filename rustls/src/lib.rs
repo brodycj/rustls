@@ -399,6 +399,15 @@ mod aa {
     pub(crate) use alloc::rc::Rc as Arc;
 }
 
+// XXX TODO RECONSIDER NAMING & MOVE TO SEPARATE SOURCE FILE
+mod apistate {
+    #[cfg(feature = "arcshare")]
+    pub trait ApiState: Send + Sync {}
+
+    #[cfg(not(feature = "arcshare"))]
+    pub trait ApiState {}
+}
+
 #[macro_use]
 mod msgs;
 mod common_state;
