@@ -404,14 +404,14 @@ mod aa {
 mod ttt {
     #[cfg(not(feature = "usercalias"))]
     macro_rules! tttt {
-        ($name:ident,$body:tt) => {
+        ($name:ident, $body:tt) => {
             pub trait $name: core::fmt::Debug + Send + Sync $body
         }
     }
 
     #[cfg(feature = "usercalias")]
     macro_rules! tttt {
-        ($name:ident,$body:tt) => {
+        ($name:ident, $body:tt) => {
             pub trait $name: core::fmt::Debug $body
         }
     }
