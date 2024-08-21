@@ -416,17 +416,23 @@ mod ttt {
             pub trait $name: core::fmt::Debug $body
         }
     }
+
+    #[cfg(not(feature = "usercalias"))]
+    macro_rules! internal_generic_state_trait {
+        // XXX TBD HACKISH - MAY WANT TO RECONSIDER
+        ($name:ident, $generic_parameter:ident, $body:tt) => {
+            pub(crate) trait $name<$generic_parameter>: Send + Sync $body
+        }
+    }
+
+    #[cfg(feature = "usercalias")]
+    macro_rules! internal_generic_state_trait {
+        // XXX TBD HACKISH - MAY WANT TO RECONSIDER
+        ($name:ident, $generic_parameter:ident, $body:tt) => {
+            pub(crate) trait $name<$generic_parameter> $body
+        }
+    }
 }
-
-///// XXX XXX GONE:
-// // XXX TODO SHOULD BE REMOVED & REPLACED BY XXX XXX
-// mod apistate {
-//     #[cfg(not(feature = "usercalias"))]
-//     pub trait ShareableBase: Send + Sync {}
-
-//     #[cfg(feature = "usercalias")]
-//     pub trait ShareableBase {}
-// }
 
 #[macro_use]
 mod msgs;
