@@ -257,7 +257,7 @@ impl CryptoProvider {
     /// - panics about the need to call [`CryptoProvider::install_default()`]
     pub(crate) fn get_default_or_install_from_crate_features() -> &'static Arc<Self> {
         if let Some(provider) = Self::get_default() {
-            return provider.clone();
+            return provider;
         }
 
         let provider = Self::from_crate_features()
