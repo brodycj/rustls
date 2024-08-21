@@ -1,5 +1,6 @@
 use alloc::boxed::Box;
 use crate::aa::Arc;
+use crate::apistate::ArcShareable;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
@@ -54,7 +55,7 @@ use crate::x509;
 /// [`ResolvesServerCertUsingSni`]: crate::server::ResolvesServerCertUsingSni
 /// [`ResolvesServerCert`]: crate::server::ResolvesServerCert
 /// [`ResolvesClientCert`]: crate::client::ResolvesClientCert
-pub trait SigningKey: Debug + Send + Sync {
+pub trait SigningKey: Debug + ArcShareable {
     /// Choose a `SignatureScheme` from those offered.
     ///
     /// Expresses the choice by returning something that implements `Signer`,
@@ -72,7 +73,7 @@ pub trait SigningKey: Debug + Send + Sync {
 }
 
 /// A thing that can sign a message.
-pub trait Signer: Debug + Send + Sync {
+pub trait Signer: Debug + ArcShareable {
     /// Signs `message` using the selected scheme.
     ///
     /// `message` is not hashed; the implementer must hash it using the hash function

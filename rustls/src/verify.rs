@@ -3,6 +3,7 @@ use core::fmt::Debug;
 
 use pki_types::{CertificateDer, ServerName, UnixTime};
 
+use crate::apistate::ArcShareable;
 use crate::enums::SignatureScheme;
 use crate::error::{Error, InvalidMessage};
 use crate::msgs::base::PayloadU16;
@@ -66,7 +67,7 @@ impl ClientCertVerified {
 /// Something that can verify a server certificate chain, and verify
 /// signatures made by certificates.
 #[allow(unreachable_pub)]
-pub trait ServerCertVerifier: Debug + Send + Sync {
+pub trait ServerCertVerifier: Debug + ArcShareable {
     /// Verify the end-entity certificate `end_entity` is valid for the
     /// hostname `dns_name` and chains to at least one trust anchor.
     ///
@@ -140,7 +141,7 @@ pub trait ServerCertVerifier: Debug + Send + Sync {
 
 /// Something that can verify a client certificate chain
 #[allow(unreachable_pub)]
-pub trait ClientCertVerifier: Debug + Send + Sync {
+pub trait ClientCertVerifier: Debug + ArcShareable {
     /// Returns `true` to enable the server to request a client certificate and
     /// `false` to skip requesting a client certificate. Defaults to `true`.
     fn offer_client_auth(&self) -> bool {
@@ -298,6 +299,8 @@ impl ClientCertVerifier for NoClientAuth {
         unimplemented!();
     }
 }
+
+impl ArcShareable for NoClientAuth {}
 
 /// This type combines a [`SignatureScheme`] and a signature payload produced with that scheme.
 #[derive(Debug, Clone)]

@@ -1,4 +1,5 @@
 use crate::aa::Arc;
+use crate::apistate::ArcShareable;
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, UnixTime};
@@ -416,6 +417,8 @@ impl ClientCertVerifier for WebPkiClientVerifier {
         self.supported_algs.supported_schemes()
     }
 }
+
+impl ArcShareable for WebPkiClientVerifier {}
 
 /// Controls how the [WebPkiClientVerifier] handles anonymous clients.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
