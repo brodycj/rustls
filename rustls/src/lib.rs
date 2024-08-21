@@ -390,7 +390,7 @@ mod log {
 #[macro_use]
 mod test_macros;
 
-// XXX TODO RECONSIDER MODULE NAMING & MOVE TO SEPARATE SOURCE FILE
+// XXX TODO RECONSIDER MODULE NAMING & MOVE TO SEPARATE MODULE SOURCE FILE
 mod aa {
     #[cfg(not(feature = "usercalias"))]
     pub(crate) use alloc::sync::Arc;
@@ -399,7 +399,8 @@ mod aa {
     pub(crate) use alloc::rc::Rc as Arc;
 }
 
-// XXX TODO IMPROVE NAMING HERE
+// XXX TODO IMPROVE MACRO & MACRO MODULE NAMING HERE
+// XXX TODO MOVE TO SEPARATE MODULE SOURCE FILE
 #[macro_use]
 mod ttt {
     #[cfg(not(feature = "usercalias"))]
