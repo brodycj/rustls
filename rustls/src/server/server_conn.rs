@@ -106,6 +106,7 @@ pub trait ProducesTickets: Debug + Send + Sync {
     fn decrypt(&self, cipher: &[u8]) -> Option<Vec<u8>>;
 }
 
+////// XXX TODO DOC XXX
 /// How to choose a certificate chain and signing key for use
 /// in server authentication.
 ///
@@ -115,13 +116,14 @@ pub trait ProducesTickets: Debug + Send + Sync {
 /// For applications that use async I/O and need to do I/O to choose
 /// a certificate (for instance, fetching a certificate from a data store),
 /// the [`Acceptor`] interface is more suitable.
-pub trait ResolvesServerCert: Debug + ShareableBase {
+////// XXX TODO DOC XXX
+tttt!(ResolvesServerCert, {
     /// Choose a certificate chain and matching key given simplified
     /// ClientHello information.
     ///
     /// Return `None` to abort the handshake.
     fn resolve(&self, client_hello: ClientHello<'_>) -> Option<Arc<sign::CertifiedKey>>;
-}
+});
 
 /// A struct representing the received Client Hello
 pub struct ClientHello<'a> {
