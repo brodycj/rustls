@@ -1,5 +1,4 @@
 use crate::aa::Arc;
-use crate::apistate::ShareableBase;
 
 use pki_types::ServerName;
 
@@ -199,8 +198,6 @@ pub use cache::ClientSessionMemoryCache;
 #[derive(Debug)]
 pub(super) struct FailResolveClientCert {}
 
-impl ShareableBase for FailResolveClientCert {}
-
 impl client::ResolvesClientCert for FailResolveClientCert {
     fn resolve(
         &self,
@@ -217,8 +214,6 @@ impl client::ResolvesClientCert for FailResolveClientCert {
 
 #[derive(Debug)]
 pub(super) struct AlwaysResolvesClientCert(Arc<sign::CertifiedKey>);
-
-impl ShareableBase for AlwaysResolvesClientCert {}
 
 impl AlwaysResolvesClientCert {
     pub(super) fn new(

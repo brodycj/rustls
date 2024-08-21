@@ -1,5 +1,5 @@
 use crate::aa::Arc;
-use crate::apistate::ShareableBase;
+
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
@@ -94,9 +94,10 @@ pub trait ClientSessionStore: fmt::Debug + Send + Sync {
     ) -> Option<persist::Tls13ClientSessionValue>;
 }
 
+//// XXX TODO DOC XXX
 /// A trait for the ability to choose a certificate chain and
 /// private key for the purposes of client authentication.
-pub trait ResolvesClientCert: fmt::Debug + ShareableBase {
+tttt!(ResolvesClientCert, {
     /// Resolve a client certificate chain/private key to use as the client's
     /// identity.
     ///
@@ -124,7 +125,7 @@ pub trait ResolvesClientCert: fmt::Debug + ShareableBase {
 
     /// Return true if any certificates at all are available.
     fn has_certs(&self) -> bool;
-}
+});
 
 /// Common configuration for (typically) all connections made by a program.
 ///

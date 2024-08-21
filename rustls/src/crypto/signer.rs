@@ -1,6 +1,7 @@
 use alloc::boxed::Box;
+
 use crate::aa::Arc;
-use crate::apistate::ShareableBase;
+
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
@@ -11,6 +12,7 @@ use crate::error::{Error, InconsistentKeys};
 use crate::server::ParsedCertificate;
 use crate::x509;
 
+///// XXX TODO FIX DOC XXX
 /// An abstract signing key.
 ///
 /// This interface is used by rustls to use a private signing key
@@ -55,7 +57,8 @@ use crate::x509;
 /// [`ResolvesServerCertUsingSni`]: crate::server::ResolvesServerCertUsingSni
 /// [`ResolvesServerCert`]: crate::server::ResolvesServerCert
 /// [`ResolvesClientCert`]: crate::client::ResolvesClientCert
-pub trait SigningKey: Debug + ShareableBase {
+/////// XXX TODO FIX DOC XXX
+tttt!(SigningKey, {
     /// Choose a `SignatureScheme` from those offered.
     ///
     /// Expresses the choice by returning something that implements `Signer`,
@@ -70,7 +73,7 @@ pub trait SigningKey: Debug + ShareableBase {
 
     /// What kind of key we have.
     fn algorithm(&self) -> SignatureAlgorithm;
-}
+});
 
 ///// XXX TODO XXX XXX DOC XXX XXX
 /// A thing that can sign a message.
