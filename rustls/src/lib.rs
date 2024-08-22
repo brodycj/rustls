@@ -390,14 +390,7 @@ mod log {
 #[macro_use]
 mod test_macros;
 
-// XXX TODO MOVE TO SEPARATE MODULE SOURCE FILE - ???
-mod alias {
-    #[cfg(not(feature = "withrcalias"))]
-    pub(crate) use alloc::sync::Arc;
-
-    #[cfg(feature = "withrcalias")]
-    pub(crate) use alloc::rc::Rc as Arc;
-}
+mod alias;
 
 #[macro_use]
 mod trait_macros;
