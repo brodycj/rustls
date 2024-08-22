@@ -465,6 +465,7 @@ pub fn finish_server_config(
 pub fn make_server_config(kt: KeyType) -> ServerConfig {
     finish_server_config(kt, server_config_builder())
 }
+
 pub fn make_server_config_with_versions(
     kt: KeyType,
     versions: &[&'static rustls::SupportedProtocolVersion],
