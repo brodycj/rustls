@@ -402,7 +402,7 @@ mod alias {
 // XXX TODO IMPROVE MACRO & MACRO MODULE NAMING HERE
 // XXX TODO MOVE TO SEPARATE MODULE SOURCE FILE
 #[macro_use]
-mod ttt {
+mod trait_macros {
     #[cfg(not(feature = "withrcalias"))]
     macro_rules! pub_api_trait {
         ($name:ident, $body:tt) => {
