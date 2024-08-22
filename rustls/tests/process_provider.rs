@@ -1,5 +1,7 @@
 #![cfg(any(feature = "ring", feature = "aws_lc_rs"))]
 
+// XXX XXX TBD TEST XXX WITHOUT FEATURE: withdefaultprovider
+
 //! Note that the default test runner builds each test file into a separate
 //! executable, and runs tests in an indeterminate order.  That restricts us
 //! to doing all the desired tests, in series, in one function.
@@ -16,10 +18,9 @@ use rustls::ClientConfig;
 mod common;
 use crate::common::*;
 
+#[cfg(feature = "withdefaultprovider")]
 #[test]
 fn test_process_provider() {
-    // XXX TBD ??? ???
-    #[cfg(feature = "withdefaultprovider")]
     if dbg!(cfg!(all(feature = "ring", feature = "aws_lc_rs"))) {
         test_explicit_choice_required();
     } else if dbg!(cfg!(all(feature = "ring", not(feature = "aws_lc_rs")))) {
@@ -29,10 +30,6 @@ fn test_process_provider() {
     } else {
         panic!("fix feature combinations");
     }
-
-    // XXX TODO MOVE TO XXX
-    #[cfg(not(feature = "withdefaultprovider"))]
-    finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
 }
 
 #[cfg(feature = "withdefaultprovider")]
