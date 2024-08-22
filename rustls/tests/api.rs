@@ -4996,7 +4996,7 @@ fn test_client_config_keyshare_mismatch() {
     assert!(do_handshake_until_error(&mut client, &mut server).is_err());
 }
 
-#[cfg(not(feature = "withrcalias"))]
+// #[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_sends_helloretryrequest() {
@@ -5195,7 +5195,7 @@ fn test_client_rejects_hrr_with_varied_session_id() {
     );
 }
 
-#[cfg(not(feature = "withrcalias"))]
+// #[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_attempts_to_use_unsupported_kx_group() {
@@ -5246,7 +5246,7 @@ fn test_client_attempts_to_use_unsupported_kx_group() {
     ));
 }
 
-#[cfg(not(feature = "withrcalias"))]
+// #[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_sends_share_for_less_preferred_group() {
@@ -5760,7 +5760,7 @@ fn remove_ems_request(msg: &mut Message) -> Altered {
 }
 
 /// https://github.com/rustls/rustls/issues/797
-#[cfg(not(feature = "withrcalias"))]
+// #[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_tls12_no_resume_after_server_downgrade() {
@@ -6470,7 +6470,7 @@ fn test_client_construction_requires_66_bytes_of_random_material() {
         .expect("check how much random material ClientConnection::new consumes");
 }
 
-#[cfg(not(feature = "withrcalias"))]
+// #[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_removes_tls12_session_if_server_sends_undecryptable_first_message() {
