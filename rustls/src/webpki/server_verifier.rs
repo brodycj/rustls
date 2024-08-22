@@ -152,10 +152,11 @@ impl WebPkiServerVerifier {
     /// Use [`Self::builder_with_provider`] if you wish to specify an explicit provider.
     ///
     /// For more information, see the [`ServerCertVerifierBuilder`] documentation.
+    #[cfg(feature = "withdefaultprovider")]
     pub fn builder(roots: Arc<RootCertStore>) -> ServerCertVerifierBuilder {
         Self::builder_with_provider(
             roots,
-            Arc::clone(&CryptoProvider::get_default_or_install_from_crate_features()),
+            Arc::clone(CryptoProvider::get_default_or_install_from_crate_features()),
         )
     }
 

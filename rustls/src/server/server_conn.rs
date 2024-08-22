@@ -382,6 +382,7 @@ impl ServerConfig {
     /// and safe protocol version defaults.
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
+    #[cfg(feature = "withdefaultprovider")]
     #[cfg(feature = "std")]
     pub fn builder() -> ConfigBuilder<Self, WantsVerifier> {
         Self::builder_with_protocol_versions(versions::DEFAULT_VERSIONS)
@@ -399,6 +400,7 @@ impl ServerConfig {
     ///   the crate features and process default.
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
+    #[cfg(feature = "withdefaultprovider")]
     #[cfg(feature = "std")]
     pub fn builder_with_protocol_versions(
         versions: &[&'static versions::SupportedProtocolVersion],
@@ -407,7 +409,7 @@ impl ServerConfig {
         // 1. that the provider has been installed (explicitly or implicitly)
         // 2. that the process-level default provider is usable with the supplied protocol versions.
         Self::builder_with_provider(Arc::clone(
-            &CryptoProvider::get_default_or_install_from_crate_features(),
+            CryptoProvider::get_default_or_install_from_crate_features(),
         ))
         .with_protocol_versions(versions)
         .unwrap()
