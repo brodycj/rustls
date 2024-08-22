@@ -76,7 +76,7 @@ fn pki_error(error: webpki::Error) -> Error {
         }
 
         _ => CertificateError::Other(OtherError(
-            #[cfg(feature = "syncenabled")]
+            #[cfg(feature = "arcsyncenabled")]
             #[cfg(feature = "std")]
             Arc::new(error),
         ))
@@ -101,7 +101,7 @@ fn crl_error(e: webpki::Error) -> CertRevocationListError {
         UnsupportedRevocationReason => CertRevocationListError::UnsupportedRevocationReason,
 
         _ => CertRevocationListError::Other(OtherError(
-            #[cfg(feature = "syncenabled")]
+            #[cfg(feature = "arcsyncenabled")]
             #[cfg(feature = "std")]
             Arc::new(e),
         )),

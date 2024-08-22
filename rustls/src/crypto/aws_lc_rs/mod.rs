@@ -256,12 +256,12 @@ pub(super) fn fips() -> bool {
 }
 
 pub(super) fn unspecified_err(_e: aws_lc_rs::error::Unspecified) -> Error {
-    #[cfg(feature = "syncenabled")]
+    #[cfg(feature = "arcsyncenabled")]
     #[cfg(feature = "std")]
     {
         Error::Other(OtherError(Arc::new(_e)))
     }
-    #[cfg(any(not(feature = "syncenabled"), not(feature = "std")))]
+    #[cfg(any(not(feature = "arcsyncenabled"), not(feature = "std")))]
     {
         Error::Other(OtherError())
     }

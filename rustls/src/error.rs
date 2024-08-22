@@ -635,7 +635,7 @@ mod other_error {
     /// Enums holding this type will never compare equal to each other.
     #[derive(Debug, Clone)]
     pub struct OtherError(
-        #[cfg(feature = "syncenabled")]
+        #[cfg(feature = "arcsyncenabled")]
         #[cfg(feature = "std")]
         pub Arc<dyn StdError + Send + Sync>
     );
@@ -654,19 +654,19 @@ mod other_error {
 
     impl fmt::Display for OtherError {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            #[cfg(feature = "syncenabled")]
+            #[cfg(feature = "arcsyncenabled")]
             #[cfg(feature = "std")]
             {
                 write!(f, "{}", self.0)
             }
-            #[cfg(any(not(feature = "syncenabled"), not(feature = "std")))]
+            #[cfg(any(not(feature = "arcsyncenabled"), not(feature = "std")))]
             {
                 f.write_str("no further information available")
             }
         }
     }
 
-    #[cfg(feature = "syncenabled")]
+    #[cfg(feature = "arcsyncenabled")]
     #[cfg(feature = "std")]
     impl StdError for OtherError {
         fn source(&self) -> Option<&(dyn StdError + 'static)> {
@@ -702,7 +702,7 @@ mod tests {
             ApplicationVerificationFailure
         );
         let other = Other(OtherError(
-            #[cfg(feature = "syncenabled")]
+            #[cfg(feature = "arcsyncenabled")]
             #[cfg(feature = "std")]
             alloc::sync::Arc::from(Box::from("")),
         ));
@@ -727,7 +727,7 @@ mod tests {
         assert_eq!(UnsupportedIndirectCrl, UnsupportedIndirectCrl);
         assert_eq!(UnsupportedRevocationReason, UnsupportedRevocationReason);
         let other = Other(OtherError(
-            #[cfg(feature = "syncenabled")]
+            #[cfg(feature = "arcsyncenabled")]
             #[cfg(feature = "std")]
             alloc::sync::Arc::from(Box::from("")),
         ));
@@ -736,7 +736,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "syncenabled")]
+    #[cfg(feature = "arcsyncenabled")]
     #[cfg(feature = "std")]
     fn other_error_equality() {
         let other_error = OtherError(alloc::sync::Arc::from(Box::from("")));
@@ -776,7 +776,7 @@ mod tests {
             Error::InconsistentKeys(InconsistentKeys::Unknown),
             Error::InvalidCertRevocationList(CertRevocationListError::BadSignature),
             Error::Other(OtherError(
-                #[cfg(feature = "syncenabled")]
+                #[cfg(feature = "arcsyncenabled")]
                 #[cfg(feature = "std")]
                 alloc::sync::Arc::from(Box::from("")),
             )),

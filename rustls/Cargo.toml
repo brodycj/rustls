@@ -40,7 +40,7 @@ logging = ["log"]
 # XXX TODO ADD TO DEFAULT FEATURES
 defaultproviderenabled = []
 # XXX TODO NAMING - ADD SEPARATORS
-syncenabled = []
+arcsyncenabled = []
 aws_lc_rs = ["dep:aws-lc-rs", "webpki/aws_lc_rs"]
 aws-lc-rs = ["aws_lc_rs"] # Alias because Cargo features commonly use `-`
 brotli = ["dep:brotli", "dep:brotli-decompressor", "std"]

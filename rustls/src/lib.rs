@@ -392,10 +392,10 @@ mod test_macros;
 
 // XXX TODO MOVE TO SEPARATE MODULE SOURCE FILE - ???
 mod alias {
-    #[cfg(feature = "syncenabled")]
+    #[cfg(feature = "arcsyncenabled")]
     pub(crate) use alloc::sync::Arc;
 
-    #[cfg(not(feature = "syncenabled"))]
+    #[cfg(not(feature = "arcsyncenabled"))]
     pub(crate) use alloc::rc::Rc as Arc;
 }
 

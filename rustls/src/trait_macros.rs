@@ -1,5 +1,5 @@
 /// pub trait that includes Send & Sync - supports use with alloc::sync::Arc
-#[cfg(feature = "syncenabled")]
+#[cfg(feature = "arcsyncenabled")]
 macro_rules! pub_api_trait {
     ($name:ident, $body:tt) => {
         pub trait $name: core::fmt::Debug + Send + Sync $body
@@ -7,7 +7,7 @@ macro_rules! pub_api_trait {
 }
 
 /// pub trait with no Send / Sync - supports use with alloc::rc::Rc
-#[cfg(not(feature = "syncenabled"))]
+#[cfg(not(feature = "arcsyncenabled"))]
 macro_rules! pub_api_trait {
     ($name:ident, $body:tt) => {
         pub trait $name: core::fmt::Debug $body
@@ -15,7 +15,7 @@ macro_rules! pub_api_trait {
 }
 
 /// internal pub(crate) trait that includes Send & Sync - supports use with alloc::sync::Arc
-#[cfg(feature = "syncenabled")]
+#[cfg(feature = "arcsyncenabled")]
 macro_rules! internal_generic_state_trait {
     // XXX QUICK HACKY MACRO API WITH SEPARATE NAME & GENERIC TYPE PARAMETERS
     ($name:ident, $generic_type_parameter:ident, $body:tt) => {
@@ -24,7 +24,7 @@ macro_rules! internal_generic_state_trait {
 }
 
 /// internal pub(crate) trait with no Send / Sync - supports use with alloc::rc::Rc
-#[cfg(not(feature = "syncenabled"))]
+#[cfg(not(feature = "arcsyncenabled"))]
 macro_rules! internal_generic_state_trait {
     // XXX QUICK HACKY MACRO API WITH SEPARATE NAME & GENERIC TYPE PARAMETERS
     ($name:ident, $generic_type_parameter:ident, $body:tt) => {
