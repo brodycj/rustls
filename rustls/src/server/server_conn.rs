@@ -53,7 +53,7 @@ use crate::{compress, sign, verify, versions, KeyLog, WantsVersions};
 /// in the type system to allow implementations freedom in
 /// how to achieve interior mutability.  `Mutex` is a common
 /// choice.
-pub trait StoresServerSessions: Debug + Send + Sync {
+pub_api_trait!(StoresServerSessions, {
     /// Store session secrets encoded in `value` against `key`,
     /// overwrites any existing value against `key`.  Returns `true`
     /// if the value was stored.
@@ -71,7 +71,7 @@ pub trait StoresServerSessions: Debug + Send + Sync {
     /// whether their session can be resumed; the implementation is not required to remember
     /// a session even if it returns `true` here.
     fn can_cache(&self) -> bool;
-}
+});
 
 /// A trait for the ability to encrypt and decrypt tickets.
 pub trait ProducesTickets: Debug + Send + Sync {

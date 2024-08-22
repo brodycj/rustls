@@ -3845,7 +3845,6 @@ impl fmt::Debug for ServerStorage {
     }
 }
 
-#[cfg(not(feature = "withrcalias"))]
 impl rustls::server::StoresServerSessions for ServerStorage {
     fn put(&self, key: Vec<u8>, value: Vec<u8>) -> bool {
         self.put_count
