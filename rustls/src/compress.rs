@@ -32,7 +32,7 @@
 //! [cc_cd]: crate::ClientConfig::cert_decompressors
 //! [sc_cd]: crate::ServerConfig::cert_decompressors
 
-use crate::aa::Arc;
+use crate::alias::Arc;
 #[cfg(feature = "std")]
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;

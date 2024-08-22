@@ -620,7 +620,7 @@ impl From<rand::GetRandomFailed> for Error {
 
 mod other_error {
     #[cfg(feature = "std")]
-    use crate::aa::Arc;
+    use crate::alias::Arc;
     use core::fmt;
     #[cfg(feature = "std")]
     use std::error::Error as StdError;

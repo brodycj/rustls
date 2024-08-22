@@ -17,7 +17,7 @@ use crate::tls13::Tls13CipherSuite;
 
 #[cfg(feature = "std")]
 mod connection {
-    use crate::aa::Arc;
+    use crate::alias::Arc;
     use alloc::vec;
     use alloc::vec::Vec;
     use core::fmt::{self, Debug};

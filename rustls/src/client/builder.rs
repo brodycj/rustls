@@ -1,4 +1,5 @@
-use crate::aa::Arc;
+use crate::alias::Arc;
+
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 
@@ -92,7 +93,8 @@ impl ConfigBuilder<ClientConfig, WantsVerifier> {
 
 /// Container for unsafe APIs
 pub(super) mod danger {
-    use crate::aa::Arc;
+    use crate::alias::Arc;
+
     use core::marker::PhantomData;
 
     use crate::client::WantsClientCert;
