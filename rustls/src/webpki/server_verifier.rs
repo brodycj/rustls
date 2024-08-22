@@ -1,5 +1,5 @@
 use crate::alias::Arc;
-// use crate::apistate::ShareableBase;
+
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, ServerName, UnixTime};
@@ -301,8 +301,6 @@ impl ServerCertVerifier for WebPkiServerVerifier {
         self.supported.supported_schemes()
     }
 }
-
-// impl ShareableBase for WebPkiServerVerifier {}
 
 test_for_each_provider! {
     #[cfg(not(feature = "withrcalias"))]

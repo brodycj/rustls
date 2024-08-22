@@ -143,8 +143,6 @@ impl SigningKey for RsaSigningKey {
     }
 }
 
-// impl ShareableBase for RsaSigningKey {}
-
 impl Debug for RsaSigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.debug_struct("RsaSigningKey")
@@ -194,8 +192,6 @@ impl Signer for RsaSigner {
         self.scheme
     }
 }
-
-// impl ShareableBase for RsaSigner {}
 
 impl Debug for RsaSigner {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -276,8 +272,6 @@ impl SigningKey for EcdsaSigningKey {
     }
 }
 
-// impl ShareableBase for EcdsaSigningKey {}
-
 impl Debug for EcdsaSigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.debug_struct("EcdsaSigningKey")
@@ -304,8 +298,6 @@ impl Signer for EcdsaSigner {
         self.scheme
     }
 }
-
-// impl ShareableBase for EcdsaSigner {}
 
 impl Debug for EcdsaSigner {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -367,8 +359,6 @@ impl SigningKey for Ed25519SigningKey {
         self.scheme.algorithm()
     }
 }
-
-// impl ShareableBase for Ed25519SigningKey {}
 
 impl Debug for Ed25519SigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {

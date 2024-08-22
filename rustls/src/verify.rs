@@ -3,7 +3,6 @@ use core::fmt::Debug;
 
 use pki_types::{CertificateDer, ServerName, UnixTime};
 
-// use crate::apistate::ShareableBase;
 use crate::enums::SignatureScheme;
 use crate::error::{Error, InvalidMessage};
 use crate::msgs::base::PayloadU16;
