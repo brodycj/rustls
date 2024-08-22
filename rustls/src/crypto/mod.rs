@@ -3,9 +3,9 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
-#[cfg(all(feature = "arcshare", not(feature = "std")))]
+#[cfg(all(feature = "withdefaultprovider", not(feature = "std")))]
 use once_cell::race::OnceBox;
-#[cfg(all(feature = "arcshare", feature = "std"))]
+#[cfg(all(feature = "withdefaultprovider", feature = "std"))]
 use once_cell::sync::OnceCell;
 use pki_types::PrivateKeyDer;
 use zeroize::Zeroize;
@@ -226,7 +226,7 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(all(feature = "arcshare", feature = "std"))]
+    #[cfg(all(feature = "withdefaultprovider", feature = "std"))]
     pub fn install_default(self) -> Result<(), Arc<Self>> {
         PROCESS_DEFAULT_PROVIDER.set(Arc::new(self))
     }
@@ -238,7 +238,7 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(all(feature = "arcshare", not(feature = "std")))]
+    #[cfg(all(feature = "withdefaultprovider", not(feature = "std")))]
     pub fn install_default(self) -> Result<(), Box<Arc<Self>>> {
         PROCESS_DEFAULT_PROVIDER.set(Box::new(Arc::new(self)))
     }
@@ -246,7 +246,7 @@ impl CryptoProvider {
     /// Returns the default `CryptoProvider` for this process.
     ///
     /// This will be `None` if no default has been set yet.
-    #[cfg(feature = "arcshare")]
+    #[cfg(feature = "withdefaultprovider")]
     pub fn get_default() -> Option<&'static Arc<Self>> {
         PROCESS_DEFAULT_PROVIDER.get()
     }
@@ -256,9 +256,9 @@ impl CryptoProvider {
     /// - gets the pre-installed default, or
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
-    // #[cfg(feature = "arcshare")]
+    // #[cfg(feature = "withdefaultprovider")]
     pub(crate) fn get_default_or_install_from_crate_features() -> Arc<Self> {
-        #[cfg(feature = "arcshare")]
+        #[cfg(feature = "withdefaultprovider")]
         if let Some(provider) = Self::get_default() {
             return provider.clone();
         }
@@ -322,9 +322,9 @@ impl CryptoProvider {
     }
 }
 
-#[cfg(all(feature = "arcshare", feature = "std"))]
+#[cfg(all(feature = "withdefaultprovider", feature = "std"))]
 static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
-#[cfg(all(feature = "arcshare", not(feature = "std")))]
+#[cfg(all(feature = "withdefaultprovider", not(feature = "std")))]
 static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 
 /// A source of cryptographically secure randomness.

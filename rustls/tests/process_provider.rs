@@ -19,7 +19,7 @@ use crate::common::*;
 #[test]
 fn test_process_provider() {
     // XXX TBD ??? ???
-    #[cfg(feature = "arcshare")]
+    #[cfg(feature = "withdefaultprovider")]
     if dbg!(cfg!(all(feature = "ring", feature = "aws_lc_rs"))) {
         test_explicit_choice_required();
     } else if dbg!(cfg!(all(feature = "ring", not(feature = "aws_lc_rs")))) {
@@ -31,11 +31,11 @@ fn test_process_provider() {
     }
 
     // XXX TODO MOVE TO XXX
-    #[cfg(not(feature = "arcshare"))]
+    #[cfg(not(feature = "withdefaultprovider"))]
     finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
 }
 
-#[cfg(feature = "arcshare")]
+#[cfg(feature = "withdefaultprovider")]
 fn test_explicit_choice_required() {
     assert!(CryptoProvider::get_default().is_none());
     provider::default_provider()
@@ -51,7 +51,7 @@ fn test_explicit_choice_required() {
     finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
 }
 
-#[cfg(feature = "arcshare")]
+#[cfg(feature = "withdefaultprovider")]
 fn test_ring_used_as_implicit_provider() {
     assert!(CryptoProvider::get_default().is_none());
 
@@ -65,7 +65,7 @@ fn test_ring_used_as_implicit_provider() {
     .contains("secure_random: Ring"));
 }
 
-#[cfg(feature = "arcshare")]
+#[cfg(feature = "withdefaultprovider")]
 fn test_aws_lc_rs_used_as_implicit_provider() {
     assert!(CryptoProvider::get_default().is_none());
 
