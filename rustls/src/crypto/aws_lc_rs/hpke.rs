@@ -1,5 +1,6 @@
 #[cfg(feature = "std")]
 use crate::alias::Arc;
+
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt::{self, Debug, Formatter};
@@ -926,6 +927,8 @@ impl<const KDF_LEN: usize> Drop for KemSharedSecret<KDF_LEN> {
 }
 
 fn key_rejected_err(_e: aws_lc_rs::error::KeyRejected) -> Error {
+    // XXX TODO IMPROVE CONSISTENCY WITH OTHER CONDITIONAL CODE - XXX TODO IMPROVE CONSISTENCY IN
+    // MULTIPLE PLACES
     #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     {

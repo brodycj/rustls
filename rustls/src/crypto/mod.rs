@@ -1,4 +1,5 @@
 use crate::alias::Arc;
+
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt::Debug;
@@ -7,6 +8,7 @@ use core::fmt::Debug;
 use once_cell::race::OnceBox;
 #[cfg(all(feature = "withdefaultprovider", feature = "std"))]
 use once_cell::sync::OnceCell;
+
 use pki_types::PrivateKeyDer;
 use zeroize::Zeroize;
 
@@ -256,7 +258,6 @@ impl CryptoProvider {
     /// - gets the pre-installed default, or
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
-    // #[cfg(feature = "withdefaultprovider")]
     pub(crate) fn get_default_or_install_from_crate_features() -> Arc<Self> {
         #[cfg(feature = "withdefaultprovider")]
         if let Some(provider) = Self::get_default() {
@@ -266,6 +267,7 @@ impl CryptoProvider {
         let provider = Self::from_crate_features()
             .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point");
         // Ignore the error resulting from us losing a race, and accept the outcome.
+        // XXX TODO XXX XXX XXX
         // let _ = provider.install_default();
         // Self::get_default().unwrap()
         return Arc::new(provider);
