@@ -5,7 +5,11 @@
 use super::*;
 
 mod common;
+
+#[cfg(not(feature = "usercalias"))]
 use std::sync::Arc;
+#[cfg(feature = "usercalias")]
+use std::rc::Rc as Arc;
 
 use common::{
     do_handshake, do_handshake_until_both_error, make_client_config_with_versions,

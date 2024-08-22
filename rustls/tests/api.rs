@@ -1855,6 +1855,7 @@ fn client_flush_does_nothing() {
     assert!(matches!(client.writer().flush(), Ok(())));
 }
 
+#[cfg(not(feature = "usercalias"))]
 #[allow(clippy::no_effect)]
 #[test]
 fn server_is_send_and_sync() {
@@ -1863,6 +1864,7 @@ fn server_is_send_and_sync() {
     &server as &dyn Sync;
 }
 
+#[cfg(not(feature = "usercalias"))]
 #[allow(clippy::no_effect)]
 #[test]
 fn client_is_send_and_sync() {
@@ -3853,6 +3855,7 @@ impl fmt::Debug for ServerStorage {
     }
 }
 
+#[cfg(not(feature = "usercalias"))]
 impl rustls::server::StoresServerSessions for ServerStorage {
     fn put(&self, key: Vec<u8>, value: Vec<u8>) -> bool {
         self.put_count
@@ -3919,6 +3922,7 @@ impl fmt::Debug for ClientStorage {
     }
 }
 
+#[cfg(not(feature = "usercalias"))]
 impl rustls::client::ClientSessionStore for ClientStorage {
     fn set_kx_hint(&self, server_name: ServerName<'static>, group: rustls::NamedGroup) {
         self.ops
@@ -4006,6 +4010,7 @@ impl rustls::client::ClientSessionStore for ClientStorage {
     }
 }
 
+#[cfg(not(feature = "usercalias"))]
 #[test]
 fn tls13_stateful_resumption() {
     let kt = KeyType::Rsa2048;
@@ -4067,6 +4072,7 @@ fn tls13_stateful_resumption() {
     assert_eq!(server.handshake_kind(), Some(HandshakeKind::Resumed));
 }
 
+#[cfg(not(feature = "usercalias"))]
 #[test]
 fn tls13_stateless_resumption() {
     let kt = KeyType::Rsa2048;

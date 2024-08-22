@@ -437,7 +437,12 @@ test_for_each_provider! {
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use std::prelude::v1::*;
+
+    #[cfg(not(feature = "usercalias"))]
     use std::sync::Arc;
+    #[cfg(feature = "usercalias")]
+    use std::rc::Rc as Arc;
+
     use std::{vec, format, println};
 
     fn load_crls(crls_der: &[&[u8]]) -> Vec<CertificateRevocationListDer<'static>> {
