@@ -38,7 +38,7 @@ std = ["webpki/std", "pki-types/std", "once_cell/std"]
 logging = ["log"]
 # XXX TODO NAMING - ADD SEPARATORS
 # XXX TODO ADD TO DEFAULT FEATURES
-withdefaultprovider = []
+defaultproviderenabled = []
 # XXX TODO NAMING - ADD SEPARATORS
 syncenabled = []
 aws_lc_rs = ["dep:aws-lc-rs", "webpki/aws_lc_rs"]

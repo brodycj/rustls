@@ -1,6 +1,6 @@
 #![cfg(any(feature = "ring", feature = "aws_lc_rs"))]
 
-// XXX XXX TBD TEST XXX WITHOUT FEATURE: withdefaultprovider
+// XXX XXX TBD TEST XXX WITHOUT FEATURE: defaultproviderenabled
 
 //! Note that the default test runner builds each test file into a separate
 //! executable, and runs tests in an indeterminate order.  That restricts us
@@ -18,7 +18,7 @@ use rustls::ClientConfig;
 mod common;
 use crate::common::*;
 
-#[cfg(feature = "withdefaultprovider")]
+#[cfg(feature = "defaultproviderenabled")]
 #[test]
 fn test_process_provider() {
     if dbg!(cfg!(all(feature = "ring", feature = "aws_lc_rs"))) {
@@ -32,7 +32,7 @@ fn test_process_provider() {
     }
 }
 
-#[cfg(feature = "withdefaultprovider")]
+#[cfg(feature = "defaultproviderenabled")]
 fn test_explicit_choice_required() {
     assert!(CryptoProvider::get_default().is_none());
     provider::default_provider()
@@ -48,7 +48,7 @@ fn test_explicit_choice_required() {
     finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
 }
 
-#[cfg(feature = "withdefaultprovider")]
+#[cfg(feature = "defaultproviderenabled")]
 fn test_ring_used_as_implicit_provider() {
     assert!(CryptoProvider::get_default().is_none());
 
@@ -62,7 +62,7 @@ fn test_ring_used_as_implicit_provider() {
     .contains("secure_random: Ring"));
 }
 
-#[cfg(feature = "withdefaultprovider")]
+#[cfg(feature = "defaultproviderenabled")]
 fn test_aws_lc_rs_used_as_implicit_provider() {
     assert!(CryptoProvider::get_default().is_none());
 

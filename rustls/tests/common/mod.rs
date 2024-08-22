@@ -394,9 +394,9 @@ pub fn server_config_builder() -> rustls::ConfigBuilder<ServerConfig, rustls::Wa
     // XXX TODO CLARIFY XXX UPDATES
     if exactly_one_provider() {
         // XXX TODO CLARIFY XXX
-        #[cfg(not(feature = "withdefaultprovider"))]
+        #[cfg(not(feature = "defaultproviderenabled"))]
         panic!("NOT EXPECTED TO GET HERE");
-        #[cfg(feature = "withdefaultprovider")]
+        #[cfg(feature = "defaultproviderenabled")]
         rustls::ServerConfig::builder()
     } else {
         rustls::ServerConfig::builder_with_provider(provider::default_provider().into())
@@ -410,9 +410,9 @@ pub fn server_config_builder_with_versions(
 ) -> rustls::ConfigBuilder<ServerConfig, rustls::WantsVerifier> {
     if exactly_one_provider() {
         // XXX TODO CLARIFY XXX
-        #[cfg(not(feature = "withdefaultprovider"))]
+        #[cfg(not(feature = "defaultproviderenabled"))]
         panic!("NOT EXPECTED TO GET HERE");
-        #[cfg(feature = "withdefaultprovider")]
+        #[cfg(feature = "defaultproviderenabled")]
         rustls::ServerConfig::builder_with_protocol_versions(versions)
     } else {
         rustls::ServerConfig::builder_with_provider(provider::default_provider().into())
@@ -426,9 +426,9 @@ pub fn client_config_builder() -> rustls::ConfigBuilder<ClientConfig, rustls::Wa
     // equivalent to `builder_with_provider(provider::provider().into())`.
     if exactly_one_provider() {
         // XXX TODO CLARIFY XXX
-        #[cfg(not(feature = "withdefaultprovider"))]
+        #[cfg(not(feature = "defaultproviderenabled"))]
         panic!("NOT EXPECTED TO GET HERE");
-        #[cfg(feature = "withdefaultprovider")]
+        #[cfg(feature = "defaultproviderenabled")]
         rustls::ClientConfig::builder()
     } else {
         rustls::ClientConfig::builder_with_provider(provider::default_provider().into())
@@ -442,9 +442,9 @@ pub fn client_config_builder_with_versions(
 ) -> rustls::ConfigBuilder<ClientConfig, rustls::WantsVerifier> {
     if exactly_one_provider() {
         // XXX TODO CLARIFY XXX
-        #[cfg(not(feature = "withdefaultprovider"))]
+        #[cfg(not(feature = "defaultproviderenabled"))]
         panic!("NOT EXPECTED TO GET HERE");
-        #[cfg(feature = "withdefaultprovider")]
+        #[cfg(feature = "defaultproviderenabled")]
         rustls::ClientConfig::builder_with_protocol_versions(versions)
     } else {
         rustls::ClientConfig::builder_with_provider(provider::default_provider().into())
@@ -626,9 +626,9 @@ pub fn make_client_config_with_verifier(
 pub fn webpki_client_verifier_builder(roots: Arc<RootCertStore>) -> ClientCertVerifierBuilder {
     if exactly_one_provider() {
         // XXX TODO CLARIFY XXX
-        #[cfg(not(feature = "withdefaultprovider"))]
+        #[cfg(not(feature = "defaultproviderenabled"))]
         panic!("NOT EXPECTED TO GET HERE");
-        #[cfg(feature = "withdefaultprovider")]
+        #[cfg(feature = "defaultproviderenabled")]
         WebPkiClientVerifier::builder(roots)
     } else {
         WebPkiClientVerifier::builder_with_provider(roots, provider::default_provider().into())
@@ -638,9 +638,9 @@ pub fn webpki_client_verifier_builder(roots: Arc<RootCertStore>) -> ClientCertVe
 pub fn webpki_server_verifier_builder(roots: Arc<RootCertStore>) -> ServerCertVerifierBuilder {
     if exactly_one_provider() {
         // XXX TODO CLARIFY XXX
-        #[cfg(not(feature = "withdefaultprovider"))]
+        #[cfg(not(feature = "defaultproviderenabled"))]
         panic!("NOT EXPECTED TO GET HERE");
-        #[cfg(feature = "withdefaultprovider")]
+        #[cfg(feature = "defaultproviderenabled")]
         WebPkiServerVerifier::builder(roots)
     } else {
         WebPkiServerVerifier::builder_with_provider(roots, provider::default_provider().into())
@@ -865,7 +865,7 @@ pub fn do_suite_and_kx_test(
 
 fn exactly_one_provider() -> bool {
     // XXX TODO CLEAN-UP & CLARIFY
-    #[cfg(not(feature = "withdefaultprovider"))]
+    #[cfg(not(feature = "defaultproviderenabled"))]
     return false;
     cfg!(any(
         all(feature = "ring", not(feature = "aws_lc_rs")),
