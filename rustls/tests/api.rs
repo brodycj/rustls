@@ -3998,7 +3998,6 @@ impl rustls::client::ClientSessionStore for ClientStorage {
     }
 }
 
-#[cfg(not(feature = "withrcalias"))]
 #[test]
 fn tls13_stateful_resumption() {
     let kt = KeyType::Rsa2048;
