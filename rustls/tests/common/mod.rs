@@ -391,11 +391,10 @@ impl KeyType {
 pub fn server_config_builder() -> rustls::ConfigBuilder<ServerConfig, rustls::WantsVerifier> {
     // ensure `ServerConfig::builder()` is covered, even though it is
     // equivalent to `builder_with_provider(provider::provider().into())`.
-    // XXX TODO CLARIFY XXX UPDATES
-    if exactly_one_provider() {
-        // XXX TODO CLARIFY XXX
+    if use_default_with_exactly_one_provider() {
         #[cfg(not(feature = "defaultproviderenabled"))]
-        panic!("NOT EXPECTED TO GET HERE");
+        unreachable!("SHOULD NOT GET HERE WITH FEATURE NOT ENABLED: defaultproviderenabled");
+        // ONLY POSSIBLE to compile the following with feature enabled: defaultproviderenabled
         #[cfg(feature = "defaultproviderenabled")]
         rustls::ServerConfig::builder()
     } else {
@@ -408,10 +407,10 @@ pub fn server_config_builder() -> rustls::ConfigBuilder<ServerConfig, rustls::Wa
 pub fn server_config_builder_with_versions(
     versions: &[&'static rustls::SupportedProtocolVersion],
 ) -> rustls::ConfigBuilder<ServerConfig, rustls::WantsVerifier> {
-    if exactly_one_provider() {
-        // XXX TODO CLARIFY XXX
+    if use_default_with_exactly_one_provider() {
         #[cfg(not(feature = "defaultproviderenabled"))]
-        panic!("NOT EXPECTED TO GET HERE");
+        unreachable!("SHOULD NOT GET HERE WITH FEATURE NOT ENABLED: defaultproviderenabled");
+        // ONLY POSSIBLE to compile the following with feature enabled: defaultproviderenabled
         #[cfg(feature = "defaultproviderenabled")]
         rustls::ServerConfig::builder_with_protocol_versions(versions)
     } else {
@@ -424,10 +423,10 @@ pub fn server_config_builder_with_versions(
 pub fn client_config_builder() -> rustls::ConfigBuilder<ClientConfig, rustls::WantsVerifier> {
     // ensure `ClientConfig::builder()` is covered, even though it is
     // equivalent to `builder_with_provider(provider::provider().into())`.
-    if exactly_one_provider() {
-        // XXX TODO CLARIFY XXX
+    if use_default_with_exactly_one_provider() {
         #[cfg(not(feature = "defaultproviderenabled"))]
-        panic!("NOT EXPECTED TO GET HERE");
+        unreachable!("SHOULD NOT GET HERE WITH FEATURE NOT ENABLED: defaultproviderenabled");
+        // ONLY POSSIBLE to compile the following with feature enabled: defaultproviderenabled
         #[cfg(feature = "defaultproviderenabled")]
         rustls::ClientConfig::builder()
     } else {
@@ -440,10 +439,10 @@ pub fn client_config_builder() -> rustls::ConfigBuilder<ClientConfig, rustls::Wa
 pub fn client_config_builder_with_versions(
     versions: &[&'static rustls::SupportedProtocolVersion],
 ) -> rustls::ConfigBuilder<ClientConfig, rustls::WantsVerifier> {
-    if exactly_one_provider() {
-        // XXX TODO CLARIFY XXX
+    if use_default_with_exactly_one_provider() {
         #[cfg(not(feature = "defaultproviderenabled"))]
-        panic!("NOT EXPECTED TO GET HERE");
+        unreachable!("SHOULD NOT GET HERE WITH FEATURE NOT ENABLED: defaultproviderenabled");
+        // ONLY POSSIBLE to compile the following with feature enabled: defaultproviderenabled
         #[cfg(feature = "defaultproviderenabled")]
         rustls::ClientConfig::builder_with_protocol_versions(versions)
     } else {
@@ -625,7 +624,7 @@ pub fn make_client_config_with_verifier(
 }
 
 pub fn webpki_client_verifier_builder(roots: Arc<RootCertStore>) -> ClientCertVerifierBuilder {
-    if exactly_one_provider() {
+    if use_default_with_exactly_one_provider() {
         // XXX TODO CLARIFY XXX
         #[cfg(not(feature = "defaultproviderenabled"))]
         panic!("NOT EXPECTED TO GET HERE");
@@ -637,7 +636,7 @@ pub fn webpki_client_verifier_builder(roots: Arc<RootCertStore>) -> ClientCertVe
 }
 
 pub fn webpki_server_verifier_builder(roots: Arc<RootCertStore>) -> ServerCertVerifierBuilder {
-    if exactly_one_provider() {
+    if use_default_with_exactly_one_provider() {
         // XXX TODO CLARIFY XXX
         #[cfg(not(feature = "defaultproviderenabled"))]
         panic!("NOT EXPECTED TO GET HERE");
@@ -864,8 +863,11 @@ pub fn do_suite_and_kx_test(
     );
 }
 
-fn exactly_one_provider() -> bool {
-    // XXX TODO CLEAN-UP & CLARIFY
+fn use_default_with_exactly_one_provider() -> bool {
+    // RETURNS true in case of the following conditions:
+    // - defaultproviderenabled feature is enabled
+    // - exactly one built-in provider feature is enabled
+    // OTHERWISE RETURNS false
     #[cfg(not(feature = "defaultproviderenabled"))]
     return false;
     cfg!(any(
