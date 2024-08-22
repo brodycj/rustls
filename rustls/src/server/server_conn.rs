@@ -117,7 +117,7 @@ pub trait ProducesTickets: Debug + Send + Sync {
 /// a certificate (for instance, fetching a certificate from a data store),
 /// the [`Acceptor`] interface is more suitable.
 ////// XXX TODO DOC XXX
-tttt!(ResolvesServerCert, {
+pub_api_trait!(ResolvesServerCert, {
     /// Choose a certificate chain and matching key given simplified
     /// ClientHello information.
     ///

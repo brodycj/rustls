@@ -404,14 +404,14 @@ mod aa {
 #[macro_use]
 mod ttt {
     #[cfg(not(feature = "withrcalias"))]
-    macro_rules! tttt {
+    macro_rules! pub_api_trait {
         ($name:ident, $body:tt) => {
             pub trait $name: core::fmt::Debug + Send + Sync $body
         }
     }
 
     #[cfg(feature = "withrcalias")]
-    macro_rules! tttt {
+    macro_rules! pub_api_trait {
         ($name:ident, $body:tt) => {
             pub trait $name: core::fmt::Debug $body
         }

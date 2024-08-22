@@ -58,7 +58,7 @@ use crate::x509;
 /// [`ResolvesServerCert`]: crate::server::ResolvesServerCert
 /// [`ResolvesClientCert`]: crate::client::ResolvesClientCert
 /////// XXX TODO FIX DOC XXX
-tttt!(SigningKey, {
+pub_api_trait!(SigningKey, {
     /// Choose a `SignatureScheme` from those offered.
     ///
     /// Expresses the choice by returning something that implements `Signer`,
@@ -77,7 +77,7 @@ tttt!(SigningKey, {
 
 ///// XXX TODO XXX XXX DOC XXX XXX
 /// A thing that can sign a message.
-tttt!(Signer, {
+pub_api_trait!(Signer, {
     /// Signs `message` using the selected scheme.
     ///
     /// `message` is not hashed; the implementer must hash it using the hash function

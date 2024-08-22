@@ -97,7 +97,7 @@ pub trait ClientSessionStore: fmt::Debug + Send + Sync {
 //// XXX TODO DOC XXX
 /// A trait for the ability to choose a certificate chain and
 /// private key for the purposes of client authentication.
-tttt!(ResolvesClientCert, {
+pub_api_trait!(ResolvesClientCert, {
     /// Resolve a client certificate chain/private key to use as the client's
     /// identity.
     ///
