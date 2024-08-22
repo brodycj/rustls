@@ -4059,7 +4059,6 @@ fn tls13_stateful_resumption() {
     assert_eq!(server.handshake_kind(), Some(HandshakeKind::Resumed));
 }
 
-#[cfg(not(feature = "withrcalias"))]
 #[test]
 fn tls13_stateless_resumption() {
     let kt = KeyType::Rsa2048;
@@ -4128,7 +4127,6 @@ fn early_data_not_available() {
     assert!(client.early_data().is_none());
 }
 
-#[cfg(not(feature = "withrcalias"))]
 fn early_data_configs() -> (Arc<ClientConfig>, Arc<ServerConfig>) {
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config(kt);
@@ -4140,7 +4138,6 @@ fn early_data_configs() -> (Arc<ClientConfig>, Arc<ServerConfig>) {
     (Arc::new(client_config), Arc::new(server_config))
 }
 
-#[cfg(not(feature = "withrcalias"))]
 #[test]
 fn early_data_is_available_on_resumption() {
     let (client_config, server_config) = early_data_configs();
@@ -4190,7 +4187,6 @@ fn early_data_not_available_on_server_before_client_hello() {
     assert!(server.early_data().is_none());
 }
 
-#[cfg(not(feature = "withrcalias"))]
 #[test]
 fn early_data_can_be_rejected_by_server() {
     let (client_config, server_config) = early_data_configs();
