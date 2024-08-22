@@ -3911,7 +3911,6 @@ impl fmt::Debug for ClientStorage {
     }
 }
 
-#[cfg(not(feature = "withrcalias"))]
 impl rustls::client::ClientSessionStore for ClientStorage {
     fn set_kx_hint(&self, server_name: ServerName<'static>, group: rustls::NamedGroup) {
         self.ops
