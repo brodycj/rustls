@@ -399,40 +399,8 @@ mod alias {
     pub(crate) use alloc::rc::Rc as Arc;
 }
 
-// XXX TODO IMPROVE MACRO & MACRO MODULE NAMING HERE
-// XXX TODO MOVE TO SEPARATE MODULE SOURCE FILE
 #[macro_use]
-mod trait_macros {
-    #[cfg(not(feature = "withrcalias"))]
-    macro_rules! pub_api_trait {
-        ($name:ident, $body:tt) => {
-            pub trait $name: core::fmt::Debug + Send + Sync $body
-        }
-    }
-
-    #[cfg(feature = "withrcalias")]
-    macro_rules! pub_api_trait {
-        ($name:ident, $body:tt) => {
-            pub trait $name: core::fmt::Debug $body
-        }
-    }
-
-    #[cfg(not(feature = "withrcalias"))]
-    macro_rules! internal_generic_state_trait {
-        // XXX TBD HACKISH - MAY WANT TO RECONSIDER
-        ($name:ident, $generic_parameter:ident, $body:tt) => {
-            pub(crate) trait $name<$generic_parameter>: Send + Sync $body
-        }
-    }
-
-    #[cfg(feature = "withrcalias")]
-    macro_rules! internal_generic_state_trait {
-        // XXX TBD HACKISH - MAY WANT TO RECONSIDER
-        ($name:ident, $generic_parameter:ident, $body:tt) => {
-            pub(crate) trait $name<$generic_parameter> $body
-        }
-    }
-}
+mod trait_macros;
 
 #[macro_use]
 mod msgs;
