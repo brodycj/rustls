@@ -2693,8 +2693,6 @@ fn make_disjoint_suite_configs() -> (ClientConfig, ServerConfig) {
     (client_config, server_config)
 }
 
-// XXX TODO
-#[ignore]
 #[test]
 fn client_stream_handshake_error() {
     let (client_config, server_config) = make_disjoint_suite_configs();
@@ -2718,8 +2716,6 @@ fn client_stream_handshake_error() {
     }
 }
 
-// XXX TODO
-#[ignore]
 #[test]
 fn client_streamowned_handshake_error() {
     let (client_config, server_config) = make_disjoint_suite_configs();
@@ -2743,8 +2739,6 @@ fn client_streamowned_handshake_error() {
     let (_, _) = client_stream.into_parts();
 }
 
-// XXX TODO
-#[ignore]
 #[test]
 fn server_stream_handshake_error() {
     let (client_config, server_config) = make_disjoint_suite_configs();
@@ -2768,8 +2762,6 @@ fn server_stream_handshake_error() {
     }
 }
 
-// XXX TODO
-#[ignore]
 #[test]
 fn server_streamowned_handshake_error() {
     let (client_config, server_config) = make_disjoint_suite_configs();
@@ -2813,8 +2805,6 @@ fn server_connection_is_debug() {
     println!("{:?}", server);
 }
 
-// XXX TODO
-#[ignore]
 #[test]
 fn server_complete_io_for_handshake_ending_with_alert() {
     let (client_config, server_config) = make_disjoint_suite_configs();

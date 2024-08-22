@@ -630,10 +630,7 @@ impl<Data> ConnectionCommon<Data> {
                     let _ignored = self.write_tls(io);
                     let _ignored = io.flush();
 
-                    // XXX XXX
-                    // return Err(io::Error::new(io::ErrorKind::InvalidData, e));
-                    let _x = e;
-                    unreachable!("XXX");
+                    return Err(io::Error::new(io::ErrorKind::InvalidData, e));
                 }
             };
 
