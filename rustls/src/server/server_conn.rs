@@ -699,9 +699,13 @@ mod connection {
     ///
     /// ```no_run
     /// # #[cfg(feature = "aws_lc_rs")] {
+    /// # #[cfg(not(feature = "withrcalias"))]
+    /// # use std::sync::Arc;
+    /// # #[cfg(feature = "withrcalias")]
+    /// # use std::rc::Rc as Arc;
     /// # fn choose_server_config(
     /// #     _: rustls::server::ClientHello,
-    /// # ) -> std::sync::Arc<rustls::ServerConfig> {
+    /// # ) -> Arc<rustls::ServerConfig> {
     /// #     unimplemented!();
     /// # }
     /// # #[allow(unused_variables)]
