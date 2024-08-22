@@ -75,6 +75,7 @@ fn pki_error(error: webpki::Error) -> Error {
         }
 
         _ => CertificateError::Other(OtherError(
+            #[cfg(not(feature = "usercalias"))]
             #[cfg(feature = "std")]
             Arc::new(error),
         ))
@@ -99,6 +100,7 @@ fn crl_error(e: webpki::Error) -> CertRevocationListError {
         UnsupportedRevocationReason => CertRevocationListError::UnsupportedRevocationReason,
 
         _ => CertRevocationListError::Other(OtherError(
+            #[cfg(not(feature = "usercalias"))]
             #[cfg(feature = "std")]
             Arc::new(e),
         )),
