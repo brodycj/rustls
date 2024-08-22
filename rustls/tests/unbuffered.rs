@@ -2,9 +2,9 @@
 
 use std::num::NonZeroUsize;
 
-#[cfg(not(feature = "withrcalias"))]
+#[cfg(feature = "syncenabled")]
 use std::sync::Arc;
-#[cfg(feature = "withrcalias")]
+#[cfg(not(feature = "syncenabled"))]
 use std::rc::Rc as Arc;
 
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};

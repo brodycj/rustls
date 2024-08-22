@@ -6,9 +6,9 @@ use super::*;
 
 mod common;
 
-#[cfg(not(feature = "withrcalias"))]
+#[cfg(feature = "syncenabled")]
 use std::sync::Arc;
-#[cfg(feature = "withrcalias")]
+#[cfg(not(feature = "syncenabled"))]
 use std::rc::Rc as Arc;
 
 use common::{

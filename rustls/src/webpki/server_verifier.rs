@@ -304,9 +304,9 @@ impl ServerCertVerifier for WebPkiServerVerifier {
 }
 
 test_for_each_provider! {
-    #[cfg(not(feature = "withrcalias"))]
+    #[cfg(feature = "syncenabled")]
     use std::sync::Arc;
-    #[cfg(feature = "withrcalias")]
+    #[cfg(not(feature = "syncenabled"))]
     use std::rc::Rc as Arc;
 
     use std::{vec, println};

@@ -4,9 +4,9 @@
 use std::io;
 use std::ops::DerefMut;
 
-#[cfg(not(feature = "withrcalias"))]
+#[cfg(feature = "syncenabled")]
 use std::sync::Arc;
-#[cfg(feature = "withrcalias")]
+#[cfg(not(feature = "syncenabled"))]
 use std::rc::Rc as Arc;
 
 use once_cell::sync::OnceCell;
