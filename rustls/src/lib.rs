@@ -390,6 +390,50 @@ mod log {
 #[macro_use]
 mod test_macros;
 
+// XXX TODO RECONSIDER MODULE NAMING & MOVE TO SEPARATE MODULE SOURCE FILE
+mod aa {
+    #[cfg(not(feature = "withrcalias"))]
+    pub(crate) use alloc::sync::Arc;
+
+    #[cfg(feature = "withrcalias")]
+    pub(crate) use alloc::rc::Rc as Arc;
+}
+
+// XXX TODO IMPROVE MACRO & MACRO MODULE NAMING HERE
+// XXX TODO MOVE TO SEPARATE MODULE SOURCE FILE
+#[macro_use]
+mod ttt {
+    #[cfg(not(feature = "withrcalias"))]
+    macro_rules! pub_api_trait {
+        ($name:ident, $body:tt) => {
+            pub trait $name: core::fmt::Debug + Send + Sync $body
+        }
+    }
+
+    #[cfg(feature = "withrcalias")]
+    macro_rules! pub_api_trait {
+        ($name:ident, $body:tt) => {
+            pub trait $name: core::fmt::Debug $body
+        }
+    }
+
+    #[cfg(not(feature = "withrcalias"))]
+    macro_rules! internal_generic_state_trait {
+        // XXX TBD HACKISH - MAY WANT TO RECONSIDER
+        ($name:ident, $generic_parameter:ident, $body:tt) => {
+            pub(crate) trait $name<$generic_parameter>: Send + Sync $body
+        }
+    }
+
+    #[cfg(feature = "withrcalias")]
+    macro_rules! internal_generic_state_trait {
+        // XXX TBD HACKISH - MAY WANT TO RECONSIDER
+        ($name:ident, $generic_parameter:ident, $body:tt) => {
+            pub(crate) trait $name<$generic_parameter> $body
+        }
+    }
+}
+
 #[macro_use]
 mod msgs;
 mod common_state;

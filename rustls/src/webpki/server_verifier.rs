@@ -1,4 +1,5 @@
-use alloc::sync::Arc;
+use crate::aa::Arc;
+// use crate::apistate::ShareableBase;
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, ServerName, UnixTime};
@@ -154,7 +155,7 @@ impl WebPkiServerVerifier {
     pub fn builder(roots: Arc<RootCertStore>) -> ServerCertVerifierBuilder {
         Self::builder_with_provider(
             roots,
-            Arc::clone(CryptoProvider::get_default_or_install_from_crate_features()),
+            Arc::clone(&CryptoProvider::get_default_or_install_from_crate_features()),
         )
     }
 
@@ -301,8 +302,14 @@ impl ServerCertVerifier for WebPkiServerVerifier {
     }
 }
 
+// impl ShareableBase for WebPkiServerVerifier {}
+
 test_for_each_provider! {
+    #[cfg(not(feature = "withrcalias"))]
     use std::sync::Arc;
+    #[cfg(feature = "withrcalias")]
+    use std::rc::Rc as Arc;
+
     use std::{vec, println};
     use std::prelude::v1::*;
 

@@ -1,4 +1,4 @@
-use alloc::sync::Arc;
+use crate::aa::Arc;
 
 use pki_types::PrivateKeyDer;
 pub(crate) use ring as ring_like;

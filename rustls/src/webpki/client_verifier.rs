@@ -1,4 +1,5 @@
-use alloc::sync::Arc;
+use crate::aa::Arc;
+// use crate::apistate::ShareableBase;
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, UnixTime};
@@ -272,7 +273,7 @@ impl WebPkiClientVerifier {
     pub fn builder(roots: Arc<RootCertStore>) -> ClientCertVerifierBuilder {
         Self::builder_with_provider(
             roots,
-            Arc::clone(CryptoProvider::get_default_or_install_from_crate_features()),
+            Arc::clone(&CryptoProvider::get_default_or_install_from_crate_features()),
         )
     }
 
@@ -417,6 +418,8 @@ impl ClientCertVerifier for WebPkiClientVerifier {
     }
 }
 
+// impl ShareableBase for WebPkiClientVerifier {}
+
 /// Controls how the [WebPkiClientVerifier] handles anonymous clients.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum AnonymousClientPolicy {
@@ -434,7 +437,12 @@ test_for_each_provider! {
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use std::prelude::v1::*;
+
+    #[cfg(not(feature = "withrcalias"))]
     use std::sync::Arc;
+    #[cfg(feature = "withrcalias")]
+    use std::rc::Rc as Arc;
+
     use std::{vec, format, println};
 
     fn load_crls(crls_der: &[&[u8]]) -> Vec<CertificateRevocationListDer<'static>> {

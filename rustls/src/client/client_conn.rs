@@ -1,4 +1,5 @@
-use alloc::sync::Arc;
+use crate::aa::Arc;
+
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
@@ -93,9 +94,10 @@ pub trait ClientSessionStore: fmt::Debug + Send + Sync {
     ) -> Option<persist::Tls13ClientSessionValue>;
 }
 
+//// XXX TODO DOC XXX
 /// A trait for the ability to choose a certificate chain and
 /// private key for the purposes of client authentication.
-pub trait ResolvesClientCert: fmt::Debug + Send + Sync {
+pub_api_trait!(ResolvesClientCert, {
     /// Resolve a client certificate chain/private key to use as the client's
     /// identity.
     ///
@@ -123,7 +125,7 @@ pub trait ResolvesClientCert: fmt::Debug + Send + Sync {
 
     /// Return true if any certificates at all are available.
     fn has_certs(&self) -> bool;
-}
+});
 
 /// Common configuration for (typically) all connections made by a program.
 ///
@@ -291,7 +293,7 @@ impl ClientConfig {
         // 1. that the provider has been installed (explicitly or implicitly)
         // 2. that the process-level default provider is usable with the supplied protocol versions.
         Self::builder_with_provider(Arc::clone(
-            CryptoProvider::get_default_or_install_from_crate_features(),
+            &CryptoProvider::get_default_or_install_from_crate_features(),
         ))
         .with_protocol_versions(versions)
         .unwrap()
@@ -503,7 +505,7 @@ pub enum Tls12Resumption {
 
 /// Container for unsafe APIs
 pub(super) mod danger {
-    use alloc::sync::Arc;
+    use crate::aa::Arc;
 
     use super::verify::ServerCertVerifier;
     use super::ClientConfig;
@@ -603,7 +605,7 @@ impl EarlyData {
 
 #[cfg(feature = "std")]
 mod connection {
-    use alloc::sync::Arc;
+    use crate::aa::Arc;
     use alloc::vec::Vec;
     use core::fmt;
     use core::ops::{Deref, DerefMut};

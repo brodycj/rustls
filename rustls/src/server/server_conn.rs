@@ -1,5 +1,6 @@
+use crate::aa::Arc;
 use alloc::boxed::Box;
-use alloc::sync::Arc;
+// use crate::apistate::ShareableBase;
 use alloc::vec::Vec;
 use core::fmt;
 use core::fmt::{Debug, Formatter};
@@ -105,6 +106,7 @@ pub trait ProducesTickets: Debug + Send + Sync {
     fn decrypt(&self, cipher: &[u8]) -> Option<Vec<u8>>;
 }
 
+////// XXX TODO DOC XXX
 /// How to choose a certificate chain and signing key for use
 /// in server authentication.
 ///
@@ -114,13 +116,14 @@ pub trait ProducesTickets: Debug + Send + Sync {
 /// For applications that use async I/O and need to do I/O to choose
 /// a certificate (for instance, fetching a certificate from a data store),
 /// the [`Acceptor`] interface is more suitable.
-pub trait ResolvesServerCert: Debug + Send + Sync {
+////// XXX TODO DOC XXX
+pub_api_trait!(ResolvesServerCert, {
     /// Choose a certificate chain and matching key given simplified
     /// ClientHello information.
     ///
     /// Return `None` to abort the handshake.
     fn resolve(&self, client_hello: ClientHello<'_>) -> Option<Arc<sign::CertifiedKey>>;
-}
+});
 
 /// A struct representing the received Client Hello
 pub struct ClientHello<'a> {
@@ -404,7 +407,7 @@ impl ServerConfig {
         // 1. that the provider has been installed (explicitly or implicitly)
         // 2. that the process-level default provider is usable with the supplied protocol versions.
         Self::builder_with_provider(Arc::clone(
-            CryptoProvider::get_default_or_install_from_crate_features(),
+            &CryptoProvider::get_default_or_install_from_crate_features(),
         ))
         .with_protocol_versions(versions)
         .unwrap()
@@ -510,8 +513,8 @@ impl ServerConfig {
 
 #[cfg(feature = "std")]
 mod connection {
+    use crate::aa::Arc;
     use alloc::boxed::Box;
-    use alloc::sync::Arc;
     use alloc::vec::Vec;
     use core::fmt;
     use core::fmt::{Debug, Formatter};

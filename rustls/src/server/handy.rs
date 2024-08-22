@@ -1,4 +1,5 @@
-use alloc::sync::Arc;
+use crate::aa::Arc;
+// use crate::apistate::ShareableBase;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
@@ -26,7 +27,7 @@ impl server::StoresServerSessions for NoServerSessionStorage {
 
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod cache {
-    use alloc::sync::Arc;
+    use crate::aa::Arc;
     use alloc::vec::Vec;
     use core::fmt::{Debug, Formatter};
 
@@ -199,10 +200,13 @@ impl server::ResolvesServerCert for AlwaysResolvesChain {
     }
 }
 
+// impl ShareableBase for AlwaysResolvesChain {}
+
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod sni_resolver {
+    use crate::aa::Arc;
     use alloc::string::{String, ToString};
-    use alloc::sync::Arc;
+    // use crate::apistate::ShareableBase;
     use core::fmt::Debug;
 
     use pki_types::{DnsName, ServerName};
@@ -272,6 +276,8 @@ mod sni_resolver {
             }
         }
     }
+
+    // impl ShareableBase for ResolvesServerCertUsingSni {}
 
     #[cfg(test)]
     mod tests {

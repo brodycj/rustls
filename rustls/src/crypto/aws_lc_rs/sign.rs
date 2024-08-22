@@ -1,8 +1,9 @@
 #![allow(clippy::duplicate_mod)]
 
+use crate::aa::Arc;
 use alloc::boxed::Box;
 use alloc::string::ToString;
-use alloc::sync::Arc;
+// use crate::apistate::ShareableBase;
 use alloc::vec::Vec;
 use alloc::{format, vec};
 use core::fmt::{self, Debug, Formatter};
@@ -142,6 +143,8 @@ impl SigningKey for RsaSigningKey {
     }
 }
 
+// impl ShareableBase for RsaSigningKey {}
+
 impl Debug for RsaSigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.debug_struct("RsaSigningKey")
@@ -191,6 +194,8 @@ impl Signer for RsaSigner {
         self.scheme
     }
 }
+
+// impl ShareableBase for RsaSigner {}
 
 impl Debug for RsaSigner {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -271,6 +276,8 @@ impl SigningKey for EcdsaSigningKey {
     }
 }
 
+// impl ShareableBase for EcdsaSigningKey {}
+
 impl Debug for EcdsaSigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.debug_struct("EcdsaSigningKey")
@@ -297,6 +304,8 @@ impl Signer for EcdsaSigner {
         self.scheme
     }
 }
+
+// impl ShareableBase for EcdsaSigner {}
 
 impl Debug for EcdsaSigner {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -358,6 +367,8 @@ impl SigningKey for Ed25519SigningKey {
         self.scheme.algorithm()
     }
 }
+
+// impl ShareableBase for Ed25519SigningKey {}
 
 impl Debug for Ed25519SigningKey {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
