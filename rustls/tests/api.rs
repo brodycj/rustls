@@ -9,9 +9,9 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use std::{fmt, mem};
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 use std::sync::Arc;
-#[cfg(feature = "usercalias")]
+#[cfg(feature = "withrcalias")]
 use std::rc::Rc as Arc;
 
 use pki_types::{CertificateDer, IpAddr, ServerName, UnixTime};
@@ -1855,7 +1855,7 @@ fn client_flush_does_nothing() {
     assert!(matches!(client.writer().flush(), Ok(())));
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[allow(clippy::no_effect)]
 #[test]
 fn server_is_send_and_sync() {
@@ -1864,7 +1864,7 @@ fn server_is_send_and_sync() {
     &server as &dyn Sync;
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[allow(clippy::no_effect)]
 #[test]
 fn client_is_send_and_sync() {
@@ -3845,7 +3845,7 @@ impl fmt::Debug for ServerStorage {
     }
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 impl rustls::server::StoresServerSessions for ServerStorage {
     fn put(&self, key: Vec<u8>, value: Vec<u8>) -> bool {
         self.put_count
@@ -3912,7 +3912,7 @@ impl fmt::Debug for ClientStorage {
     }
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 impl rustls::client::ClientSessionStore for ClientStorage {
     fn set_kx_hint(&self, server_name: ServerName<'static>, group: rustls::NamedGroup) {
         self.ops
@@ -4000,7 +4000,7 @@ impl rustls::client::ClientSessionStore for ClientStorage {
     }
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[test]
 fn tls13_stateful_resumption() {
     let kt = KeyType::Rsa2048;
@@ -4062,7 +4062,7 @@ fn tls13_stateful_resumption() {
     assert_eq!(server.handshake_kind(), Some(HandshakeKind::Resumed));
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[test]
 fn tls13_stateless_resumption() {
     let kt = KeyType::Rsa2048;
@@ -4131,7 +4131,7 @@ fn early_data_not_available() {
     assert!(client.early_data().is_none());
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 fn early_data_configs() -> (Arc<ClientConfig>, Arc<ServerConfig>) {
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config(kt);
@@ -4143,7 +4143,7 @@ fn early_data_configs() -> (Arc<ClientConfig>, Arc<ServerConfig>) {
     (Arc::new(client_config), Arc::new(server_config))
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[test]
 fn early_data_is_available_on_resumption() {
     let (client_config, server_config) = early_data_configs();
@@ -4193,7 +4193,7 @@ fn early_data_not_available_on_server_before_client_hello() {
     assert!(server.early_data().is_none());
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[test]
 fn early_data_can_be_rejected_by_server() {
     let (client_config, server_config) = early_data_configs();
@@ -5003,7 +5003,7 @@ fn test_client_config_keyshare_mismatch() {
     assert!(do_handshake_until_error(&mut client, &mut server).is_err());
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_sends_helloretryrequest() {
@@ -5202,7 +5202,7 @@ fn test_client_rejects_hrr_with_varied_session_id() {
     );
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_attempts_to_use_unsupported_kx_group() {
@@ -5253,7 +5253,7 @@ fn test_client_attempts_to_use_unsupported_kx_group() {
     ));
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_sends_share_for_less_preferred_group() {
@@ -5341,7 +5341,7 @@ fn test_client_sends_share_for_less_preferred_group() {
     client_2.process_new_packets().unwrap();
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_tls13_client_resumption_does_not_reuse_tickets() {
@@ -5767,7 +5767,7 @@ fn remove_ems_request(msg: &mut Message) -> Altered {
 }
 
 /// https://github.com/rustls/rustls/issues/797
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_tls12_no_resume_after_server_downgrade() {
@@ -6477,7 +6477,7 @@ fn test_client_construction_requires_66_bytes_of_random_material() {
         .expect("check how much random material ClientConnection::new consumes");
 }
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_client_removes_tls12_session_if_server_sends_undecryptable_first_message() {

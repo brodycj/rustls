@@ -255,12 +255,12 @@ pub(super) fn fips() -> bool {
 }
 
 pub(super) fn unspecified_err(_e: aws_lc_rs::error::Unspecified) -> Error {
-    #[cfg(not(feature = "usercalias"))]
+    #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     {
         Error::Other(OtherError(Arc::new(_e)))
     }
-    #[cfg(any(feature = "usercalias", not(feature = "std")))]
+    #[cfg(any(feature = "withrcalias", not(feature = "std")))]
     {
         Error::Other(OtherError())
     }

@@ -305,9 +305,9 @@ impl ServerCertVerifier for WebPkiServerVerifier {
 // impl ShareableBase for WebPkiServerVerifier {}
 
 test_for_each_provider! {
-    #[cfg(not(feature = "usercalias"))]
+    #[cfg(not(feature = "withrcalias"))]
     use std::sync::Arc;
-    #[cfg(feature = "usercalias")]
+    #[cfg(feature = "withrcalias")]
     use std::rc::Rc as Arc;
 
     use std::{vec, println};

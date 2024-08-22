@@ -6,9 +6,9 @@
 use std::io::{self, Read, Write};
 use std::ops::{Deref, DerefMut};
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 use std::sync::Arc;
-#[cfg(feature = "usercalias")]
+#[cfg(feature = "withrcalias")]
 use std::rc::Rc as Arc;
 
 use std::time::{Duration, Instant};

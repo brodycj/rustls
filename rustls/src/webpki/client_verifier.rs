@@ -438,9 +438,9 @@ test_for_each_provider! {
 
     use std::prelude::v1::*;
 
-    #[cfg(not(feature = "usercalias"))]
+    #[cfg(not(feature = "withrcalias"))]
     use std::sync::Arc;
-    #[cfg(feature = "usercalias")]
+    #[cfg(feature = "withrcalias")]
     use std::rc::Rc as Arc;
 
     use std::{vec, format, println};

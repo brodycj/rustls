@@ -4,9 +4,9 @@
 use std::io;
 use std::ops::DerefMut;
 
-#[cfg(not(feature = "usercalias"))]
+#[cfg(not(feature = "withrcalias"))]
 use std::sync::Arc;
-#[cfg(feature = "usercalias")]
+#[cfg(feature = "withrcalias")]
 use std::rc::Rc as Arc;
 
 use once_cell::sync::OnceCell;

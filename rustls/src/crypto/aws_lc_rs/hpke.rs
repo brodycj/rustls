@@ -926,12 +926,12 @@ impl<const KDF_LEN: usize> Drop for KemSharedSecret<KDF_LEN> {
 }
 
 fn key_rejected_err(_e: aws_lc_rs::error::KeyRejected) -> Error {
-    #[cfg(not(feature = "usercalias"))]
+    #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     {
         Error::Other(OtherError(Arc::new(_e)))
     }
-    #[cfg(any(feature = "usercalias", not(feature = "std")))]
+    #[cfg(any(feature = "withrcalias", not(feature = "std")))]
     {
         Error::Other(OtherError())
     }
