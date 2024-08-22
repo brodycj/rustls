@@ -1,7 +1,5 @@
 #![cfg(any(feature = "ring", feature = "aws_lc_rs"))]
 
-// XXX XXX TBD TEST XXX WITHOUT FEATURE: defaultproviderenabled
-
 //! Note that the default test runner builds each test file into a separate
 //! executable, and runs tests in an indeterminate order.  That restricts us
 //! to doing all the desired tests, in series, in one function.
@@ -20,20 +18,20 @@ use crate::common::*;
 
 #[cfg(feature = "defaultproviderenabled")]
 #[test]
-fn test_process_provider() {
+fn test_default_process_provider() {
     if dbg!(cfg!(all(feature = "ring", feature = "aws_lc_rs"))) {
-        test_explicit_choice_required();
+        test_explicit_choice_required_for_default_provider();
     } else if dbg!(cfg!(all(feature = "ring", not(feature = "aws_lc_rs")))) {
-        test_ring_used_as_implicit_provider();
+        test_ring_used_as_implicit_default_provider();
     } else if dbg!(cfg!(all(feature = "aws_lc_rs", not(feature = "ring")))) {
-        test_aws_lc_rs_used_as_implicit_provider();
+        test_aws_lc_rs_used_as_implicit_default_provider();
     } else {
         panic!("fix feature combinations");
     }
 }
 
 #[cfg(feature = "defaultproviderenabled")]
-fn test_explicit_choice_required() {
+fn test_explicit_choice_required_for_default_provider() {
     assert!(CryptoProvider::get_default().is_none());
     provider::default_provider()
         .install_default()
@@ -49,7 +47,7 @@ fn test_explicit_choice_required() {
 }
 
 #[cfg(feature = "defaultproviderenabled")]
-fn test_ring_used_as_implicit_provider() {
+fn test_ring_used_as_implicit_default_provider() {
     assert!(CryptoProvider::get_default().is_none());
 
     // implicitly installs ring provider
@@ -63,7 +61,7 @@ fn test_ring_used_as_implicit_provider() {
 }
 
 #[cfg(feature = "defaultproviderenabled")]
-fn test_aws_lc_rs_used_as_implicit_provider() {
+fn test_aws_lc_rs_used_as_implicit_default_provider() {
     assert!(CryptoProvider::get_default().is_none());
 
     // implicitly installs aws-lc-rs provider
