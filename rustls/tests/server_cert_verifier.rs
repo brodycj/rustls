@@ -6,10 +6,10 @@ use super::*;
 
 mod common;
 
-#[cfg(not(feature = "withrcalias"))]
-use std::sync::Arc;
 #[cfg(feature = "withrcalias")]
 use std::rc::Rc as Arc;
+#[cfg(not(feature = "withrcalias"))]
+use std::sync::Arc;
 
 use common::{
     do_handshake, do_handshake_until_both_error, make_client_config_with_versions,

@@ -9,10 +9,10 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use std::{fmt, mem};
 
-#[cfg(not(feature = "withrcalias"))]
-use std::sync::Arc;
 #[cfg(feature = "withrcalias")]
 use std::rc::Rc as Arc;
+#[cfg(not(feature = "withrcalias"))]
+use std::sync::Arc;
 
 use pki_types::{CertificateDer, IpAddr, ServerName, UnixTime};
 use rustls::client::{verify_server_cert_signed_by_trust_anchor, ResolvesClientCert, Resumption};

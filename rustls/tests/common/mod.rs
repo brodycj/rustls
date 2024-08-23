@@ -4,10 +4,10 @@
 use std::io;
 use std::ops::DerefMut;
 
-#[cfg(not(feature = "withrcalias"))]
-use std::sync::Arc;
 #[cfg(feature = "withrcalias")]
 use std::rc::Rc as Arc;
+#[cfg(not(feature = "withrcalias"))]
+use std::sync::Arc;
 
 use once_cell::sync::OnceCell;
 use pki_types::{
