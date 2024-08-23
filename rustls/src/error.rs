@@ -637,7 +637,7 @@ mod other_error {
     pub struct OtherError(
         #[cfg(not(feature = "withrcalias"))]
         #[cfg(feature = "std")]
-        pub Arc<dyn StdError + Send + Sync>
+        pub Arc<dyn StdError + Send + Sync>,
     );
 
     impl PartialEq<Self> for OtherError {
