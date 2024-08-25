@@ -6,6 +6,14 @@ macro_rules! pub_api_trait {
     }
 }
 
+#[cfg(not(feature = "withrcalias"))]
+macro_rules! pub_api_traitxx {
+    ($x: literal, $name:ident, $body:tt) => {
+        #[doc = $x]
+        pub trait $name: core::fmt::Debug + Send + Sync $body
+    }
+}
+
 /// pub trait with no Send / Sync - supports use with alloc::rc::Rc
 #[cfg(feature = "withrcalias")]
 macro_rules! pub_api_trait {
