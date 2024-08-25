@@ -154,7 +154,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Install cross
         uses: taiki-e/install-action@cross
-      - run: cross build --no-default-features -F std,ring -p rustls --locked --target m68k-unknown-linux-gnu
+      - run: cross build --no-default-features -F ring -p rustls --locked --target xtensa-esp32-none-elf
 
   format:
     name: Format
