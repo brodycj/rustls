@@ -154,7 +154,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Install cross
         uses: taiki-e/install-action@cross
-      - run: cross build --no-default-features -F std,ring -p rustls --locked --target s390x-unknown-linux-gnu
+      - run: cross test --no-default-features -F std,ring -p rustls --locked --target s390x-unknown-linux-gnu
 
   format:
     name: Format
