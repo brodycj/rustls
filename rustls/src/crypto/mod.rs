@@ -230,7 +230,9 @@ mod default_crypto_provider {
     static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 
     #[cfg(feature = "std")]
-    pub(crate) fn install_default_crypto_provider(x: Arc<CryptoProvider>) -> Result<(), Arc<CryptoProvider>> {
+    pub(crate) fn install_default_crypto_provider(
+        x: Arc<CryptoProvider>,
+    ) -> Result<(), Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.set(x)
     }
 
@@ -255,7 +257,7 @@ impl CryptoProvider {
     #[cfg(feature = "std")]
     pub fn install_default(self) -> Result<(), Arc<Self>> {
         // PROCESS_DEFAULT_PROVIDER.set(Arc::new(self))
-        default_crypto_provider::install_default_crypto_provider(Arc::new(self))   
+        default_crypto_provider::install_default_crypto_provider(Arc::new(self))
     }
 
     /// Sets this `CryptoProvider` as the default for this process.
