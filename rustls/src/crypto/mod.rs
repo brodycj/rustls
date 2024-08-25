@@ -214,45 +214,6 @@ pub struct CryptoProvider {
     pub key_provider: &'static dyn KeyProvider,
 }
 
-mod default_crypto_provider {
-    use alloc::sync::Arc;
-
-    #[cfg(not(feature = "std"))]
-    use alloc::boxed::Box;
-    #[cfg(not(feature = "std"))]
-    use once_cell::race::OnceBox;
-    #[cfg(feature = "std")]
-    use once_cell::sync::OnceCell;
-
-    use crate::crypto::CryptoProvider;
-
-    #[cfg(feature = "std")]
-    static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
-    #[cfg(not(feature = "std"))]
-    static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
-
-    #[cfg(feature = "std")]
-    pub(crate) fn install_default_crypto_provider(
-        x: Arc<CryptoProvider>,
-    ) -> Result<(), Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.set(x)
-    }
-
-    #[cfg(not(feature = "std"))]
-    pub(crate) fn install_default_crypto_provider(
-        x: Arc<CryptoProvider>,
-    ) -> Result<(), Arc<CryptoProvider>> {
-        match PROCESS_DEFAULT_PROVIDER.set(Box::new(x)) {
-            Ok(()) => Ok(()),
-            Err(xx) => Err(*xx),
-        }
-    }
-
-    pub(crate) fn get_default_crypto_provider() -> Option<&'static Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.get()
-    }
-}
-
 impl CryptoProvider {
     /// Sets this `CryptoProvider` as the default for this process.
     ///
@@ -604,6 +565,46 @@ impl From<&[u8]> for SharedSecret {
 #[cfg_attr(docsrs, doc(cfg(feature = "fips")))]
 pub fn default_fips_provider() -> CryptoProvider {
     aws_lc_rs::default_provider()
+}
+
+mod default_crypto_provider {
+    use alloc::sync::Arc;
+
+    #[cfg(not(feature = "std"))]
+    use alloc::boxed::Box;
+
+    #[cfg(not(feature = "std"))]
+    use once_cell::race::OnceBox;
+    #[cfg(feature = "std")]
+    use once_cell::sync::OnceCell;
+
+    use crate::crypto::CryptoProvider;
+
+    #[cfg(feature = "std")]
+    static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
+    #[cfg(not(feature = "std"))]
+    static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
+
+    #[cfg(feature = "std")]
+    pub(crate) fn install_default_crypto_provider(
+        x: Arc<CryptoProvider>,
+    ) -> Result<(), Arc<CryptoProvider>> {
+        PROCESS_DEFAULT_PROVIDER.set(x)
+    }
+
+    #[cfg(not(feature = "std"))]
+    pub(crate) fn install_default_crypto_provider(
+        x: Arc<CryptoProvider>,
+    ) -> Result<(), Arc<CryptoProvider>> {
+        match PROCESS_DEFAULT_PROVIDER.set(Box::new(x)) {
+            Ok(()) => Ok(()),
+            Err(xx) => Err(*xx),
+        }
+    }
+
+    pub(crate) fn get_default_crypto_provider() -> Option<&'static Arc<CryptoProvider>> {
+        PROCESS_DEFAULT_PROVIDER.get()
+    }
 }
 
 #[cfg(test)]
