@@ -221,6 +221,8 @@ mod default_crypto_provider {
     use once_cell::race::OnceBox;
     #[cfg(feature = "std")]
     use once_cell::sync::OnceCell;
+    #[cfg(not(feature = "std"))]
+    use alloc::boxed::Box;
 
     use crate::crypto::CryptoProvider;
 
@@ -240,7 +242,10 @@ mod default_crypto_provider {
     pub(crate) fn install_default_crypto_provider(
         x: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.set(Box::new(self))
+        match PROCESS_DEFAULT_PROVIDER.set(Box::new(x)) {
+            Ok(()) => Ok(()),
+            Err(xx) => Err(*xx),
+        }
     }
 
     pub(crate) fn get_default_crypto_provider() -> Option<&'static Arc<CryptoProvider>> {
@@ -256,12 +261,12 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(feature = "std")]
+    // #[cfg(feature = "std")]
     pub fn install_default(self) -> Result<(), Arc<Self>> {
-        // PROCESS_DEFAULT_PROVIDER.set(Arc::new(self))
         default_crypto_provider::install_default_crypto_provider(Arc::new(self))
     }
 
+    ////// XXX TODO COMBINE WITH FN ABOVE:
     /// Sets this `CryptoProvider` as the default for this process.
     ///
     /// This can be called successfully at most once in any process execution.
@@ -269,10 +274,10 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(not(feature = "std"))]
-    pub fn install_default(self) -> Result<(), Box<Arc<Self>>> {
-        PROCESS_DEFAULT_PROVIDER.set(Box::new(Arc::new(self)))
-    }
+    // #[cfg(not(feature = "std"))]
+    // pub fn install_default(self) -> Result<(), Box<Arc<Self>>> {
+    //     default_crypto_provider::install_default_crypto_provider(Arc::new(self))
+    // }
 
     /// Returns the default `CryptoProvider` for this process.
     ///
