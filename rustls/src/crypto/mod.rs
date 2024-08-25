@@ -237,8 +237,10 @@ mod default_crypto_provider {
     }
 
     #[cfg(not(feature = "std"))]
-    fn install_default_crypto_provider(self: CryptoProvider) -> Result<(), Box<Arc<Self>>> {
-        PROCESS_DEFAULT_PROVIDER.set(Box::new(Arc::new(self)))
+    pub(crate) fn install_default_crypto_provider(
+        x: Arc<CryptoProvider>,
+    ) -> Result<(), Arc<CryptoProvider>> {
+        PROCESS_DEFAULT_PROVIDER.set(Box::new(self))
     }
 
     pub(crate) fn get_default_crypto_provider() -> Option<&'static Arc<CryptoProvider>> {
