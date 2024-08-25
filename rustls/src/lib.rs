@@ -398,6 +398,14 @@ mod test_macros;
 
 mod alias;
 
+#[cfg(target_has_atomic = "ptr")]
+compile_error!("STOP HERE / DID DETECT ATOMIC PTR");
+
+#[cfg(feature = "std")]
+compile_error!("STOP HERE / DID DETECT std feature enabled");
+
+compile_error!("XF");
+
 #[macro_use]
 mod trait_macros;
 
