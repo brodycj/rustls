@@ -218,11 +218,11 @@ mod default_crypto_provider {
     use alloc::sync::Arc;
 
     #[cfg(not(feature = "std"))]
+    use alloc::boxed::Box;
+    #[cfg(not(feature = "std"))]
     use once_cell::race::OnceBox;
     #[cfg(feature = "std")]
     use once_cell::sync::OnceCell;
-    #[cfg(not(feature = "std"))]
-    use alloc::boxed::Box;
 
     use crate::crypto::CryptoProvider;
 
