@@ -261,23 +261,9 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    // #[cfg(feature = "std")]
     pub fn install_default(self) -> Result<(), Arc<Self>> {
         default_crypto_provider::install_default_crypto_provider(Arc::new(self))
     }
-
-    ////// XXX TODO COMBINE WITH FN ABOVE:
-    /// Sets this `CryptoProvider` as the default for this process.
-    ///
-    /// This can be called successfully at most once in any process execution.
-    ///
-    /// Call this early in your process to configure which provider is used for
-    /// the provider.  The configuration should happen before any use of
-    /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    // #[cfg(not(feature = "std"))]
-    // pub fn install_default(self) -> Result<(), Box<Arc<Self>>> {
-    //     default_crypto_provider::install_default_crypto_provider(Arc::new(self))
-    // }
 
     /// Returns the default `CryptoProvider` for this process.
     ///
