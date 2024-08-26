@@ -1,5 +1,8 @@
 /// pub trait - version with doc - version that includes Send & Sync - supports use with alloc::sync::Arc
-#[cfg(not(feature = "withrcalias"))]
+#[cfg(all(
+    target_has_atomic = "ptr",
+    not(rustls_no_atomic_ptr)
+))]
 macro_rules! pub_api_trait_with_doc {
     ($doc_text: literal, $name:ident, $body:tt) => {
         #[doc = $doc_text]
@@ -9,7 +12,10 @@ macro_rules! pub_api_trait_with_doc {
 
 /////// XXX TODO REPLACE ALL USE OF THIS MACRO WITH pub_api_trait_with_doc! (with doc fixed) & REMOVE THIS MACRO
 /// pub trait - version with no doc - version that includes Send & Sync - supports use with alloc::sync::Arc
-#[cfg(not(feature = "withrcalias"))]
+#[cfg(all(
+    target_has_atomic = "ptr",
+    not(rustls_no_atomic_ptr)
+))]
 macro_rules! pub_api_trait {
     ($name:ident, $body:tt) => {
         pub trait $name: core::fmt::Debug + Send + Sync $body
@@ -17,7 +23,10 @@ macro_rules! pub_api_trait {
 }
 
 /// pub trait - version with doc - version with no Send / Sync - supports use with alloc::rc::Rc
-#[cfg(feature = "withrcalias")]
+#[cfg(any(
+    not(target_has_atomic = "ptr"),
+    rustls_no_atomic_ptr
+))]
 macro_rules! pub_api_trait_with_doc {
     ($doc_text: literal, $name:ident, $body:tt) => {
         #[doc = $doc_text]
@@ -27,7 +36,10 @@ macro_rules! pub_api_trait_with_doc {
 
 /////// XXX TODO REPLACE ALL USE OF THIS MACRO WITH pub_api_trait_with_doc! (with doc fixed) & REMOVE THIS MACRO
 /// pub trait - version with no doc - version with no Send / Sync - supports use with alloc::rc::Rc
-#[cfg(feature = "withrcalias")]
+#[cfg(any(
+    not(target_has_atomic = "ptr"),
+    rustls_no_atomic_ptr
+))]
 macro_rules! pub_api_trait {
     ($name:ident, $body:tt) => {
         pub trait $name: core::fmt::Debug $body
@@ -35,7 +47,10 @@ macro_rules! pub_api_trait {
 }
 
 /// internal pub(crate) trait that includes Send & Sync - supports use with alloc::sync::Arc
-#[cfg(not(feature = "withrcalias"))]
+#[cfg(all(
+    target_has_atomic = "ptr",
+    not(rustls_no_atomic_ptr)
+))]
 macro_rules! internal_generic_state_trait {
     // XXX QUICK HACKY MACRO API WITH SEPARATE NAME & GENERIC TYPE PARAMETERS
     ($name:ident, $generic_type_parameter:ident, $body:tt) => {
@@ -44,7 +59,10 @@ macro_rules! internal_generic_state_trait {
 }
 
 /// internal pub(crate) trait with no Send / Sync - supports use with alloc::rc::Rc
-#[cfg(feature = "withrcalias")]
+#[cfg(any(
+    not(target_has_atomic = "ptr"),
+    rustls_no_atomic_ptr
+))]
 macro_rules! internal_generic_state_trait {
     // XXX QUICK HACKY MACRO API WITH SEPARATE NAME & GENERIC TYPE PARAMETERS
     ($name:ident, $generic_type_parameter:ident, $body:tt) => {
