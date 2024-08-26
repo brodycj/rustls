@@ -21,6 +21,7 @@ jobs:
           - stable
           - beta
           - nightly
+          - "1.63" # CURRENT MSRV
         os:
           - ubuntu-latest
     steps:
