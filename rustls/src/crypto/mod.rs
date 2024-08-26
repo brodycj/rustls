@@ -230,7 +230,6 @@ impl CryptoProvider {
     ///
     /// This will be `None` if no default has been set yet.
     pub fn get_default() -> Option<&'static Arc<Self>> {
-        // PROCESS_DEFAULT_PROVIDER.get()
         default_crypto_provider::get_default_crypto_provider()
     }
 
