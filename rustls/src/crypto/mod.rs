@@ -223,14 +223,14 @@ impl CryptoProvider {
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
     pub fn install_default(self) -> Result<(), Arc<Self>> {
-        default_crypto_provider::install_default_crypto_provider(Arc::new(self))
+        crypto_default_provider::install_default_provider(Arc::new(self))
     }
 
     /// Returns the default `CryptoProvider` for this process.
     ///
     /// This will be `None` if no default has been set yet.
     pub fn get_default() -> Option<&'static Arc<Self>> {
-        default_crypto_provider::get_default_crypto_provider()
+        crypto_default_provider::get_default_crypto_provider()
     }
 
     /// An internal function that:
@@ -566,7 +566,7 @@ pub fn default_fips_provider() -> CryptoProvider {
     aws_lc_rs::default_provider()
 }
 
-mod default_crypto_provider {
+mod crypto_default_provider {
     use alloc::sync::Arc;
 
     #[cfg(not(feature = "std"))]
@@ -585,19 +585,19 @@ mod default_crypto_provider {
     static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 
     #[cfg(feature = "std")]
-    pub(crate) fn install_default_crypto_provider(
-        x: Arc<CryptoProvider>,
+    pub(crate) fn install_default_provider(
+        default_provider: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.set(x)
+        PROCESS_DEFAULT_PROVIDER.set(default_provider)
     }
 
     #[cfg(not(feature = "std"))]
-    pub(crate) fn install_default_crypto_provider(
-        x: Arc<CryptoProvider>,
+    pub(crate) fn install_default_provider(
+        default_provider: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
-        match PROCESS_DEFAULT_PROVIDER.set(Box::new(x)) {
+        match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider)) {
             Ok(()) => Ok(()),
-            Err(xx) => Err(*xx),
+            Err(previous_default_provider) => Err(*previous_default_provider),
         }
     }
 
