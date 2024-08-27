@@ -232,7 +232,7 @@ impl CryptoProvider {
     ///
     /// This will be `None` if no default has been set yet.
     // #[cfg(feature = "defaultproviderenabled")]
-    pub fn get_default() -> Option< Arc<Self>> {
+    pub fn get_default() -> Option<Arc<Self>> {
         crypto_default_provider::get_default_crypto_provider()
     }
 
@@ -242,7 +242,7 @@ impl CryptoProvider {
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
     // #[cfg(feature = "defaultproviderenabled")]
-    pub(crate) fn get_default_or_install_from_crate_features() ->  Arc<Self> {
+    pub(crate) fn get_default_or_install_from_crate_features() -> Arc<Self> {
         if let Some(provider) = Self::get_default() {
             return provider;
         }
