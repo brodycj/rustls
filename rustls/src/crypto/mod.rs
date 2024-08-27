@@ -250,7 +250,8 @@ impl CryptoProvider {
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
     // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
-    pub(crate) fn get_default_or_install_from_crate_features() -> static_default::DefaultCryptoProviderRef {
+    pub(crate) fn get_default_or_install_from_crate_features(
+    ) -> static_default::DefaultCryptoProviderRef {
         static_default::get_default().unwrap_or_else(|| {
             let _ = Self::from_crate_features()
                 .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point")
@@ -634,7 +635,7 @@ mod static_default {
                 #[cfg(not(feature = "withrcalias"))]
                 provider,
                 #[cfg(feature = "withrcalias")]
-                Arc::from(provider.clone())
+                Arc::from(provider.clone()),
             ),
             None => None,
         }
