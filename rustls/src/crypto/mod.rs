@@ -223,7 +223,7 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(feature = "defaultproviderenabled")]
+    // #[cfg(feature = "defaultproviderenabled")]
     pub fn install_default(self) -> Result<(), Arc<Self>> {
         crypto_default_provider::install_default_provider(Arc::new(self))
     }
@@ -231,8 +231,8 @@ impl CryptoProvider {
     /// Returns the default `CryptoProvider` for this process.
     ///
     /// This will be `None` if no default has been set yet.
-    #[cfg(feature = "defaultproviderenabled")]
-    pub fn get_default() -> Option<&'static Arc<Self>> {
+    // #[cfg(feature = "defaultproviderenabled")]
+    pub fn get_default() -> Option< Arc<Self>> {
         crypto_default_provider::get_default_crypto_provider()
     }
 
@@ -241,8 +241,8 @@ impl CryptoProvider {
     /// - gets the pre-installed default, or
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
-    #[cfg(feature = "defaultproviderenabled")]
-    pub(crate) fn get_default_or_install_from_crate_features() -> &'static Arc<Self> {
+    // #[cfg(feature = "defaultproviderenabled")]
+    pub(crate) fn get_default_or_install_from_crate_features() ->  Arc<Self> {
         if let Some(provider) = Self::get_default() {
             return provider;
         }
@@ -570,13 +570,14 @@ pub fn default_fips_provider() -> CryptoProvider {
     aws_lc_rs::default_provider()
 }
 
-#[cfg(feature = "defaultproviderenabled")]
+// #[cfg(feature = "defaultproviderenabled")]
 mod crypto_default_provider {
-    use alloc::sync::Arc;
+    use crate::alias::Arc;
 
-    #[cfg(not(feature = "std"))]
+    // #[cfg(not(feature = "std"))]
     use alloc::boxed::Box;
 
+    use log::error;
     #[cfg(not(feature = "std"))]
     use once_cell::race::OnceBox;
     #[cfg(feature = "std")]
@@ -585,29 +586,44 @@ mod crypto_default_provider {
     use crate::crypto::CryptoProvider;
 
     #[cfg(feature = "std")]
-    static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
+    static PROCESS_DEFAULT_PROVIDER: OnceCell<Box<CryptoProvider>> = OnceCell::new();
     #[cfg(not(feature = "std"))]
     static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 
-    #[cfg(feature = "std")]
-    pub(crate) fn install_default_provider(
-        default_provider: Arc<CryptoProvider>,
-    ) -> Result<(), Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.set(default_provider)
-    }
+    // #[cfg(feature = "std")]
+    // pub(crate) fn install_default_provider(
+    //     default_provider: Arc<CryptoProvider>,
+    // ) -> Result<(), Arc<CryptoProvider>> {
+    //     PROCESS_DEFAULT_PROVIDER.set(default_provider)
+    // }
 
-    #[cfg(not(feature = "std"))]
+    // #[cfg(not(feature = "std"))]
     pub(crate) fn install_default_provider(
         default_provider: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
-        match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider)) {
+        match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider.as_ref().clone())) {
             Ok(()) => Ok(()),
-            Err(previous_default_provider) => Err(*previous_default_provider),
+            Err(previous_default_provider) => Err(Arc::from(previous_default_provider)),
         }
     }
 
-    pub(crate) fn get_default_crypto_provider() -> Option<&'static Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.get()
+    pub(crate) fn get_default_crypto_provider() -> Option<Arc<CryptoProvider>> {
+        // match PROCESS_DEFAULT_PROVIDER.get() as x {
+        //     Ok => Ok(Arc::from(x)),
+        //     Err => {
+        //         error!("XXX TODO NOT IMPLEMENTED") // XXX TODO XXX XXX
+        // }
+        // }
+        let x = PROCESS_DEFAULT_PROVIDER.get();
+        // let xx = x.unwrap_or_else(|| {
+        //     error!("XXX TODO ERROR CASE NOT IMPLEMENTED HERE");
+        // });
+        // let xx = x.unwrap(); // XXX TODO NEED TO HANDLE ERROR CASE HERE
+        // XXX TODO REPLACE WITH MATCH INSTEAD
+        if x.is_none() {
+            return None;
+        }
+        Some(Arc::from(x.unwrap().clone()))
     }
 }
 
