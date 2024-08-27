@@ -223,7 +223,7 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(feature = "defaultproviderenabled")]
+    // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
     pub fn install_default(self) -> Result<(), Arc<Self>> {
         crypto_default_provider::install_default_provider(Arc::new(self))
     }
@@ -231,7 +231,7 @@ impl CryptoProvider {
     /// Returns the default `CryptoProvider` for this process.
     ///
     /// This will be `None` if no default has been set yet.
-    // #[cfg(feature = "defaultproviderenabled")]
+    // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
     // pub fn get_default() -> Option<&'static Arc<Self>> {
     //     crypto_default_provider::get_default_crypto_provider()
     // }
@@ -244,7 +244,7 @@ impl CryptoProvider {
     /// - gets the pre-installed default, or
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
-    // #[cfg(feature = "defaultproviderenabled")]
+    // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
     pub(crate) fn get_default_or_install_from_crate_features() -> Arc<Self> {
         match Self::get_default() {
             Some(provider) => provider,
