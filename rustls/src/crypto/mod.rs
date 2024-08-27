@@ -246,14 +246,14 @@ impl CryptoProvider {
     /// - panics about the need to call [`CryptoProvider::install_default()`]
     // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
     pub(crate) fn get_default_or_install_from_crate_features() -> Arc<Self> {
-        match Self::get_default() {
+        match static_default::get_default() {
             Some(provider) => provider,
             None => {
-                let provider = Self::from_crate_features()
-                    .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point");
+                let _ = Self::from_crate_features()
+                    .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point")
+                    .install_default();
                 // Ignore the error resulting from us losing a race, and accept the outcome.
-                let _ = provider.install_default();
-                Self::get_default().unwrap()
+                static_default::get_default().unwrap()
             }
         }
         // let provider = Self::from_crate_features()
