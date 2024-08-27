@@ -216,6 +216,22 @@ pub struct CryptoProvider {
 }
 
 impl CryptoProvider {
+    /// Returns the default `CryptoProvider` for this process.
+    ///
+    /// This will be `None` if no default has been set yet.
+    #[cfg(not(feature = "withrcalias"))]
+    pub fn get_default() -> Option<&'static Arc<Self>> {
+        static_default::get_default()
+    }
+
+    /// Returns the default `CryptoProvider` for this process.
+    ///
+    /// This will be `None` if no default has been set yet.
+    #[cfg(feature = "withrcalias")]
+    pub fn get_default() -> Option<Arc<Self>> {
+        static_default::get_default()
+    }
+
     /// Sets this `CryptoProvider` as the default for this process.
     ///
     /// This can be called successfully at most once in any process execution.
@@ -228,24 +244,13 @@ impl CryptoProvider {
         static_default::install_default(Arc::new(self))
     }
 
-    /// Returns the default `CryptoProvider` for this process.
-    ///
-    /// This will be `None` if no default has been set yet.
-    // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
-    // pub fn get_default() -> Option<&'static Arc<Self>> {
-    //     crypto_default_provider::get_default_crypto_provider()
-    // }
-    pub fn get_default() -> Option<Arc<Self>> {
-        static_default::get_default()
-    }
-
     /// An internal function that:
     ///
     /// - gets the pre-installed default, or
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
     // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
-    pub(crate) fn get_default_or_install_from_crate_features() -> Arc<Self> {
+    pub(crate) fn get_default_or_install_from_crate_features() -> static_default::DefaultCryptoProviderRef {
         static_default::get_default().unwrap_or_else(|| {
             let _ = Self::from_crate_features()
                 .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point")
@@ -585,11 +590,15 @@ mod static_default {
 
     use crate::crypto::CryptoProvider;
 
-    // XXX XXX GONE:
-    // use super::aws_lc_rs::default_provider;
+    #[cfg(not(feature = "withrcalias"))]
+    pub(crate) type DefaultCryptoProviderRef = &'static Arc<CryptoProvider>;
+    #[cfg(feature = "withrcalias")]
+    pub(crate) type DefaultCryptoProviderRef = Arc<CryptoProvider>;
 
-    // XXX TODO XXX
-    // type DefaultCryptoProviderCell = OnceCell<Arc<CryptoProvider>>;
+    // XXX TODO XXX non-std support
+    #[cfg(not(feature = "withrcalias"))]
+    type DefaultCryptoProviderCell = OnceCell<Arc<CryptoProvider>>;
+    #[cfg(feature = "withrcalias")]
     type DefaultCryptoProviderCell = OnceCell<Box<CryptoProvider>>;
 
     // #[cfg(feature = "std")]
@@ -601,29 +610,17 @@ mod static_default {
 
     static PROCESS_DEFAULT_PROVIDER: DefaultCryptoProviderCell = DefaultCryptoProviderCell::new();
 
-    // #[cfg(feature = "std")]
-    // pub(crate) fn install_default_provider(
-    //     default_provider: Arc<CryptoProvider>,
-    // ) -> Result<(), Arc<CryptoProvider>> {
-    //     PROCESS_DEFAULT_PROVIDER.set(default_provider)
-    // }
-
-    // #[cfg(not(feature = "std"))]
-    // pub(crate) fn install_default_provider(
-    //     default_provider: Arc<CryptoProvider>,
-    // ) -> Result<(), Arc<CryptoProvider>> {
-    //     match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider)) {
-    //         Ok(()) => Ok(()),
-    //         Err(previous_default_provider) => Err(*previous_default_provider),
-    //     }
-    // }
-
     pub(crate) fn install_default(
         provider: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
-        match PROCESS_DEFAULT_PROVIDER.set(Box::new(provider.as_ref().clone())) {
+        match PROCESS_DEFAULT_PROVIDER.set(
+            #[cfg(not(feature = "withrcalias"))]
+            provider,
+            #[cfg(feature = "withrcalias")]
+            Box::new(provider.as_ref().clone()),
+        ) {
             Ok(()) => Ok(()),
-            Err(previous) => Err(Arc::from(previous)),
+            Err(_) => Err(get_default().unwrap().clone()),
         }
     }
 
@@ -631,9 +628,14 @@ mod static_default {
     //     PROCESS_DEFAULT_PROVIDER.get()
     // }
 
-    pub(crate) fn get_default() -> Option<Arc<CryptoProvider>> {
+    pub(crate) fn get_default() -> Option<DefaultCryptoProviderRef> {
         match PROCESS_DEFAULT_PROVIDER.get() {
-            Some(provider) => Some(Arc::from(provider.clone())),
+            Some(provider) => Some(
+                #[cfg(not(feature = "withrcalias"))]
+                provider,
+                #[cfg(feature = "withrcalias")]
+                Arc::from(provider.clone())
+            ),
             None => None,
         }
     }
