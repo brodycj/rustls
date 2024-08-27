@@ -225,7 +225,7 @@ impl CryptoProvider {
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
     // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
     pub fn install_default(self) -> Result<(), Arc<Self>> {
-        crypto_default_provider::install_default_provider(Arc::new(self))
+        static_default::install_default(Arc::new(self))
     }
 
     /// Returns the default `CryptoProvider` for this process.
@@ -236,7 +236,7 @@ impl CryptoProvider {
     //     crypto_default_provider::get_default_crypto_provider()
     // }
     pub fn get_default() -> Option<Arc<Self>> {
-        crypto_default_provider::get_default_crypto_provider()
+        static_default::get_default()
     }
 
     /// An internal function that:
@@ -580,7 +580,7 @@ pub fn default_fips_provider() -> CryptoProvider {
 }
 
 // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
-mod crypto_default_provider {
+mod static_default {
     use crate::alias::Arc;
 
     // #[cfg(not(feature = "std"))]
@@ -593,7 +593,8 @@ mod crypto_default_provider {
 
     use crate::crypto::CryptoProvider;
 
-    use super::aws_lc_rs::default_provider;
+    // XXX XXX GONE:
+    // use super::aws_lc_rs::default_provider;
 
     // XXX TODO XXX
     // type DefaultCryptoProviderCell = OnceCell<Arc<CryptoProvider>>;
@@ -625,12 +626,12 @@ mod crypto_default_provider {
     //     }
     // }
 
-    pub(crate) fn install_default_provider(
-        default_provider: Arc<CryptoProvider>,
+    pub(crate) fn install_default(
+        provider: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
-        match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider.as_ref().clone())) {
+        match PROCESS_DEFAULT_PROVIDER.set(Box::new(provider.as_ref().clone())) {
             Ok(()) => Ok(()),
-            Err(previous_default_provider) => Err(Arc::from(previous_default_provider)),
+            Err(previous) => Err(Arc::from(previous)),
         }
     }
 
@@ -638,7 +639,7 @@ mod crypto_default_provider {
     //     PROCESS_DEFAULT_PROVIDER.get()
     // }
 
-    pub(crate) fn get_default_crypto_provider() -> Option<Arc<CryptoProvider>> {
+    pub(crate) fn get_default() -> Option<Arc<CryptoProvider>> {
         match PROCESS_DEFAULT_PROVIDER.get() {
             Some(provider) => Some(Arc::from(provider.clone())),
             None => None,
