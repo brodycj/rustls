@@ -43,10 +43,10 @@ jobs:
           RUST_BACKTRACE: 1
 
       - name: cargo build (debug; rustls package with the withrcalias,defaultproviderenabled features enabled)
-        run: cargo build --locked -p rustls -F withrcalias
+        run: cargo build --locked -F withrcalias,defaultproviderenabled -p rustls
 
       - name: cargo test (debug; rustls package with the withrcalias,defaultproviderenabled features enabled)
-        run: cargo test -p rustls -F withrcalias
+        run: cargo test -F withrcalias,defaultproviderenabled -p rustls
 
       - name: cargo build (debug; rustls package with no feature options specified)
         run: cargo build --locked -p rustls
@@ -55,10 +55,10 @@ jobs:
         run: cargo test -p rustls
 
       - name: cargo build (debug; rustls package with the withrcalias feature enabled)
-        run: cargo build --locked -p rustls -F withrcalias
+        run: cargo build --locked -p rustls -F withrcalias # XXX TODO -F before -p option
 
       - name: cargo test (debug; rustls package with the withrcalias feature enabled)
-        run: cargo test -p rustls -F withrcalias
+        run: cargo test -p rustls -F withrcalias # XXX TODO -F before -p option
 
   # XXX FIX & RESTORE:
   # build:
