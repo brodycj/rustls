@@ -377,6 +377,8 @@ jobs:
         run: cargo install cross --git https://github.com/cross-rs/cross
       - run: cargo add --dev --features bindgen aws-lc-rs -p rustls
       - run: cargo install --force --locked bindgen-cli
+      # NOTE that cargo test will *always* enable the `std` feature
+      # XXX TODO: add build step with no `std` feature enabled
       - run: cross test --package rustls --target ${{ matrix.target }}
 
   semver:
