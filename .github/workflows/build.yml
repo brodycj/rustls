@@ -41,9 +41,8 @@ jobs:
     strategy:
       matrix:
         target:
-          - aarch64-linux-android
-          - arm-linux-androideabi
-          - x64_64-linux-android
+          - aarch64-unknown-freebsd
+          - armv7-linux-androideabi
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
