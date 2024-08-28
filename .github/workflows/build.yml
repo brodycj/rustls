@@ -358,8 +358,14 @@ jobs:
       - run: cargo install --force --locked bindgen-cli
       # - run: cross build --no-default-features -p rustls --locked --target armv7-unknown-linux-gnueabihf
       - run: cross build --no-default-features -F std,aws_lc_rs -p rustls --locked --target armv7-unknown-linux-gnueabihf
+        env:
+          RUSTFLAGS: "-L ${{ env.LLVM_PATH }}/lib"
       - run: cross test --no-default-features -F std,aws_lc_rs -p rustls --target armv7-unknown-linux-gnueabihf
+        env:
+          RUSTFLAGS: "-L ${{ env.LLVM_PATH }}/lib"
       - run: cross test --no-default-features -F std,ring,tls12 -p rustls --target armv7-unknown-linux-gnueabihf
+        env:
+          RUSTFLAGS: "-L ${{ env.LLVM_PATH }}/lib"
 
   cross:
     name: Check cross compilation targets
