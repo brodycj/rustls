@@ -250,8 +250,7 @@ impl CryptoProvider {
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
     // #[cfg(feature = "defaultproviderenabled")] // XXX TODO COMPLETELY REMOVE THIS FEATURE CONFIG
-    pub(crate) fn get_default_or_install_from_crate_features(
-    ) -> static_default::DefaultCryptoProviderRef {
+    pub(crate) fn get_default_or_install_default() -> static_default::DefaultRef {
         static_default::get_default().unwrap_or_else(|| {
             let _ = Self::from_crate_features()
                 .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point")
@@ -592,9 +591,9 @@ mod static_default {
     use crate::crypto::CryptoProvider;
 
     #[cfg(not(feature = "withrcalias"))]
-    pub(crate) type DefaultCryptoProviderRef = &'static Arc<CryptoProvider>;
+    pub(crate) type DefaultRef = &'static Arc<CryptoProvider>;
     #[cfg(feature = "withrcalias")]
-    pub(crate) type DefaultCryptoProviderRef = Arc<CryptoProvider>;
+    pub(crate) type DefaultRef = Arc<CryptoProvider>;
 
     // XXX TODO XXX non-std support
     #[cfg(not(feature = "withrcalias"))]
@@ -629,7 +628,7 @@ mod static_default {
     //     PROCESS_DEFAULT_PROVIDER.get()
     // }
 
-    pub(crate) fn get_default() -> Option<DefaultCryptoProviderRef> {
+    pub(crate) fn get_default() -> Option<DefaultRef> {
         match PROCESS_DEFAULT_PROVIDER.get() {
             Some(provider) => Some(
                 #[cfg(not(feature = "withrcalias"))]
