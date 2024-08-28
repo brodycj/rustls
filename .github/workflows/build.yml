@@ -337,6 +337,24 @@ jobs:
         run: cargo minimal-versions --direct --ignore-private check
         working-directory: rustls/
 
+  cross-test-i686:
+    name: cross build & test - i686 (32-bit) target
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install cross
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cross
+      - run: cross build --package rustls --locked --target i686-unknown-linux-gnu
+      - run: cross test --package rustls --target i686-unknown-linux-gnu
+
   cross-test-targets:
     name: cross build-test - multiple targets
     runs-on: ubuntu-latest
