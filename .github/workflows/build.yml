@@ -76,6 +76,9 @@ jobs:
       #   with:
       #     version: "17"
       # - run: sudo apt install openssl libssl-dev
+      - run: sudo apt-get install mlocate
+      - run: locate stddef.h
+      - run: sudo apt-get install build-essential
       - run: locate stddef.h
       - run: sudo apt-get install llvm-dev
       - run: sudo apt-get install clang libclang-dev
