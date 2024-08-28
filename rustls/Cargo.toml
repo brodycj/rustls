@@ -75,6 +75,10 @@ path = "benches/benchmarks.rs"
 harness = false
 required-features = ["ring"]
 
+[[example]]
+name = "test_ca"
+path = "examples/internal/test_ca.rs"
+
 [[test]]
 name = "api"
 path = "tests/runners/api.rs"
