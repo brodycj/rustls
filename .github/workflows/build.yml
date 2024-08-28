@@ -370,7 +370,7 @@ jobs:
       - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - run: cargo install cross --git https://github.com/cross-rs/cross
-      - run: cargo add --dev --feature bindgen aws-lc-rs -p rustls
+      - run: cargo add --dev --features bindgen aws-lc-rs -p rustls
       - run: cargo install --force --locked bindgen-cli
       - run: cross test --package rustls --target ${{ matrix.target }}
 
