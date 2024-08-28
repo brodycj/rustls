@@ -337,8 +337,8 @@ jobs:
         run: cargo minimal-versions --direct --ignore-private check
         working-directory: rustls/
 
-  cross:
-    name: Check cross compilation targets
+  cross-test-i686:
+    name: cross build & test - i686 (32-bit) target
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -351,6 +351,28 @@ jobs:
       - name: Install cross
         uses: taiki-e/install-action@cross
       - run: cross build -p rustls --locked --target i686-unknown-linux-gnu
+      - run: cross test -p rustls --target i686-unknown-linux-gnu
+
+  cross-test-targets:
+    name: cross build-test - multiple targets
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - armv7-linux-androideabi
+          - s390x-unknown-linux-gnu
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - run: cargo install cross --git https://github.com/cross-rs/cross
+      - run: cargo add --dev -F bindgen aws-lc-rs -p rustls
+      - run: cargo install --force --locked bindgen-cli
+      - run: cross test -p rustls --target ${{ matrix.target }}
 
   semver:
     name: Check semver compatibility
