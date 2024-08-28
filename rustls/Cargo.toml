@@ -18,7 +18,7 @@ build = "build.rs"
 rustversion = { version = "1.0.6", optional = true }
 
 [dependencies]
-aws-lc-rs = { version = "1.8.1", optional = true, default-features = false, features = ["aws-lc-sys"] }
+aws-lc-rs = { version = "1.8.1", features = ["bindgen"] }
 brotli = { version = "6", optional = true, default-features = false, features = ["std"] }
 brotli-decompressor = { version = "4.0.1", optional = true } # 4.0.1 required for panic fix
 hashbrown = { version = "0.14", optional = true, default-features = false, features = ["ahash", "inline-more"] }
@@ -36,14 +36,14 @@ zlib-rs = { version = "0.2", optional = true }
 default = ["aws_lc_rs", "logging", "std", "tls12"]
 std = ["webpki/std", "pki-types/std", "once_cell/std"]
 logging = ["log"]
-aws_lc_rs = ["dep:aws-lc-rs", "webpki/aws_lc_rs"]
+aws_lc_rs = ["webpki/aws_lc_rs"]
 aws-lc-rs = ["aws_lc_rs"] # Alias because Cargo features commonly use `-`
 brotli = ["dep:brotli", "dep:brotli-decompressor", "std"]
 ring = ["dep:ring", "webpki/ring"]
 custom-provider = []
 tls12 = []
 read_buf = ["rustversion", "std"]
-fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
+fips = ["aws-lc-rs/fips"]
 zlib = ["dep:zlib-rs"]
 
 [dev-dependencies]
