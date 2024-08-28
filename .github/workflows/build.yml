@@ -371,10 +371,8 @@ jobs:
 
       - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@stable
-      - name: Install cross
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cross
+      - name: Install cross (cross-rs) from GitHub
+        run: cargo install cross --git https://github.com/cross-rs/cross
       - run: cargo add --dev --features bindgen aws-lc-rs -p rustls
       - run: cargo install --force --locked bindgen-cli
       - run: cross test --package rustls --target ${{ matrix.target }}
