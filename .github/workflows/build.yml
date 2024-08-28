@@ -351,6 +351,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Install cross
         uses: taiki-e/install-action@cross
+      - run: cargo install -F --locked bindgen-cli
       - run: cross build --no-default-features -p rustls --locked --target arm-unknown-linux-gnueabi
       - run: cross test --no-default-features -F std,ring,tls12 -p rustls --target arm-unknown-linux-gnueabi
 
