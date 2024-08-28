@@ -53,7 +53,7 @@ jobs:
 
   cross-test-targets:
     name: cross build-test - multiple targets
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
