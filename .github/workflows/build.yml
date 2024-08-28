@@ -350,8 +350,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Install cross
         uses: taiki-e/install-action@cross
-      - run: cross build -p rustls --locked --target i686-unknown-linux-gnu
-      - run: cross test -p rustls --target i686-unknown-linux-gnu
+      - run: cross build --package rustls --locked --target i686-unknown-linux-gnu
+      - run: cross test --package rustls --target i686-unknown-linux-gnu
 
   cross-test-targets:
     name: cross build-test - multiple targets
@@ -370,9 +370,9 @@ jobs:
       - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - run: cargo install cross --git https://github.com/cross-rs/cross
-      - run: cargo add --dev -F bindgen aws-lc-rs -p rustls
+      - run: cargo add --dev --feature bindgen aws-lc-rs -p rustls
       - run: cargo install --force --locked bindgen-cli
-      - run: cross test -p rustls --target ${{ matrix.target }}
+      - run: cross test --package rustls --target ${{ matrix.target }}
 
   semver:
     name: Check semver compatibility
