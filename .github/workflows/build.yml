@@ -41,8 +41,8 @@ jobs:
     strategy:
       matrix:
         target:
-          - aarch64-unknown-freebsd
           - armv7-linux-androideabi
+          - s390x-unknown-linux-gnu
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
