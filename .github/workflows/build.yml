@@ -50,8 +50,8 @@ jobs:
       #   uses: taiki-e/install-action@cross
       - run: cargo install bindgen-cli
       - run: cargo install cross --git https://github.com/cross-rs/cross
-      - run: cross build -p rustls --locked --target arm-linux-androideabi
       - run: cargo add --dev -F bindgen aws-ls-sys -p rustls
+      - run: cross build -p rustls --locked --target arm-linux-androideabi
       - run: cross test -p rustls --target arm-linux-androideabi
 
   semver:
