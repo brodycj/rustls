@@ -352,6 +352,8 @@ jobs:
       - name: Install cross
         uses: taiki-e/install-action@cross
       - run: cross build -p rustls --locked --target i686-unknown-linux-gnu
+      - run: cross test -p rustls --target i686-unknown-linux-gnu
+      - run: cross build -p rustls --locked --target i686-unknown-linux-gnu
 
   semver:
     name: Check semver compatibility
