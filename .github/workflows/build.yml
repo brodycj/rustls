@@ -117,7 +117,9 @@ jobs:
         # as needed for `cross build` to work with `aws_lc_rs` feature on most targets
         run: cargo add --features bindgen aws-lc-rs --package rustls
       - run: git diff
-      - run: cross build --no-default-features --features aws_lc_rs,ring
+      # XXX TBD ??? ???
+      # - run: cross build --no-default-features --features aws_lc_rs,ring
+      - run: cross build --no-default-features --features aws_lc_rs
 
   semver:
     name: Check semver compatibility
