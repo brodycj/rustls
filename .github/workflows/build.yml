@@ -352,8 +352,8 @@ jobs:
       - name: Install cross
         uses: taiki-e/install-action@cross
       - run: cargo install --force --locked bindgen-cli
-      - run: cross build --no-default-features -p rustls --locked --target arm-unknown-linux-gnueabi
-      - run: cross test --no-default-features -F std,ring,tls12 -p rustls --target arm-unknown-linux-gnueabi
+      - run: cross build --no-default-features -p rustls --locked --target armv7-unknown-linux-gnueabihf
+      - run: cross test --no-default-features -F std,ring,tls12 -p rustls --target armv7-unknown-linux-gnueabihf
 
   cross:
     name: Check cross compilation targets
