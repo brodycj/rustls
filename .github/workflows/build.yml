@@ -351,11 +351,12 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Install cross
         uses: taiki-e/install-action@cross
-      - name: Install clang xxx
-        uses: KyleMayes/install-llvm-action@v2
-        with:
-          version: "17"
-      - run: sudo apt install openssl libssl-dev
+      # - name: Install clang xxx
+      #   uses: KyleMayes/install-llvm-action@v2
+      #   with:
+      #     version: "17"
+      # - run: sudo apt install openssl libssl-dev
+      - run: sudo apt-get install clang
       - run: cargo install --force --locked bindgen-cli
       # - run: cross build --no-default-features -p rustls --locked --target armv7-unknown-linux-gnueabihf
       - run: cross build --no-default-features -F std,aws_lc_rs -p rustls --locked --target armv7-unknown-linux-gnueabihf
