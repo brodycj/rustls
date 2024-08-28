@@ -76,7 +76,8 @@ jobs:
       #   with:
       #     version: "17"
       # - run: sudo apt install openssl libssl-dev
-      - run: sudo apt-get install clang-3.9 libclang-3.9-dev
+      - run: sudo apt-get install llvm-dev
+      - run: sudo apt-get install clang libclang-dev
       - run: cargo install --force --locked bindgen-cli
       # - run: cross build --no-default-features -p rustls --locked --target armv7-unknown-linux-gnueabihf
       - run: cross build --no-default-features -F std,aws_lc_rs -p rustls --locked --target armv7-unknown-linux-gnueabihf
