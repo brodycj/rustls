@@ -34,7 +34,6 @@ jobs:
 
       - run: cargo check --locked --lib --all-features -p rustls
 
-
   minver:
     name: Check minimum versions of direct dependencies
     runs-on: ubuntu-latest
