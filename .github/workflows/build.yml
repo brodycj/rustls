@@ -87,7 +87,7 @@ jobs:
       # - run: cross build --no-default-features -p rustls --locked --target armv7-unknown-linux-gnueabihf
       - run: cross build --no-default-features -F std,aws_lc_rs -p rustls --locked --target armv7-unknown-linux-gnueabihf
         env:
-          RUSTFLAGS: "-I /usr/lib/llvm-15/lib/clang/15.0.7/include -L ${{ env.LLVM_PATH }}/lib"
+          RUSTFLAGS: "-I/usr/lib/llvm-15/lib/clang/15.0.7/include -L ${{ env.LLVM_PATH }}/lib"
       - run: cross test --no-default-features -F std,aws_lc_rs -p rustls --target armv7-unknown-linux-gnueabihf
         env:
           RUSTFLAGS: "-L ${{ env.LLVM_PATH }}/lib"
