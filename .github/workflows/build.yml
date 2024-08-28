@@ -361,6 +361,7 @@ jobs:
     strategy:
       matrix:
         target:
+          - aarch64-linux-android
           - armv7-linux-androideabi
           - s390x-unknown-linux-gnu
     steps:
