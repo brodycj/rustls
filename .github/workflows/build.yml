@@ -41,7 +41,7 @@ jobs:
     strategy:
       matrix:
         target:
-          - aarch64-unknown-fuchsia
+          - aarch64-unknown-uefi
           - arm-linux-androideabi
     steps:
       - name: Checkout sources
