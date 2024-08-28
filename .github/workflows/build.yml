@@ -38,6 +38,11 @@ jobs:
   cross:
     name: Check cross compilation targets
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        target:
+          - aarch64-unknown-linux-gnu
+          - arm-linux-androideabi
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -53,7 +58,7 @@ jobs:
       - run: cargo add --dev -F bindgen aws-lc-rs -p rustls
       - run: cargo install --force --locked bindgen-cli
       # - run: cross build -p rustls --locked --target arm-linux-androideabi
-      - run: cross test -p rustls --target arm-linux-androideabi
+      - run: cross test -p rustls --target ${{ matrix.target }}
 
   semver:
     name: Check semver compatibility
