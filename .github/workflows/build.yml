@@ -107,7 +107,7 @@ jobs:
         run: cargo install cross --git https://github.com/cross-rs/cross
       # XXX TODO ADD name: entry with description for some steps below
       # XXX TODO EXPAND -p => --package option for better clarity & consistency
-      - run: cargo add --dev --features bindgen aws-lc-rs -p rustls
+      - run: cargo add --dev --features bindgen aws-lc-sys --package rustls
       - run: git diff
       # XXX TODO REMOVE --force flag, if possible from here
       - run: cargo install --force --locked bindgen-cli
@@ -115,7 +115,7 @@ jobs:
       # need to update [dependencies] with bindgen in rustls before build test with aws_lc_rs will work with most cross targets
       - name: Install bindgen feature in rustls [dependencies] section
         # as needed for `cross build` to work with `aws_lc_rs` feature on most targets
-        run: cargo add --features bindgen aws-lc-rs --package rustls
+        run: cargo add --features bindgen aws-lc-sys --package rustls
       - run: git diff
       # XXX TBD ??? ???
       # - run: cross build --no-default-features --features aws_lc_rs,ring
