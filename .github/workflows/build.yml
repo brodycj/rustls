@@ -351,6 +351,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Install cross
         uses: taiki-e/install-action@cross
+      - name: Install clang
+        uses: egor-tensin/setup-clang@1
       - run: cargo install --force --locked bindgen-cli
       # - run: cross build --no-default-features -p rustls --locked --target armv7-unknown-linux-gnueabihf
       - run: cross build --no-default-features -F std,aws_lc_rs -p rustls --locked --target armv7-unknown-linux-gnueabihf
