@@ -424,8 +424,8 @@ jobs:
         env:
           RUSTFLAGS: -D warnings
 
-      - name: cargo test (release; no run)
-        run: cargo test --locked --release --no-run
+      - name: cargo test (release; default features)
+        run: cargo test --locked --release
         # working-directory: rustls
         env:
           RUSTFLAGS: -D warnings
