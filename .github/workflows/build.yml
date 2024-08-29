@@ -374,10 +374,11 @@ jobs:
       # NOTE that cargo test will *always* enable the `std` feature
       # XXX TODO: add build step with no `std` feature enabled
       - run: cross test --package rustls --target ${{ matrix.target }}
-      - name: Install golang for aws-lc-fips-sys
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.23.0"
+      # - name: Install golang for aws-lc-fips-sys
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version: "1.23.0"
+      - run: sudo apt install golang
       # need to update [dependencies] with bindgen in rustls before build test with aws_lc_rs will work with most cross targets
       - run: cargo add --features bindgen aws-lc-sys --package rustls
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
