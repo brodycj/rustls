@@ -92,9 +92,8 @@ jobs:
       - name: Install bindgen feature & CLI for aws-lc-sys (as needed for many cross targets)
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
         run: |
-          # with --verbose to show what is happening between these cargo steps a little more clearly
-          cargo add --dev --features bindgen aws-lc-sys --package rustls --verbose
-          cargo install bindgen-cli --verbose
+          cargo add --dev --features bindgen aws-lc-sys --package rustls
+          cargo install bindgen-cli
       - run: cross test --package rustls --target ${{ matrix.target }}
 
   semver:
