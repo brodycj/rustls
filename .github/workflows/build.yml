@@ -412,9 +412,6 @@ jobs:
         env:
           RUSTFLAGS: -D warnings
 
-      # - name: cargo test (debug; no default features; tls12)
-      #   run: cargo test --locked --no-default-features --features tls12,std
-
       - name: cargo test (debug; no default features; aws-lc-rs,tls12)
         run: cargo test --no-default-features --features aws_lc_rs,tls12,std
         # working-directory: rustls
