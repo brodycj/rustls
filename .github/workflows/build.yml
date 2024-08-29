@@ -93,7 +93,7 @@ jobs:
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
         run: |
           cargo add --dev --features bindgen aws-lc-sys --package rustls
-          cargo install --force --locked bindgen-cli
+          cargo install bindgen-cli
       - run: cross test --package rustls --target ${{ matrix.target }}
 
   semver:
