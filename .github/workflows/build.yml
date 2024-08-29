@@ -368,8 +368,7 @@ jobs:
       # XXX TODO COMBINE TO REMOVE REPEATED if: lines from here
       - run: cargo add --dev --features bindgen aws-lc-sys --package rustls
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
-      # XXX TODO REMOVE --force flag, if possible from here
-      - run: cargo install --force --locked bindgen-cli
+      - run: cargo install bindgen-cli
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
       # NOTE that cargo test will *always* enable the `std` feature
       # XXX TODO: add build step with no `std` feature enabled
