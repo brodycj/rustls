@@ -70,8 +70,8 @@ jobs:
         target:
           # XXX XXX
           - i586-unknown-linux-gnu
-          - mips-unknown-linux-gnu
-          - mipsel-unknown-linux-gnu
+          # - mips-unknown-linux-gnu
+          # - mipsel-unknown-linux-gnu
           - riscv64gc-unknown-linux-gnu
           # 32-bit Android targets:
           - thumbv7neon-linux-androideabi
