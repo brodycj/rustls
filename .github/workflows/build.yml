@@ -72,8 +72,7 @@ jobs:
           - i586-unknown-linux-gnu
           # XXX XXX SKIP THUMB V6 DUE TO ISSUE ENCOUNTERED with alloc::sync / Arc
           # - thumbv6m-none-eabi
-          # XXX TBD XXX XXX
-          - mips-unknown-linux-gnu
+          # - mips-unknown-linux-gnu
           # - mipsel-unknown-linux-gnu
           - riscv64gc-unknown-linux-gnu
           # 32-bit Android targets:
