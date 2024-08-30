@@ -69,6 +69,7 @@ jobs:
       matrix:
         target:
           # 32-bit Android targets:
+          - arm-linux-androideabi
           - armv7-linux-androideabi
           - i686-linux-android
           # standard 32-bit (Linux) target - SKIP bindgen for this target:
