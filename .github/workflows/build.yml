@@ -68,9 +68,8 @@ jobs:
     strategy:
       matrix:
         target:
-          # XXX XXX
-          # - i586-unknown-linux-gnu
           # XXX TBD XXX XXX:
+          - i586-unknown-linux-gnu
           - riscv64gc-unknown-linux-gnu
           # 32-bit Android targets:
           - thumbv7neon-linux-androideabi
