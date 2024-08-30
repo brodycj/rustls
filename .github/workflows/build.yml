@@ -344,6 +344,7 @@ jobs:
       matrix:
         target:
           # 32-bit Android targets:
+          - thumbv6m-none-eabi
           - armv7-linux-androideabi
           - i686-linux-android
           # standard 32-bit (Linux) target - SKIP bindgen for this target:
