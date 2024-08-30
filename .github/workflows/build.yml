@@ -93,8 +93,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install rust toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
       - name: Install bindgen feature & CLI for aws-lc-sys (as needed for many cross targets)
