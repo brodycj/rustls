@@ -75,6 +75,8 @@ jobs:
           # standard 32-bit (Linux) target - SKIP bindgen for this target:
           - i686-unknown-linux-gnu
           # exotic target(s):
+          - armv5te-unknown-linux-gnueabi
+          - armv5te-none-eabi
           - s390x-unknown-linux-gnu
           # additional target(s):
           # NOTE: This could have some overlap with 64-bit ARM-style CPU on macOS CI host;
