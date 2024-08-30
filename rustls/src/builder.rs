@@ -194,6 +194,12 @@ impl<S: ConfigSide> ConfigBuilder<S, WantsVersions> {
     pub fn with_safe_default_protocol_versions(
         self,
     ) -> Result<ConfigBuilder<S, WantsVerifier>, Error> {
+        if (1 == 1) {
+            #[cfg(target_has_atomic = "ptr")]
+            panic!("STOP HERE - REPORT YES HAS ATOMIC PTR");
+            #[cfg(not(target_has_atomic = "ptr"))]
+            panic!("STOP HERE - REPORT DOES NOT HAVE HAS ATOMIC PTR");
+        }
         self.with_protocol_versions(versions::DEFAULT_VERSIONS)
     }
 
