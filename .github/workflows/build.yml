@@ -100,7 +100,7 @@ jobs:
       - run: rustup component add rust-src
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
-      - run: cargo remove tokio
+      - run: cargo remove -p rustls-examples tokio
       - run: rm -rf Cargo.lock
       - name: Install bindgen feature & CLI for aws-lc-sys (as needed for many cross targets)
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
