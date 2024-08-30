@@ -69,7 +69,7 @@ jobs:
       matrix:
         target:
           # XXX XXX
-          - i586-unknown-linux-gnu
+          # - i586-unknown-linux-gnu
           # XXX TBD ??? ???:
           # - riscv64gc-unknown-linux-gnu
           # 32-bit Android targets:
