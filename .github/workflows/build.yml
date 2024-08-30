@@ -70,6 +70,7 @@ jobs:
         target:
           # XXX XXX
           - i586-unknown-linux-gnu
+          - thumbv6m-none-eabi
           # - mips-unknown-linux-gnu
           # - mipsel-unknown-linux-gnu
           - riscv64gc-unknown-linux-gnu
