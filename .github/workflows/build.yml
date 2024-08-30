@@ -68,6 +68,8 @@ jobs:
     strategy:
       matrix:
         target:
+          # try xxx xxx:
+          - armv5te-unknown-linux-gnueabi
           # 32-bit Android targets:
           - armv7-linux-androideabi
           - i686-linux-android
