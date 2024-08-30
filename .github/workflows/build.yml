@@ -346,6 +346,7 @@ jobs:
           # 32-bit Android targets:
           - armv7-linux-androideabi
           - i686-linux-android
+          - thumbv7neon-linux-androideabi
           # standard 32-bit (Linux) target - SKIP bindgen for this target:
           - i686-unknown-linux-gnu
           # exotic target(s):
