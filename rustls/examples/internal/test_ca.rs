@@ -5,8 +5,9 @@ use std::io::Write;
 use std::net::IpAddr;
 use std::path::PathBuf;
 use std::str::FromStr;
-use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Duration;
+
+use portable_atomic::{AtomicU64, Ordering};
 
 use rcgen::{
     BasicConstraints, CertificateParams, CertificateRevocationListParams, CertifiedKey,
