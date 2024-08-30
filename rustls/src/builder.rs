@@ -195,8 +195,8 @@ impl<S: ConfigSide> ConfigBuilder<S, WantsVersions> {
         self,
     ) -> Result<ConfigBuilder<S, WantsVerifier>, Error> {
         if (1 == 1) {
-            #[cfg(target_has_atomic = "ptr")]
-            panic!("STOP HERE - REPORT YES HAS ATOMIC PTR");
+            // #[cfg(target_has_atomic = "ptr")]
+            // panic!("STOP HERE - REPORT YES HAS ATOMIC PTR");
             #[cfg(not(target_has_atomic = "ptr"))]
             panic!("STOP HERE - REPORT DOES NOT HAVE HAS ATOMIC PTR");
         }
