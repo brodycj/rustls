@@ -69,6 +69,7 @@ jobs:
       matrix:
         target:
           # 32-bit Android targets:
+          - thumbv5neon-linux-androideabi
           - armv5te-unknown-linux-gnueabi
           - arm-linux-androideabi
           - armv7-linux-androideabi
