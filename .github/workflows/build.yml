@@ -199,7 +199,7 @@ jobs:
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
       # XXX TODO FIND WAY TO GET BUILD WORKING WITH BUILT-IN PROVIDERS
-      - run: cross build --no-default-features --features custom-provider --package rustls --target ${{ matrix.target }}
+      - run: cross build --no-default-features --features custom-provider,withrcalias --package rustls --target ${{ matrix.target }}
       # XXX TODO FIND A WAY TO TEST ON ALL OF THESE TARGETS
 
   format:
