@@ -95,10 +95,8 @@ jobs:
         with:
           persist-credentials: false
 
-      # XXX TBD nightly vs stable - ???
-      - name: Install rust toolchain - nightly
-        uses: dtolnay/rust-toolchain@nightly
-      # - run: rustup component add rust-src
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
       # - run: cargo remove -p rustls-examples env_logger
