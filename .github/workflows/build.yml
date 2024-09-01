@@ -109,7 +109,7 @@ jobs:
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
         run: cargo add --dev --features bindgen aws-lc-sys --package rustls --verbose && cargo install bindgen-cli --verbose
       - run: cargo add --features bindgen aws-lc-sys --package rustls # *should* fix things for running example(s)
-      - run: cross build --no-default-features --features aws-lc-rs --target ${{ matrix.target }} -p rustls
+      - run: cross build --no-default-features --features aws-lc-rs --target ${{ matrix.target }} -p rustls -Z build-std="core,alloc,std"
         env:
           CROSS_NO_WARNINGS: 0
       - run: cross run -p rustls-examples --bin unbuffered-client --target ${{ matrix.target }}
