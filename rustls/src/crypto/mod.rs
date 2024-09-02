@@ -577,34 +577,34 @@ mod crypto_default_provider {
     #[cfg(not(feature = "std"))]
     use alloc::boxed::Box;
 
-    #[cfg(not(feature = "std"))]
-    use once_cell::race::OnceBox;
-    #[cfg(feature = "std")]
+    // #[cfg(not(feature = "std"))]
+    // use once_cell::race::OnceBox;
+    // #[cfg(feature = "std")]
     use once_cell::sync::OnceCell;
 
     use crate::crypto::CryptoProvider;
 
-    #[cfg(feature = "std")]
-    static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
-    #[cfg(not(feature = "std"))]
+    // #[cfg(feature = "std")]
+    // static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
+    // #[cfg(not(feature = "std"))]
     static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 
-    #[cfg(feature = "std")]
+    // #[cfg(feature = "std")]
     pub(crate) fn install_default_provider(
         default_provider: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.set(default_provider)
     }
 
-    #[cfg(not(feature = "std"))]
-    pub(crate) fn install_default_provider(
-        default_provider: Arc<CryptoProvider>,
-    ) -> Result<(), Arc<CryptoProvider>> {
-        match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider)) {
-            Ok(()) => Ok(()),
-            Err(previous_default_provider) => Err(*previous_default_provider),
-        }
-    }
+    // #[cfg(not(feature = "std"))]
+    // pub(crate) fn install_default_provider(
+    //     default_provider: Arc<CryptoProvider>,
+    // ) -> Result<(), Arc<CryptoProvider>> {
+    //     match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider)) {
+    //         Ok(()) => Ok(()),
+    //         Err(previous_default_provider) => Err(*previous_default_provider),
+    //     }
+    // }
 
     pub(crate) fn get_default_crypto_provider() -> Option<&'static Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.get()
