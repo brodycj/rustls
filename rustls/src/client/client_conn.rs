@@ -219,7 +219,7 @@ pub struct ClientConfig {
     pub time_provider: Arc<dyn TimeProvider>,
 
     /// Source of randomness and other crypto.
-    pub(super) provider: Arc<CryptoProvider>,
+    pub(super) provider: portable_atomic_util::Arc<CryptoProvider>,
 
     /// Supported versions, in no particular order.  The default
     /// is all supported versions.
@@ -309,7 +309,7 @@ impl ClientConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     #[cfg(feature = "std")]
     pub fn builder_with_provider(
-        provider: Arc<CryptoProvider>,
+        provider: portable_atomic_util::Arc<CryptoProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {
@@ -334,7 +334,7 @@ impl ClientConfig {
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
-        provider: Arc<CryptoProvider>,
+        provider: portable_atomic_util::Arc<CryptoProvider>,
         time_provider: Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
@@ -368,7 +368,7 @@ impl ClientConfig {
     }
 
     /// Return the crypto provider used to construct this client configuration.
-    pub fn crypto_provider(&self) -> &Arc<CryptoProvider> {
+    pub fn crypto_provider(&self) -> &portable_atomic_util::Arc<CryptoProvider> {
         &self.provider
     }
 

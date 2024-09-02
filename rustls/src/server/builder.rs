@@ -43,7 +43,7 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
 /// For more information, see the [`ConfigBuilder`] documentation.
 #[derive(Clone, Debug)]
 pub struct WantsServerCert {
-    provider: Arc<CryptoProvider>,
+    provider: portable_atomic_util::Arc<CryptoProvider>,
     versions: versions::EnabledVersions,
     verifier: Arc<dyn ClientCertVerifier>,
     time_provider: Arc<dyn TimeProvider>,

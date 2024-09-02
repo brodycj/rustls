@@ -1099,7 +1099,7 @@ impl RawTls {
     }
 }
 
-pub fn aes_128_gcm_with_1024_confidentiality_limit() -> Arc<CryptoProvider> {
+pub fn aes_128_gcm_with_1024_confidentiality_limit() -> portable_atomic_util::Arc<CryptoProvider> {
     const CONFIDENTIALITY_LIMIT: u64 = 1024;
 
     // needed to extend lifetime of Tls13CipherSuite to 'static
@@ -1145,7 +1145,7 @@ pub fn aes_128_gcm_with_1024_confidentiality_limit() -> Arc<CryptoProvider> {
     .into()
 }
 
-pub fn unsafe_plaintext_crypto_provider() -> Arc<CryptoProvider> {
+pub fn unsafe_plaintext_crypto_provider() -> portable_atomic_util::Arc<CryptoProvider> {
     static TLS13_PLAIN_SUITE: OnceCell<rustls::Tls13CipherSuite> = OnceCell::new();
 
     let tls13 = TLS13_PLAIN_SUITE.get_or_init(|| {

@@ -168,7 +168,7 @@ impl WebPkiServerVerifier {
     /// For more information, see the [`ServerCertVerifierBuilder`] documentation.
     pub fn builder_with_provider(
         roots: Arc<RootCertStore>,
-        provider: Arc<CryptoProvider>,
+        provider: portable_atomic_util::Arc<CryptoProvider>,
     ) -> ServerCertVerifierBuilder {
         ServerCertVerifierBuilder::new(roots, provider.signature_verification_algorithms)
     }

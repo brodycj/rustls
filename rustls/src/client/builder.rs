@@ -133,7 +133,7 @@ pub(super) mod danger {
 /// For more information, see the [`ConfigBuilder`] documentation.
 #[derive(Clone)]
 pub struct WantsClientCert {
-    provider: Arc<CryptoProvider>,
+    provider: portable_atomic_util::Arc<CryptoProvider>,
     versions: versions::EnabledVersions,
     verifier: Arc<dyn verify::ServerCertVerifier>,
     time_provider: Arc<dyn TimeProvider>,

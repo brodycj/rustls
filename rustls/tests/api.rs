@@ -6282,7 +6282,7 @@ fn test_secret_extract_produces_correct_variant() {
     fn check(suite: SupportedCipherSuite, f: impl Fn(ConnectionTrafficSecrets) -> bool) {
         let kt = KeyType::Rsa2048;
 
-        let provider: Arc<CryptoProvider> = CryptoProvider {
+        let provider: portable_atomic_util::Arc<CryptoProvider> = CryptoProvider {
             cipher_suites: vec![suite],
             ..provider::default_provider()
         }
@@ -6352,7 +6352,7 @@ fn test_secret_extract_produces_correct_variant() {
 #[test]
 fn test_secret_extraction_disabled_or_too_early() {
     let kt = KeyType::Rsa2048;
-    let provider = Arc::new(CryptoProvider {
+    let provider = portable_atomic_util::Arc::new(CryptoProvider {
         cipher_suites: vec![cipher_suite::TLS13_AES_128_GCM_SHA256],
         ..provider::default_provider()
     });

@@ -186,7 +186,7 @@ impl<Side: ConfigSide, State: fmt::Debug> fmt::Debug for ConfigBuilder<Side, Sta
 /// For more information, see the [`ConfigBuilder`] documentation.
 #[derive(Clone, Debug)]
 pub struct WantsVersions {
-    pub(crate) provider: Arc<CryptoProvider>,
+    pub(crate) provider: portable_atomic_util::Arc<CryptoProvider>,
     pub(crate) time_provider: Arc<dyn TimeProvider>,
 }
 
@@ -265,7 +265,7 @@ impl<S: ConfigSide> ConfigBuilder<S, WantsVersions> {
 /// For more information, see the [`ConfigBuilder`] documentation.
 #[derive(Clone, Debug)]
 pub struct WantsVerifier {
-    pub(crate) provider: Arc<CryptoProvider>,
+    pub(crate) provider: portable_atomic_util::Arc<CryptoProvider>,
     pub(crate) versions: versions::EnabledVersions,
     pub(crate) time_provider: Arc<dyn TimeProvider>,
     pub(crate) client_ech_mode: Option<EchMode>,

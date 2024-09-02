@@ -579,7 +579,7 @@ fn make_server_config(
     resume: ResumptionParam,
     max_fragment_size: Option<usize>,
 ) -> Arc<ServerConfig> {
-    let provider = Arc::new(provider::default_provider());
+    let provider = portable_atomic_util::Arc::new(provider::default_provider());
     let client_auth = match client_auth {
         ClientAuth::Yes => {
             let roots = params.key_type.get_chain();

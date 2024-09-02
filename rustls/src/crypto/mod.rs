@@ -1,4 +1,4 @@
-use crate::alias::Arc;
+use portable_atomic_util::Arc;
 
 use alloc::boxed::Box;
 use alloc::vec::Vec;
@@ -365,7 +365,7 @@ pub trait KeyProvider: Send + Sync + Debug {
     fn load_private_key(
         &self,
         key_der: PrivateKeyDer<'static>,
-    ) -> Result<Arc<dyn SigningKey>, Error>;
+    ) -> Result<crate::alias::Arc<dyn SigningKey>, Error>;
 
     /// Return `true` if this is backed by a FIPS-approved implementation.
     ///
@@ -592,7 +592,7 @@ pub fn default_fips_provider() -> CryptoProvider {
 }
 
 mod crypto_default_provider {
-    use crate::alias::Arc;
+    use portable_atomic_util::Arc;
 
     // XXX TBD ???
     // #[cfg(not(feature = "std"))]
