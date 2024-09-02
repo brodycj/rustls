@@ -34,6 +34,7 @@ pki-types = { package = "rustls-pki-types", version = "1.7", features = ["alloc"
 zeroize = "1.7"
 zlib-rs = { version = "0.2", optional = true }
 portable-atomic-util = { version = "0.2.2", default-features = false, features = ["alloc"] }
+portable-atomic = { version = "1.7.0", default-features = false, features = ["critical-section"] }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]
