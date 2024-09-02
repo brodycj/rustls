@@ -45,7 +45,7 @@ aws-lc-rs = ["aws_lc_rs"] # Alias because Cargo features commonly use `-`
 brotli = ["dep:brotli", "dep:brotli-decompressor", "std"]
 ring = ["dep:ring", "webpki/ring"]
 # XXX TODO RATIONALE FOR: portable-atomic/critical-section
-critical-section = ["once_cell/critical-section", "portable-atomic/critical-section"]
+critical-section = ["once_cell/critical-section"]
 custom-provider = []
 tls12 = []
 read_buf = ["rustversion", "std"]
