@@ -195,6 +195,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
+      - run: cargo remove -p rustls-connect-tests --dev hickory-resolver
+      - run: cargo remove -p rustls-examples hickory-resolver
       # XXX TODO FIND WAY TO GET BUILD WORKING WITH BUILT-IN PROVIDERS
       - run: cross build --no-default-features --features custom-provider,withrcalias --package rustls --target ${{ matrix.target }}
       # XXX TBD TRY BUILDING WITH SOME OTHER FEATURES - ???
