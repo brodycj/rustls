@@ -223,7 +223,7 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    #[cfg(feature = "defaultproviderenabled")]
+    // #[cfg(feature = "defaultproviderenabled")]
     pub fn install_default(self) -> Result<(), Arc<Self>> {
         crypto_default_provider::install_default_provider(Arc::new(self))
     }
