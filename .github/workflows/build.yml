@@ -148,6 +148,14 @@ jobs:
         target:
           # 32-bit Android (Linux) targets:
           - armv7-linux-androideabi
+          - mips-unknown-linux-gnu
+          - mips-unknown-linux-musl
+          - mipsel-unknown-linux-gnu
+          - mipsel-unknown-linux-musl
+          - mips64-unknown-linux-gnu
+          - mips64-unknown-linux-musl
+          - mips64el-unknown-linux-gnu
+          - mips64el-unknown-linux-musl
           # - i686-linux-android
           # - thumbv7neon-linux-androideabi
           # # Other standard 32-bit (Linux) targets (SKIP bindgen for i686 only)
