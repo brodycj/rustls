@@ -337,6 +337,25 @@ jobs:
         run: cargo minimal-versions --direct --ignore-private check
         working-directory: rustls/
 
+  embedded-build:
+    name: embedded release build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - armv7-linux-androideabi
+          - mipsel-sony-psx
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - run: rustup target add ${{ matrix.target }}
+      - run: cargo build --no-default-features --features aws-lc-rs --release --package rustls --target ${{ matrix.target }}
+
   cross:
     name: cross-target testing
     runs-on: ubuntu-latest
