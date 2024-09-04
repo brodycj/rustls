@@ -16,6 +16,7 @@ use common::{
 use pki_types::{CertificateDer, UnixTime};
 
 use rustls::client::danger::HandshakeSignatureValid;
+use rustls::internal::alias::Arc;
 use rustls::internal::alias::ZZXArc;
 use rustls::internal::msgs::handshake::DistinguishedName;
 use rustls::server::danger::{ClientCertVerified, ClientCertVerifier};
@@ -55,7 +56,7 @@ fn client_verifier_works() {
     for kt in ALL_KEY_TYPES.iter() {
         let client_verifier = MockClientVerifier::new(ver_ok, *kt);
         let server_config = server_config_with_verifier(*kt, client_verifier);
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
@@ -74,7 +75,7 @@ fn client_verifier_no_schemes() {
         let mut client_verifier = MockClientVerifier::new(ver_ok, *kt);
         client_verifier.offered_schemes = Some(vec![]);
         let server_config = server_config_with_verifier(*kt, client_verifier);
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
@@ -101,7 +102,7 @@ fn client_verifier_no_auth_yes_root() {
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions(*kt, &[version]);
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+            let mut server = ServerConnection::new(unsafe{Arc::from_raw(server_config.as_ref())}).unwrap();
             let mut client =
                 ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
             let errs = do_handshake_until_both_error(&mut client, &mut server);
@@ -128,7 +129,7 @@ fn client_verifier_fails_properly() {
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+            let mut server = ServerConnection::new(unsafe { Arc::from_raw(server_config.as_ref()) }).unwrap();
             let mut client =
                 ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
             let err = do_handshake_until_error(&mut client, &mut server);

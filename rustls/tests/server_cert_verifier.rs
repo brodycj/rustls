@@ -12,6 +12,7 @@ use common::{
     ALL_KEY_TYPES,
 };
 
+use rustls::internal::alias::Arc;
 use rustls::internal::alias::ZZXArc;
 
 use rustls::{AlertDescription, Error, InvalidMessage};
@@ -21,7 +22,7 @@ fn client_can_override_certificate_verification() {
     for kt in ALL_KEY_TYPES.iter() {
         let verifier = ZZXArc::new(MockServerVerifier::accepts_anything());
 
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
@@ -43,7 +44,7 @@ fn client_can_override_certificate_verification_and_reject_certificate() {
             Error::InvalidMessage(InvalidMessage::HandshakePayloadTooLarge),
         ));
 
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
@@ -80,7 +81,7 @@ fn client_can_override_certificate_verification_and_reject_tls12_signatures() {
             .dangerous()
             .set_certificate_verifier(verifier);
 
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         let (mut client, mut server) =
             make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
@@ -109,7 +110,7 @@ fn client_can_override_certificate_verification_and_reject_tls13_signatures() {
             .dangerous()
             .set_certificate_verifier(verifier);
 
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         let (mut client, mut server) =
             make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
@@ -131,7 +132,7 @@ fn client_can_override_certificate_verification_and_offer_no_signature_schemes()
     for kt in ALL_KEY_TYPES.iter() {
         let verifier = ZZXArc::new(MockServerVerifier::offers_no_signature_schemes());
 
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);

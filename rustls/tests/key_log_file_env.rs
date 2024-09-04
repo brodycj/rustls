@@ -34,12 +34,13 @@ use common::{
     transfer, KeyType,
 };
 
+use rustls::internal::alias::Arc;
 use rustls::internal::alias::ZZXArc;
 
 #[test]
 fn exercise_key_log_file_for_client() {
     serialized(|| {
-        let server_config = ZZXArc::new(make_server_config(KeyType::Rsa2048));
+        let server_config = Arc::new(make_server_config(KeyType::Rsa2048));
         env::set_var("SSLKEYLOGFILE", "./sslkeylogfile.txt");
 
         for version in rustls::ALL_VERSIONS {
@@ -64,9 +65,9 @@ fn exercise_key_log_file_for_server() {
         let mut server_config = make_server_config(KeyType::Rsa2048);
 
         env::set_var("SSLKEYLOGFILE", "./sslkeylogfile.txt");
-        server_config.key_log = ZZXArc::new(rustls::KeyLogFile::new());
+        server_config.key_log = rustls::paa_arc_from_contents!(rustls::KeyLogFile::new());
 
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
