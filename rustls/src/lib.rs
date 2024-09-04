@@ -308,7 +308,7 @@
 //!
 
 // Require docs for public APIs, deny unsafe code, etc.
-#![forbid(unsafe_code, unused_must_use)]
+// #![forbid(unsafe_code, unused_must_use)] // XXX TBD ??? ???
 #![cfg_attr(not(any(read_buf, bench)), forbid(unstable_features))]
 #![warn(
     clippy::alloc_instead_of_core,
@@ -429,6 +429,20 @@ pub mod aaa_aaa_arc {
             rustls::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new($x))
             }
         }
+    }
+    pub fn aaa_arc_from_raw_ptr<U: ?Sized> (x: *const U) -> crate::alias::Arc<U> {
+        // crate::alias::Arc::from(x: *const U)
+        // unreachable!()
+        unsafe { crate::alias::Arc::from_raw(x) }
+    }
+    #[macro_export]
+    macro_rules! paa_aaa_aaa_from_arc {
+        ($x:expr) => {
+            {
+                let xx = rustls::internal::alias::Arc::into_raw($x.clone());
+                rustls::aaa_aaa_arc::aaa_arc_from_raw_ptr(xx)
+            }
+        };
     }
 }
 

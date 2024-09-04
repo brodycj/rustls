@@ -4021,6 +4021,12 @@ impl rustls::client::ClientSessionStore for ClientStorage {
     }
 }
 
+pub fn aaa_from_raw_ptr<U: ?Sized> (x: *const U) -> rustls::internal::alias::Arc<U> {
+    // crate::alias::Arc::from(x: *const U)
+    // unreachable!()
+    unsafe { rustls::internal::alias::Arc::from_raw(x) }
+}
+
 #[test]
 fn tls13_stateful_resumption() {
     let kt = KeyType::Rsa2048;
@@ -4088,12 +4094,24 @@ fn tls13_stateful_resumption() {
     //     // server_config.session_storage = xx2;
     //     server_config.session_storage = Arc::from_raw(xx1);
     // }
-    server_config.session_storage = {
-        let xx1 = Arc::into_raw(st2.clone());
-        unsafe { Arc::from_raw(xx1) }
-    };
+    // server_config.session_storage = {
+    //     let xx1 = Arc::into_raw(st2.clone());
+    //     unsafe { Arc::from_raw(xx1) }
+    // };
+    // server_config.session_storage = rustls::abc_arc_arc!(storage.clone());
+    // server_config.session_storage = {
+    //     let xx1: *const ServerStorage = Arc::into_raw(st2.clone());
+    //     let xx2: *const dyn StoresServerSessions = xx1;
+    //     // unsafe { Arc::from_raw(xx2) }
+    //     aaa_from_raw_ptr(xx2)
+    // };
+    // server_config.session_storage = {
+    //     let xx = Arc::into_raw(st2.clone());
+    //     aaa_from_raw_ptr(xx)
+    // };
     // panic!("XXX XXX");
     // server_config.session_storage = storage.clone();
+    server_config.session_storage = rustls::paa_aaa_aaa_from_arc!(storage.clone());
     let server_config = Arc::new(server_config);
     // panic!("XXX XXX XXX");
 
