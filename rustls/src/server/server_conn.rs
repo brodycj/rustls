@@ -341,7 +341,7 @@ pub struct ServerConfig {
     pub require_ems: bool,
 
     /// Provides the current system time
-    pub time_provider: Arc<dyn TimeProvider>,
+    pub time_provider: crate::paa::Arc<dyn TimeProvider>,
 
     /// How to compress the server's certificate chain.
     ///
@@ -427,7 +427,8 @@ impl ServerConfig {
         ConfigBuilder {
             state: WantsVersions {
                 provider,
-                time_provider: Arc::new(DefaultTimeProvider),
+                // time_provider: Arc::new(DefaultTimeProvider),
+                time_provider: paa_arc_from_contents!(DefaultTimeProvider),
             },
             side: PhantomData,
         }
@@ -449,7 +450,7 @@ impl ServerConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
         provider: Arc<CryptoProvider>,
-        time_provider: Arc<dyn TimeProvider>,
+        time_provider: crate::paa::Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {

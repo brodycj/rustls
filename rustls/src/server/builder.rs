@@ -45,7 +45,7 @@ pub struct WantsServerCert {
     provider: Arc<CryptoProvider>,
     versions: versions::EnabledVersions,
     verifier: Arc<dyn ClientCertVerifier>,
-    time_provider: Arc<dyn TimeProvider>,
+    time_provider: crate::paa::Arc<dyn TimeProvider>,
 }
 
 impl ConfigBuilder<ServerConfig, WantsServerCert> {

@@ -404,6 +404,19 @@ pub(crate) mod paa {
 }
 
 #[macro_use]
+pub(crate) mod aaa {
+    pub fn aaa_arc_from_box<U: ?Sized> (x: alloc::boxed::Box<U>) -> crate::paa::Arc<U> {
+        crate::paa::Arc::from(x)
+    }
+    macro_rules! paa_arc_from_contents {
+        ($x:expr) => {
+            // ---
+            crate::aaa::aaa_arc_from_box(alloc::boxed::Box::new($x))
+        }
+    }
+}
+
+#[macro_use]
 mod trait_macros;
 
 #[macro_use]
