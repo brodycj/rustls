@@ -4080,14 +4080,18 @@ fn tls13_stateful_resumption() {
     //     drop(xxx);
     //     drop(xxx2);
     // }
-    unsafe {
-        // ---
-        // let xx1 = Arc::into_raw(st2);
+    // unsafe {
+    //     // ---
+    //     // let xx1 = Arc::into_raw(st2);
+    //     let xx1 = Arc::into_raw(st2.clone());
+    //     // let xx2: Arc<dyn StoresServerSessions> = Arc::from_raw(xx1);
+    //     // server_config.session_storage = xx2;
+    //     server_config.session_storage = Arc::from_raw(xx1);
+    // }
+    server_config.session_storage = {
         let xx1 = Arc::into_raw(st2.clone());
-        // let xx2: Arc<dyn StoresServerSessions> = Arc::from_raw(xx1);
-        // server_config.session_storage = xx2;
-        server_config.session_storage = Arc::from_raw(xx1);
-    }
+        unsafe { Arc::from_raw(xx1) }
+    };
     // panic!("XXX XXX");
     // server_config.session_storage = storage.clone();
     let server_config = Arc::new(server_config);
