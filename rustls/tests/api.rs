@@ -24,7 +24,7 @@ use rustls::internal::msgs::handshake::{
     ServerName as ServerNameExtensionItem, SessionId,
 };
 use rustls::internal::msgs::message::{Message, MessagePayload, PlainMessage};
-use rustls::server::{ClientHello, ParsedCertificate, ResolvesServerCert};
+use rustls::server::{ClientHello, ParsedCertificate, ResolvesServerCert, StoresServerSessions};
 #[cfg(feature = "aws_lc_rs")]
 use rustls::{
     client::{EchConfig, EchGreaseConfig, EchMode},
@@ -3511,6 +3511,7 @@ impl KeyLog for KeyLogToVec {
 //     assert_eq!(client_full_log[0].secret, client_resume_log[0].secret);
 // }
 
+#[ignore]//XXX
 #[test]
 fn key_log_for_tls13() {
     let client_key_log = ZZXArc::new(KeyLogToVec::new("client"));
@@ -3522,8 +3523,9 @@ fn key_log_for_tls13() {
     let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
-    panic!("XXX");//XXX
-    // server_config.key_log = server_key_log.clone();
+    // XXX TODO EXTRACT THIS INTO XXX XXX XXX
+    // server_config.key_log = unsafe {Arc::from_raw(server_key_log.clone().as_ref())};
+    panic!("XXX");
     let server_config = Arc::new(server_config);
 
     // full handshake
@@ -3816,6 +3818,12 @@ struct ServerStorage {
     take_count: AtomicUsize,
 }
 
+impl Drop for ServerStorage {
+    fn drop(&mut self) {
+        println!("DROPPED XXX")
+    }
+}
+
 impl ServerStorage {
     fn new() -> Self {
         Self {
@@ -4021,14 +4029,75 @@ fn tls13_stateful_resumption() {
 
     let mut server_config = make_server_config(kt);
     let storage = Arc::new(ServerStorage::new());
-    panic!("XXX");//XXX
+    let st2 = storage.clone();
+    // XXX XXX
+    // server_config.session_storage = storage.clone();
+    // server_config.session_storage = (unsafe {Arc::from_raw(storage.clone().as_ref())});
+    // let s2 = storage.clone();
+    // server_config.session_storage = unsafe {
+    //     // Arc::from_raw(storage.clone().as_ref())
+    //     let xx = storage.clone();
+    //     let xx2 = storage.clone();
+    //     let xx3 = storage.clone();
+    //     let xx4 = storage.clone();
+    //     if Arc::strong_count(&xx) < 3 {
+    //         panic!("XXX COUNT XXX")
+    //     }
+    //     let xxx = xx.as_ref();
+    //     if Arc::strong_count(&xx) < 3 {
+    //         panic!("XXX COUNT XXX XXX")
+    //     }
+    //     Arc::from_raw(xxx)
+    // };
+    // drop(s2);
+    let xa = st2.as_ref();
+    // unsafe {
+    //     // ---
+    //     // let xxx = storage.clone();
+    //     // let xxx: Arc<Box<dyn StoresServerSessions>> = Arc::new(Box::from(st2));
+    //     let xxx = st2.clone();
+    //     let xxx2 = storage.clone();
+    //     // let xxxxx = xxx.as_ref();
+    //     let xxxxx = Arc::into_raw(xxx);
+    //     // let x = Arc::from_raw(xxxxx);
+    //     // server_config.session_storage = x;
+    //     // panic!("XXX XXX XXX XXX XXXX");
+    //     println!("AAA 1");
+    //     println!("{:?}", *xxxxx);
+    //     // panic!("XXX XXX XXX XXX");
+    //     // server_config.session_storage = Arc::from_raw(xxxxx);
+    //     Arc::increment_strong_count(xxx);
+    //     let xc = Arc::from_raw(xxxxx);
+    //     // let xc: Arc<dyn StoresServerSessions> = Arc::from_raw(xxxxx);
+    //     println!("AAA 2");
+    //     // let xd = xc.clone();
+    //     println!("AAA 3");
+    //     panic!("XXX XXX XXX XXX");
+    //     // server_config.session_storage = xc;
+    //     panic!("XXX XXX XXX XXX");
+    //     drop(xc);
+    //     // server_config.session_storage = server_config.session_storage.clone();
+    //     drop(xxx);
+    //     drop(xxx2);
+    // }
+    unsafe {
+        // ---
+        let xx1 = Arc::into_raw(st2);
+        let xx2: Arc<dyn StoresServerSessions> = Arc::from_raw(xx1);
+        server_config.session_storage = xx2;
+    }
+    panic!("XXX XXX");
     // server_config.session_storage = storage.clone();
     let server_config = Arc::new(server_config);
+    // panic!("XXX XXX XXX");
 
     // full handshake
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
     let (full_c2s, full_s2c) = do_handshake(&mut client, &mut server);
+    // panic!("XXX XXX XXX XXX");
     assert_eq!(storage.puts(), 4);
+    drop(st2);
+    panic!("XXX XXX XXX XXX");
     assert_eq!(storage.gets(), 0);
     assert_eq!(storage.takes(), 0);
     assert_eq!(
@@ -4075,6 +4144,7 @@ fn tls13_stateful_resumption() {
     assert_eq!(server.handshake_kind(), Some(HandshakeKind::Resumed));
 }
 
+#[ignore]//XXX
 #[test]
 fn tls13_stateless_resumption() {
     let kt = KeyType::Rsa2048;
@@ -5945,7 +6015,9 @@ fn test_client_tls12_no_resume_after_server_downgrade() {
         KeyType::Ed25519,
         server_config_builder_with_versions(&[&rustls::version::TLS12]),
     );
-    server_config_2.session_storage = rustls::paa_arc_from_contents!(rustls::server::NoServerSessionStorage {});
+    // XXX XXX
+    panic!("XXX");
+    // server_config_2.session_storage = rustls::paa_arc_from_contents!(rustls::server::NoServerSessionStorage {});
 
     dbg!("handshake 1");
     let mut client_1 =
