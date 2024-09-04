@@ -1,6 +1,7 @@
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
+use crate::alias::Arc;
 use crate::alias::ZZXArc;
 use crate::server::ClientHello;
 use crate::{server, sign};
@@ -26,9 +27,11 @@ impl server::StoresServerSessions for NoServerSessionStorage {
 
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod cache {
+    use alloc::boxed::Box;
     use alloc::vec::Vec;
     use core::fmt::{Debug, Formatter};
 
+    use crate::alias::Arc;
     use crate::alias::ZZXArc;
     use crate::lock::Mutex;
     use crate::{limited_cache, server};
@@ -41,25 +44,27 @@ mod cache {
     }
 
     impl ServerSessionMemoryCache {
+        /////// XXX TBD APC API ??? ???
         /// Make a new ServerSessionMemoryCache.  `size` is the maximum
         /// number of stored sessions, and may be rounded-up for
         /// efficiency.
         #[cfg(feature = "std")]
-        pub fn new(size: usize) -> ZZXArc<Self> {
-            ZZXArc::new(Self {
+        pub fn new(size: usize) -> Arc<dyn server::StoresServerSessions> {
+            crate::internal_paa_aaa_arc_from_contents!(Self {
                 cache: Mutex::new(limited_cache::LimitedCache::new(size)),
             })
         }
 
-        /// Make a new ServerSessionMemoryCache.  `size` is the maximum
-        /// number of stored sessions, and may be rounded-up for
-        /// efficiency.
-        #[cfg(not(feature = "std"))]
-        pub fn new<M: crate::lock::MakeMutex>(size: usize) -> ZZXArc<Self> {
-            ZZXArc::new(Self {
-                cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
-            })
-        }
+        ///// XXX TODO XXX XXX
+        // /// Make a new ServerSessionMemoryCache.  `size` is the maximum
+        // /// number of stored sessions, and may be rounded-up for
+        // /// efficiency.
+        // #[cfg(not(feature = "std"))]
+        // pub fn new<M: crate::lock::MakeMutex>(size: usize) -> ZZXArc<Self> {
+        //     ZZXArc::new(Self {
+        //         cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
+        //     })
+        // }
     }
 
     impl server::StoresServerSessions for ServerSessionMemoryCache {

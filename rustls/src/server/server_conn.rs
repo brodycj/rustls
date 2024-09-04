@@ -251,7 +251,7 @@ pub struct ServerConfig {
     pub max_fragment_size: Option<usize>,
 
     /// How to store client sessions.
-    pub session_storage: ZZXArc<dyn StoresServerSessions>,
+    pub session_storage: Arc<dyn StoresServerSessions>,
 
     /// How to produce tickets.
     pub ticketer: ZZXArc<dyn ProducesTickets>,
