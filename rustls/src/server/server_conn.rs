@@ -11,6 +11,7 @@ use pki_types::{DnsName, UnixTime};
 
 use super::hs;
 
+use crate::alias::Arc;
 use crate::alias::ZZXArc;
 use crate::builder::ConfigBuilder;
 use crate::common_state::{CommonState, Side};
@@ -341,7 +342,7 @@ pub struct ServerConfig {
     pub require_ems: bool,
 
     /// Provides the current system time
-    pub time_provider: crate::alias::Arc<dyn TimeProvider>,
+    pub time_provider: Arc<dyn TimeProvider>,
 
     /// How to compress the server's certificate chain.
     ///
@@ -449,7 +450,7 @@ impl ServerConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
         provider: ZZXArc<CryptoProvider>,
-        time_provider: crate::alias::Arc<dyn TimeProvider>,
+        time_provider: Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {
