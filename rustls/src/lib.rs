@@ -405,6 +405,7 @@ pub(crate) mod paa {
 
 #[macro_use]
 pub(crate) mod aaa {
+    #[inline(always)]
     pub fn aaa_arc_from_box<U: ?Sized> (x: alloc::boxed::Box<U>) -> crate::paa::Arc<U> {
         crate::paa::Arc::from(x)
     }
