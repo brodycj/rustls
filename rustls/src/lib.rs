@@ -399,8 +399,8 @@ mod alias {
 
     extern crate portable_atomic_util;
 
-    // XXX TODO WANT TO GET INSTANCES WITH THIS ARC WORKING
-    // pub type Arc<T> = portable_atomic_util::Arc<T>;
+    // XXX TODO WANT TO GET INSTANCES WITH THIS ARC WORKING EITHER WAY BETWEEN BUILT-IN ARC VS portable_atomic_util::Arc
+    // pub use portable_atomic_util::Arc;
     // XXX TBD OLD ALIAS TYPE TO BE REPLACED WITH WORKING USAGE OF OPTIONAL ALIASING TO portable_atomic_util::Arc
     pub type ZZXArc<T> = alloc::sync::Arc<T>;
 }
