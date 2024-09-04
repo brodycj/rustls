@@ -122,7 +122,7 @@ pub use crate::suites::CipherSuiteCommon;
 ///
 /// ```
 /// # #[cfg(feature = "aws_lc_rs")] {
-/// # use rustls::internal::alias::Arc;
+/// # use rustls::internal::alias::ZZXArc;
 /// # mod fictious_hsm_api { pub fn load_private_key(key_der: pki_types::PrivateKeyDer<'static>) -> ! { unreachable!(); } }
 /// use rustls::crypto::aws_lc_rs;
 ///
@@ -137,7 +137,7 @@ pub use crate::suites::CipherSuiteCommon;
 /// struct HsmKeyLoader;
 ///
 /// impl rustls::crypto::KeyProvider for HsmKeyLoader {
-///     fn load_private_key(&self, key_der: pki_types::PrivateKeyDer<'static>) -> Result<Arc<dyn rustls::sign::SigningKey>, rustls::Error> {
+///     fn load_private_key(&self, key_der: pki_types::PrivateKeyDer<'static>) -> Result<ZZXArc<dyn rustls::sign::SigningKey>, rustls::Error> {
 ///          fictious_hsm_api::load_private_key(key_der)
 ///     }
 /// }

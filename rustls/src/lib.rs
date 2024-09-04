@@ -166,7 +166,7 @@
 //! # #[cfg(feature = "aws_lc_rs")] {
 //! # use rustls;
 //! # use webpki;
-//! # use rustls::internal::alias::Arc;
+//! # use rustls::internal::alias::ZZXArc;
 //! # rustls::crypto::aws_lc_rs::default_provider().install_default();
 //! # let root_store = rustls::RootCertStore::from_iter(
 //! #  webpki_roots::TLS_SERVER_ROOTS
@@ -176,7 +176,7 @@
 //! # let config = rustls::ClientConfig::builder()
 //! #     .with_root_certificates(root_store)
 //! #     .with_no_client_auth();
-//! let rc_config = Arc::new(config);
+//! let rc_config = ZZXArc::new(config);
 //! let example_com = "example.com".try_into().unwrap();
 //! let mut client = rustls::ClientConnection::new(rc_config, example_com);
 //! # }
