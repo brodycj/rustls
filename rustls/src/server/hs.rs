@@ -8,7 +8,7 @@ use super::server_conn::ServerConnectionData;
 #[cfg(feature = "tls12")]
 use super::tls12;
 
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::common_state::{KxState, Protocol, State};
 use crate::conn::ConnectionRandoms;
 use crate::crypto::SupportedKxGroup;
@@ -205,7 +205,7 @@ impl ExtensionProcessing {
 }
 
 pub(super) struct ExpectClientHello {
-    pub(super) config: Arc<ServerConfig>,
+    pub(super) config: ZZXArc<ServerConfig>,
     pub(super) extra_exts: Vec<ServerExtension>,
     pub(super) transcript: HandshakeHashOrBuffer,
     #[cfg(feature = "tls12")]
@@ -217,7 +217,7 @@ pub(super) struct ExpectClientHello {
 }
 
 impl ExpectClientHello {
-    pub(super) fn new(config: Arc<ServerConfig>, extra_exts: Vec<ServerExtension>) -> Self {
+    pub(super) fn new(config: ZZXArc<ServerConfig>, extra_exts: Vec<ServerExtension>) -> Self {
         let mut transcript_buffer = HandshakeHashBuffer::new();
 
         if config.verifier.offer_client_auth() {

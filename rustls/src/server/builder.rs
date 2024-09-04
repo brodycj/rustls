@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 
 use pki_types::{CertificateDer, PrivateKeyDer};
 
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::crypto::CryptoProvider;
 use crate::error::Error;
@@ -17,7 +17,7 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
     /// Choose how to verify client certificates.
     pub fn with_client_cert_verifier(
         self,
-        client_cert_verifier: Arc<dyn ClientCertVerifier>,
+        client_cert_verifier: ZZXArc<dyn ClientCertVerifier>,
     ) -> ConfigBuilder<ServerConfig, WantsServerCert> {
         ConfigBuilder {
             state: WantsServerCert {
@@ -32,7 +32,7 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
 
     /// Disable client authentication.
     pub fn with_no_client_auth(self) -> ConfigBuilder<ServerConfig, WantsServerCert> {
-        self.with_client_cert_verifier(Arc::new(NoClientAuth))
+        self.with_client_cert_verifier(ZZXArc::new(NoClientAuth))
     }
 }
 
@@ -42,10 +42,10 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
 /// For more information, see the [`ConfigBuilder`] documentation.
 #[derive(Clone, Debug)]
 pub struct WantsServerCert {
-    provider: Arc<CryptoProvider>,
+    provider: ZZXArc<CryptoProvider>,
     versions: versions::EnabledVersions,
-    verifier: Arc<dyn ClientCertVerifier>,
-    time_provider: Arc<dyn TimeProvider>,
+    verifier: ZZXArc<dyn ClientCertVerifier>,
+    time_provider: ZZXArc<dyn TimeProvider>,
 }
 
 impl ConfigBuilder<ServerConfig, WantsServerCert> {
@@ -85,7 +85,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
         }
 
         let resolver = handy::AlwaysResolvesChain::new(certified_key);
-        Ok(self.with_cert_resolver(Arc::new(resolver)))
+        Ok(self.with_cert_resolver(ZZXArc::new(resolver)))
     }
 
     /// Sets a single certificate chain, matching private key and optional OCSP
@@ -121,11 +121,11 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
         }
 
         let resolver = handy::AlwaysResolvesChain::new_with_extras(certified_key, ocsp);
-        Ok(self.with_cert_resolver(Arc::new(resolver)))
+        Ok(self.with_cert_resolver(ZZXArc::new(resolver)))
     }
 
     /// Sets a custom [`ResolvesServerCert`].
-    pub fn with_cert_resolver(self, cert_resolver: Arc<dyn ResolvesServerCert>) -> ServerConfig {
+    pub fn with_cert_resolver(self, cert_resolver: ZZXArc<dyn ResolvesServerCert>) -> ServerConfig {
         ServerConfig {
             provider: self.state.provider,
             verifier: self.state.verifier,
@@ -135,11 +135,11 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             #[cfg(feature = "std")]
             session_storage: handy::ServerSessionMemoryCache::new(256),
             #[cfg(not(feature = "std"))]
-            session_storage: Arc::new(handy::NoServerSessionStorage {}),
-            ticketer: Arc::new(handy::NeverProducesTickets {}),
+            session_storage: ZZXArc::new(handy::NoServerSessionStorage {}),
+            ticketer: ZZXArc::new(handy::NeverProducesTickets {}),
             alpn_protocols: Vec::new(),
             versions: self.state.versions,
-            key_log: Arc::new(NoKeyLog {}),
+            key_log: ZZXArc::new(NoKeyLog {}),
             enable_secret_extraction: false,
             max_early_data_size: 0,
             send_half_rtt_data: false,
@@ -148,7 +148,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             require_ems: cfg!(feature = "fips"),
             time_provider: self.state.time_provider,
             cert_compressors: compress::default_cert_compressors().to_vec(),
-            cert_compression_cache: Arc::new(compress::CompressionCache::default()),
+            cert_compression_cache: ZZXArc::new(compress::CompressionCache::default()),
             cert_decompressors: compress::default_cert_decompressors().to_vec(),
         }
     }

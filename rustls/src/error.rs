@@ -626,7 +626,7 @@ mod other_error {
     use super::Error;
 
     #[cfg(feature = "std")]
-    use crate::alias::Arc;
+    use crate::alias::ZZXArc;
 
     /// Any other error that cannot be expressed by a more specific [`Error`] variant.
     ///
@@ -638,7 +638,7 @@ mod other_error {
     pub struct OtherError(
         #[cfg(not(feature = "withrcalias"))]
         #[cfg(feature = "std")]
-        pub Arc<dyn StdError + Send + Sync>,
+        pub ZZXArc<dyn StdError + Send + Sync>,
     );
 
     impl PartialEq<Self> for OtherError {

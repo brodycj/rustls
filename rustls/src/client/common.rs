@@ -3,7 +3,7 @@ use alloc::vec::Vec;
 
 use super::ResolvesClientCert;
 
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::log::{debug, trace};
 use crate::msgs::enums::ExtensionType;
 use crate::msgs::handshake::{CertificateChain, DistinguishedName, ServerExtension};
@@ -73,7 +73,7 @@ pub(super) enum ClientAuthDetails {
     Empty { auth_context_tls13: Option<Vec<u8>> },
     /// Send a non-empty `Certificate` and a `CertificateVerify`.
     Verify {
-        certkey: Arc<sign::CertifiedKey>,
+        certkey: ZZXArc<sign::CertifiedKey>,
         signer: Box<dyn sign::Signer>,
         auth_context_tls13: Option<Vec<u8>>,
         compressor: Option<&'static dyn compress::CertCompressor>,

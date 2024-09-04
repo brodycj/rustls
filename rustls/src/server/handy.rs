@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::server::ClientHello;
 use crate::{server, sign};
 
@@ -29,7 +29,7 @@ mod cache {
     use alloc::vec::Vec;
     use core::fmt::{Debug, Formatter};
 
-    use crate::alias::Arc;
+    use crate::alias::ZZXArc;
     use crate::lock::Mutex;
     use crate::{limited_cache, server};
 
@@ -45,8 +45,8 @@ mod cache {
         /// number of stored sessions, and may be rounded-up for
         /// efficiency.
         #[cfg(feature = "std")]
-        pub fn new(size: usize) -> Arc<Self> {
-            Arc::new(Self {
+        pub fn new(size: usize) -> ZZXArc<Self> {
+            ZZXArc::new(Self {
                 cache: Mutex::new(limited_cache::LimitedCache::new(size)),
             })
         }
@@ -55,8 +55,8 @@ mod cache {
         /// number of stored sessions, and may be rounded-up for
         /// efficiency.
         #[cfg(not(feature = "std"))]
-        pub fn new<M: crate::lock::MakeMutex>(size: usize) -> Arc<Self> {
-            Arc::new(Self {
+        pub fn new<M: crate::lock::MakeMutex>(size: usize) -> ZZXArc<Self> {
+            ZZXArc::new(Self {
                 cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
             })
         }
@@ -168,12 +168,12 @@ impl server::ProducesTickets for NeverProducesTickets {
 
 /// Something which always resolves to the same cert chain.
 #[derive(Debug)]
-pub(super) struct AlwaysResolvesChain(Arc<sign::CertifiedKey>);
+pub(super) struct AlwaysResolvesChain(ZZXArc<sign::CertifiedKey>);
 
 impl AlwaysResolvesChain {
     /// Creates an `AlwaysResolvesChain`, using the supplied `CertifiedKey`.
     pub(super) fn new(certified_key: sign::CertifiedKey) -> Self {
-        Self(Arc::new(certified_key))
+        Self(ZZXArc::new(certified_key))
     }
 
     /// Creates an `AlwaysResolvesChain`, using the supplied `CertifiedKey` and OCSP response.
@@ -183,7 +183,7 @@ impl AlwaysResolvesChain {
         let mut r = Self::new(certified_key);
 
         {
-            let cert = Arc::make_mut(&mut r.0);
+            let cert = ZZXArc::make_mut(&mut r.0);
             if !ocsp.is_empty() {
                 cert.ocsp = Some(ocsp);
             }
@@ -194,8 +194,8 @@ impl AlwaysResolvesChain {
 }
 
 impl server::ResolvesServerCert for AlwaysResolvesChain {
-    fn resolve(&self, _client_hello: ClientHello<'_>) -> Option<Arc<sign::CertifiedKey>> {
-        Some(Arc::clone(&self.0))
+    fn resolve(&self, _client_hello: ClientHello<'_>) -> Option<ZZXArc<sign::CertifiedKey>> {
+        Some(ZZXArc::clone(&self.0))
     }
 }
 
@@ -206,7 +206,7 @@ mod sni_resolver {
 
     use pki_types::{DnsName, ServerName};
 
-    use crate::alias::Arc;
+    use crate::alias::ZZXArc;
     use crate::error::Error;
     use crate::hash_map::HashMap;
     use crate::server::ClientHello;
@@ -217,7 +217,7 @@ mod sni_resolver {
     /// on client-supplied server name (via SNI).
     #[derive(Debug)]
     pub struct ResolvesServerCertUsingSni {
-        by_name: HashMap<String, Arc<sign::CertifiedKey>>,
+        by_name: HashMap<String, ZZXArc<sign::CertifiedKey>>,
     }
 
     impl ResolvesServerCertUsingSni {
@@ -256,14 +256,14 @@ mod sni_resolver {
 
             if let ServerName::DnsName(name) = server_name {
                 self.by_name
-                    .insert(name.as_ref().to_string(), Arc::new(ck));
+                    .insert(name.as_ref().to_string(), ZZXArc::new(ck));
             }
             Ok(())
         }
     }
 
     impl server::ResolvesServerCert for ResolvesServerCertUsingSni {
-        fn resolve(&self, client_hello: ClientHello<'_>) -> Option<Arc<sign::CertifiedKey>> {
+        fn resolve(&self, client_hello: ClientHello<'_>) -> Option<ZZXArc<sign::CertifiedKey>> {
             if let Some(name) = client_hello.server_name() {
                 self.by_name.get(name).cloned()
             } else {

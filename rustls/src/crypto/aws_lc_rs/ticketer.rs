@@ -13,7 +13,7 @@ use aws_lc_rs::{hmac, iv};
 use super::ring_like::rand::{SecureRandom, SystemRandom};
 use super::unspecified_err;
 
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::error::Error;
 use crate::log::debug;
 use crate::polyfill::try_split_at;
@@ -32,8 +32,8 @@ impl Ticketer {
     ///
     /// [RFC 5077 §4]: https://www.rfc-editor.org/rfc/rfc5077#section-4
     #[cfg(feature = "std")]
-    pub fn new() -> Result<Arc<dyn ProducesTickets>, Error> {
-        Ok(Arc::new(crate::ticketer::TicketSwitcher::new(
+    pub fn new() -> Result<ZZXArc<dyn ProducesTickets>, Error> {
+        Ok(ZZXArc::new(crate::ticketer::TicketSwitcher::new(
             6 * 60 * 60,
             make_ticket_generator,
         )?))
@@ -49,8 +49,8 @@ impl Ticketer {
     #[cfg(not(feature = "std"))]
     pub fn new<M: crate::lock::MakeMutex>(
         time_provider: &'static dyn TimeProvider,
-    ) -> Result<Arc<dyn ProducesTickets>, Error> {
-        Ok(Arc::new(crate::ticketer::TicketSwitcher::new::<M>(
+    ) -> Result<ZZXArc<dyn ProducesTickets>, Error> {
+        Ok(ZZXArc::new(crate::ticketer::TicketSwitcher::new::<M>(
             6 * 60 * 60,
             make_ticket_generator,
             time_provider,
@@ -280,7 +280,7 @@ mod tests {
 
     #[test]
     fn ticketswitcher_switching_test() {
-        let t = Arc::new(crate::ticketer::TicketSwitcher::new(1, make_ticket_generator).unwrap());
+        let t = ZZXArc::new(crate::ticketer::TicketSwitcher::new(1, make_ticket_generator).unwrap());
         let now = UnixTime::now();
         let cipher1 = t.encrypt(b"ticket 1").unwrap();
         assert_eq!(t.decrypt(&cipher1).unwrap(), b"ticket 1");

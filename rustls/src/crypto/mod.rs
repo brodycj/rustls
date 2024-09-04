@@ -5,7 +5,7 @@ use core::fmt::Debug;
 use pki_types::PrivateKeyDer;
 use zeroize::Zeroize;
 
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::sign::SigningKey;
 pub use crate::webpki::{
     verify_tls12_signature, verify_tls13_signature, WebPkiSupportedAlgorithms,
@@ -222,15 +222,15 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    pub fn install_default(self) -> Result<(), Arc<Self>> {
-        static_default::install_default(Arc::new(self))
+    pub fn install_default(self) -> Result<(), ZZXArc<Self>> {
+        static_default::install_default(ZZXArc::new(self))
     }
 
     /// Returns the default `CryptoProvider` for this process.
     ///
     /// This will be `None` if no default has been set yet.
     #[cfg(not(feature = "withrcalias"))]
-    pub fn get_default() -> Option<&'static Arc<Self>> {
+    pub fn get_default() -> Option<&'static ZZXArc<Self>> {
         static_default::get_default()
     }
 
@@ -238,7 +238,7 @@ impl CryptoProvider {
     ///
     /// This will be `None` if no default has been set yet.
     #[cfg(feature = "withrcalias")]
-    pub fn get_default() -> Option<Arc<Self>> {
+    pub fn get_default() -> Option<ZZXArc<Self>> {
         static_default::get_default()
     }
 
@@ -347,7 +347,7 @@ pub trait KeyProvider: Send + Sync + Debug {
     fn load_private_key(
         &self,
         key_der: PrivateKeyDer<'static>,
-    ) -> Result<Arc<dyn SigningKey>, Error>;
+    ) -> Result<ZZXArc<dyn SigningKey>, Error>;
 
     /// Return `true` if this is backed by a FIPS-approved implementation.
     ///
@@ -585,38 +585,38 @@ mod static_default {
     #[cfg(any(feature = "critical-section", feature = "std"))]
     use once_cell::sync::OnceCell;
 
-    use crate::alias::Arc;
+    use crate::alias::ZZXArc;
     use crate::crypto::CryptoProvider;
 
     #[cfg(not(feature = "withrcalias"))]
-    pub(crate) type DefaultRef = &'static Arc<CryptoProvider>;
+    pub(crate) type DefaultRef = &'static ZZXArc<CryptoProvider>;
     #[cfg(feature = "withrcalias")]
-    pub(crate) type DefaultRef = Arc<CryptoProvider>;
+    pub(crate) type DefaultRef = ZZXArc<CryptoProvider>;
 
     #[cfg(all(
         any(feature = "critical-section", feature = "std"),
         not(feature = "withrcalias")
     ))]
     pub(crate) fn install_default(
-        default_provider: Arc<CryptoProvider>,
-    ) -> Result<(), Arc<CryptoProvider>> {
+        default_provider: ZZXArc<CryptoProvider>,
+    ) -> Result<(), ZZXArc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.set(default_provider)
     }
 
     #[cfg(feature = "withrcalias")]
     pub(crate) fn install_default(
-        default_provider: Arc<CryptoProvider>,
-    ) -> Result<(), Arc<CryptoProvider>> {
+        default_provider: ZZXArc<CryptoProvider>,
+    ) -> Result<(), ZZXArc<CryptoProvider>> {
         match PROCESS_DEFAULT_PROVIDER.set(Box::from(default_provider.as_ref().clone())) {
             Ok(()) => Ok(()),
-            Err(previous) => Err(Arc::from(previous)),
+            Err(previous) => Err(ZZXArc::from(previous)),
         }
     }
 
     #[cfg(not(any(feature = "critical-section", feature = "std", feature = "withrcalias")))]
     pub(crate) fn install_default(
-        default_provider: Arc<CryptoProvider>,
-    ) -> Result<(), Arc<CryptoProvider>> {
+        default_provider: ZZXArc<CryptoProvider>,
+    ) -> Result<(), ZZXArc<CryptoProvider>> {
         match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider)) {
             Ok(()) => Ok(()),
             Err(previous) => Err(*previous),
@@ -631,7 +631,7 @@ mod static_default {
     #[cfg(feature = "withrcalias")]
     pub(crate) fn get_default() -> Option<DefaultRef> {
         match PROCESS_DEFAULT_PROVIDER.get() {
-            Some(provider) => Some(Arc::from(provider.clone())),
+            Some(provider) => Some(ZZXArc::from(provider.clone())),
             None => None,
         }
     }
@@ -640,14 +640,14 @@ mod static_default {
         any(feature = "critical-section", feature = "std"),
         not(feature = "withrcalias")
     ))]
-    type DefaultProviderStore = OnceCell<Arc<CryptoProvider>>;
+    type DefaultProviderStore = OnceCell<ZZXArc<CryptoProvider>>;
     #[cfg(all(
         feature = "withrcalias",
         any(feature = "critical-section", feature = "std")
     ))]
     type DefaultProviderStore = OnceCell<Box<CryptoProvider>>;
     #[cfg(not(any(feature = "critical-section", feature = "std", feature = "withrcalias")))]
-    type DefaultProviderStore = OnceBox<Arc<CryptoProvider>>;
+    type DefaultProviderStore = OnceBox<ZZXArc<CryptoProvider>>;
     #[cfg(all(
         feature = "withrcalias",
         not(any(feature = "critical-section", feature = "std"))

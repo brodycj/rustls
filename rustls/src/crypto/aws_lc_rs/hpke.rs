@@ -12,7 +12,7 @@ use aws_lc_rs::encoding::{AsBigEndian, Curve25519SeedBin, EcPrivateKeyBin};
 use zeroize::Zeroize;
 
 #[cfg(feature = "std")]
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::crypto::aws_lc_rs::hmac::{HMAC_SHA256, HMAC_SHA384, HMAC_SHA512};
 use crate::crypto::aws_lc_rs::unspecified_err;
 use crate::crypto::hpke::{
@@ -931,7 +931,7 @@ fn key_rejected_err(_e: aws_lc_rs::error::KeyRejected) -> Error {
     #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     {
-        Error::Other(OtherError(Arc::new(_e)))
+        Error::Other(OtherError(ZZXArc::new(_e)))
     }
     #[cfg(any(feature = "withrcalias", not(feature = "std")))]
     {

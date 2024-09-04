@@ -39,7 +39,7 @@ use core::fmt::Debug;
 #[cfg(feature = "std")]
 use std::sync::Mutex;
 
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::enums::CertificateCompressionAlgorithm;
 use crate::msgs::base::{Payload, PayloadU24};
 use crate::msgs::codec::Codec;
@@ -294,7 +294,7 @@ pub struct CompressionCacheInner {
     /// LRU-order entries.
     ///
     /// First is least-used, last is most-used.
-    entries: Mutex<VecDeque<Arc<CompressionCacheEntry>>>,
+    entries: Mutex<VecDeque<ZZXArc<CompressionCacheEntry>>>,
 }
 
 impl CompressionCache {
@@ -321,7 +321,7 @@ impl CompressionCache {
         &self,
         compressor: &dyn CertCompressor,
         original: &CertificatePayloadTls13<'_>,
-    ) -> Result<Arc<CompressionCacheEntry>, CompressionFailed> {
+    ) -> Result<ZZXArc<CompressionCacheEntry>, CompressionFailed> {
         match self {
             Self::Disabled => Self::uncached_compression(compressor, original),
 
@@ -335,7 +335,7 @@ impl CompressionCache {
         &self,
         compressor: &dyn CertCompressor,
         original: &CertificatePayloadTls13<'_>,
-    ) -> Result<Arc<CompressionCacheEntry>, CompressionFailed> {
+    ) -> Result<ZZXArc<CompressionCacheEntry>, CompressionFailed> {
         let (max_size, entries) = match self {
             Self::Enabled(CompressionCacheInner { size, entries }) => (*size, entries),
             _ => unreachable!(),
@@ -358,7 +358,7 @@ impl CompressionCache {
             if item.algorithm == algorithm && item.original == encoding {
                 // this item is now MRU
                 let item = cache.remove(i).unwrap();
-                cache.push_back(Arc::clone(&item));
+                cache.push_back(ZZXArc::clone(&item));
                 return Ok(item);
             }
         }
@@ -367,7 +367,7 @@ impl CompressionCache {
         // do compression:
         let uncompressed_len = encoding.len() as u32;
         let compressed = compressor.compress(encoding.clone(), CompressionLevel::Amortized)?;
-        let new_entry = Arc::new(CompressionCacheEntry {
+        let new_entry = ZZXArc::new(CompressionCacheEntry {
             algorithm,
             original: encoding,
             compressed: CompressedCertificatePayload {
@@ -384,7 +384,7 @@ impl CompressionCache {
         if cache.len() == max_size {
             cache.pop_front();
         }
-        cache.push_back(Arc::clone(&new_entry));
+        cache.push_back(ZZXArc::clone(&new_entry));
         Ok(new_entry)
     }
 
@@ -392,7 +392,7 @@ impl CompressionCache {
     fn uncached_compression(
         compressor: &dyn CertCompressor,
         original: &CertificatePayloadTls13<'_>,
-    ) -> Result<Arc<CompressionCacheEntry>, CompressionFailed> {
+    ) -> Result<ZZXArc<CompressionCacheEntry>, CompressionFailed> {
         let algorithm = compressor.algorithm();
         let encoding = original.get_encoding();
         let uncompressed_len = encoding.len() as u32;
@@ -400,7 +400,7 @@ impl CompressionCache {
 
         // this `CompressionCacheEntry` in fact never makes it into the cache, so
         // `original` is left empty
-        Ok(Arc::new(CompressionCacheEntry {
+        Ok(ZZXArc::new(CompressionCacheEntry {
             algorithm,
             original: Vec::new(),
             compressed: CompressedCertificatePayload {

@@ -11,7 +11,7 @@ use pki_types::{DnsName, UnixTime};
 
 use super::hs;
 
-use crate::alias::Arc;
+use crate::alias::ZZXArc;
 use crate::builder::ConfigBuilder;
 use crate::common_state::{CommonState, Side};
 #[cfg(feature = "std")]
@@ -121,7 +121,7 @@ pub_api_trait!(ResolvesServerCert, {
     /// ClientHello information.
     ///
     /// Return `None` to abort the handshake.
-    fn resolve(&self, client_hello: ClientHello<'_>) -> Option<Arc<sign::CertifiedKey>>;
+    fn resolve(&self, client_hello: ClientHello<'_>) -> Option<ZZXArc<sign::CertifiedKey>>;
 });
 
 /// A struct representing the received Client Hello
@@ -229,7 +229,7 @@ impl<'a> ClientHello<'a> {
 #[derive(Clone, Debug)]
 pub struct ServerConfig {
     /// Source of randomness and other crypto.
-    pub(super) provider: Arc<CryptoProvider>,
+    pub(super) provider: ZZXArc<CryptoProvider>,
 
     /// Ignore the client's ciphersuite order. Instead,
     /// choose the top ciphersuite in the server list
@@ -250,15 +250,15 @@ pub struct ServerConfig {
     pub max_fragment_size: Option<usize>,
 
     /// How to store client sessions.
-    pub session_storage: Arc<dyn StoresServerSessions>,
+    pub session_storage: ZZXArc<dyn StoresServerSessions>,
 
     /// How to produce tickets.
-    pub ticketer: Arc<dyn ProducesTickets>,
+    pub ticketer: ZZXArc<dyn ProducesTickets>,
 
     /// How to choose a server cert and key. This is usually set by
     /// [ConfigBuilder::with_single_cert] or [ConfigBuilder::with_cert_resolver].
     /// For async applications, see also [Acceptor].
-    pub cert_resolver: Arc<dyn ResolvesServerCert>,
+    pub cert_resolver: ZZXArc<dyn ResolvesServerCert>,
 
     /// Protocol names we support, most preferred first.
     /// If empty we don't do ALPN at all.
@@ -269,11 +269,11 @@ pub struct ServerConfig {
     pub(super) versions: versions::EnabledVersions,
 
     /// How to verify client certificates.
-    pub(super) verifier: Arc<dyn verify::ClientCertVerifier>,
+    pub(super) verifier: ZZXArc<dyn verify::ClientCertVerifier>,
 
     /// How to output key material for debugging.  The default
     /// does nothing.
-    pub key_log: Arc<dyn KeyLog>,
+    pub key_log: ZZXArc<dyn KeyLog>,
 
     /// Allows traffic secrets to be extracted after the handshake,
     /// e.g. for kTLS setup.
@@ -341,7 +341,7 @@ pub struct ServerConfig {
     pub require_ems: bool,
 
     /// Provides the current system time
-    pub time_provider: Arc<dyn TimeProvider>,
+    pub time_provider: ZZXArc<dyn TimeProvider>,
 
     /// How to compress the server's certificate chain.
     ///
@@ -359,7 +359,7 @@ pub struct ServerConfig {
     ///
     /// This is optional: [`compress::CompressionCache::Disabled`] gives
     /// a cache that does no caching.
-    pub cert_compression_cache: Arc<compress::CompressionCache>,
+    pub cert_compression_cache: ZZXArc<compress::CompressionCache>,
 
     /// How to decompress the clients's certificate chain.
     ///
@@ -422,12 +422,12 @@ impl ServerConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     #[cfg(feature = "std")]
     pub fn builder_with_provider(
-        provider: Arc<CryptoProvider>,
+        provider: ZZXArc<CryptoProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {
                 provider,
-                time_provider: Arc::new(DefaultTimeProvider),
+                time_provider: ZZXArc::new(DefaultTimeProvider),
             },
             side: PhantomData,
         }
@@ -448,8 +448,8 @@ impl ServerConfig {
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
-        provider: Arc<CryptoProvider>,
-        time_provider: Arc<dyn TimeProvider>,
+        provider: ZZXArc<CryptoProvider>,
+        time_provider: ZZXArc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {
@@ -479,7 +479,7 @@ impl ServerConfig {
     }
 
     /// Return the crypto provider used to construct this client configuration.
-    pub fn crypto_provider(&self) -> &Arc<CryptoProvider> {
+    pub fn crypto_provider(&self) -> &ZZXArc<CryptoProvider> {
         &self.provider
     }
 
@@ -521,7 +521,7 @@ mod connection {
 
     use super::{Accepted, Accepting, EarlyDataState, ServerConfig, ServerConnectionData};
 
-    use crate::alias::Arc;
+    use crate::alias::ZZXArc;
     use crate::common_state::{CommonState, Context, Side};
     use crate::conn::{ConnectionCommon, ConnectionCore};
     use crate::error::Error;
@@ -566,7 +566,7 @@ mod connection {
     impl ServerConnection {
         /// Make a new ServerConnection.  `config` controls how
         /// we behave in the TLS protocol.
-        pub fn new(config: Arc<ServerConfig>) -> Result<Self, Error> {
+        pub fn new(config: ZZXArc<ServerConfig>) -> Result<Self, Error> {
             Ok(Self {
                 inner: ConnectionCommon::from(ConnectionCore::for_server(config, Vec::new())?),
             })
@@ -864,7 +864,7 @@ pub struct UnbufferedServerConnection {
 
 impl UnbufferedServerConnection {
     /// Make a new ServerConnection. `config` controls how we behave in the TLS protocol.
-    pub fn new(config: Arc<ServerConfig>) -> Result<Self, Error> {
+    pub fn new(config: ZZXArc<ServerConfig>) -> Result<Self, Error> {
         Ok(Self {
             inner: UnbufferedConnectionCommon::from(ConnectionCore::for_server(
                 config,
@@ -923,7 +923,7 @@ impl Accepted {
     #[cfg(feature = "std")]
     pub fn into_connection(
         mut self,
-        config: Arc<ServerConfig>,
+        config: ZZXArc<ServerConfig>,
     ) -> Result<ServerConnection, (Error, AcceptedAlert)> {
         if let Err(err) = self
             .connection
@@ -1088,7 +1088,7 @@ impl Debug for EarlyDataState {
 
 impl ConnectionCore<ServerConnectionData> {
     pub(crate) fn for_server(
-        config: Arc<ServerConfig>,
+        config: ZZXArc<ServerConfig>,
         extra_exts: Vec<ServerExtension>,
     ) -> Result<Self, Error> {
         let mut common = CommonState::new(Side::Server);
