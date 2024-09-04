@@ -4082,11 +4082,13 @@ fn tls13_stateful_resumption() {
     // }
     unsafe {
         // ---
-        let xx1 = Arc::into_raw(st2);
-        let xx2: Arc<dyn StoresServerSessions> = Arc::from_raw(xx1);
-        server_config.session_storage = xx2;
+        // let xx1 = Arc::into_raw(st2);
+        let xx1 = Arc::into_raw(st2.clone());
+        // let xx2: Arc<dyn StoresServerSessions> = Arc::from_raw(xx1);
+        // server_config.session_storage = xx2;
+        server_config.session_storage = Arc::from_raw(xx1);
     }
-    panic!("XXX XXX");
+    // panic!("XXX XXX");
     // server_config.session_storage = storage.clone();
     let server_config = Arc::new(server_config);
     // panic!("XXX XXX XXX");
@@ -4096,8 +4098,7 @@ fn tls13_stateful_resumption() {
     let (full_c2s, full_s2c) = do_handshake(&mut client, &mut server);
     // panic!("XXX XXX XXX XXX");
     assert_eq!(storage.puts(), 4);
-    drop(st2);
-    panic!("XXX XXX XXX XXX");
+    // panic!("XXX XXX XXX XXX");
     assert_eq!(storage.gets(), 0);
     assert_eq!(storage.takes(), 0);
     assert_eq!(
@@ -4142,6 +4143,7 @@ fn tls13_stateful_resumption() {
     );
     assert_eq!(client.handshake_kind(), Some(HandshakeKind::Resumed));
     assert_eq!(server.handshake_kind(), Some(HandshakeKind::Resumed));
+    panic!("XXX XXX END OF HANDSHAKE TEST")
 }
 
 #[ignore]//XXX
