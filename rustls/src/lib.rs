@@ -405,6 +405,33 @@ mod alias {
     pub type ZZXArc<T> = alloc::sync::Arc<T>;
 }
 
+// XXX TBD CRATE NAMING FOR THIS ???
+pub mod aaa_aaa_arc {
+    #[inline(always)]
+    pub fn aaa_arc_from_box<U: ?Sized> (x: alloc::boxed::Box<U>) -> crate::alias::Arc<U> {
+        crate::alias::Arc::from(x)
+    }
+    // XXX XXX INTERNAL USE ONLY:
+    #[macro_export]
+    macro_rules! internal_paa_aaa_arc_from_contents {
+        ($x:expr) => {
+            crate::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new($x))
+        }
+    }
+    // XXX XXX HACKY API HELPER TO HELP WITH TESTING FOR NOW:
+    #[macro_export]
+    macro_rules! paa_arc_from_contents {
+        ($x:expr) => {
+            // ---
+            // XXX XXX REPLACE EXTERN CRATE WITH XXX XXX
+            {
+            extern crate alloc;
+            rustls::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new($x))
+            }
+        }
+    }
+}
+
 #[macro_use]
 mod trait_macros;
 

@@ -45,7 +45,7 @@ pub struct WantsServerCert {
     provider: ZZXArc<CryptoProvider>,
     versions: versions::EnabledVersions,
     verifier: ZZXArc<dyn ClientCertVerifier>,
-    time_provider: ZZXArc<dyn TimeProvider>,
+    time_provider: crate::alias::Arc<dyn TimeProvider>,
 }
 
 impl ConfigBuilder<ServerConfig, WantsServerCert> {

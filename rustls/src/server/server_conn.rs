@@ -341,7 +341,7 @@ pub struct ServerConfig {
     pub require_ems: bool,
 
     /// Provides the current system time
-    pub time_provider: ZZXArc<dyn TimeProvider>,
+    pub time_provider: crate::alias::Arc<dyn TimeProvider>,
 
     /// How to compress the server's certificate chain.
     ///
@@ -427,7 +427,7 @@ impl ServerConfig {
         ConfigBuilder {
             state: WantsVersions {
                 provider,
-                time_provider: ZZXArc::new(DefaultTimeProvider),
+                time_provider: crate::internal_paa_aaa_arc_from_contents!(DefaultTimeProvider),
             },
             side: PhantomData,
         }
@@ -449,7 +449,7 @@ impl ServerConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
         provider: ZZXArc<CryptoProvider>,
-        time_provider: ZZXArc<dyn TimeProvider>,
+        time_provider: crate::alias::Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {

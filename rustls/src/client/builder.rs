@@ -135,7 +135,7 @@ pub struct WantsClientCert {
     provider: ZZXArc<CryptoProvider>,
     versions: versions::EnabledVersions,
     verifier: ZZXArc<dyn verify::ServerCertVerifier>,
-    time_provider: ZZXArc<dyn TimeProvider>,
+    time_provider: crate::alias::Arc<dyn TimeProvider>,
     client_ech_mode: Option<EchMode>,
 }
 
