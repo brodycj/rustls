@@ -391,11 +391,17 @@ mod log {
 mod test_macros;
 
 mod alias {
-    #[cfg(not(feature = "withrcalias"))]
-    pub use alloc::sync::Arc;
+    // #[cfg(not(feature = "withrcalias"))]
+    // pub use alloc::sync::Arc;
 
-    #[cfg(feature = "withrcalias")]
-    pub use alloc::rc::Rc as Arc;
+    // #[cfg(feature = "withrcalias")]
+    // pub use alloc::rc::Rc as Arc;
+
+    extern crate portable_atomic_util;
+
+    // XXX TODO WANT TO GET INSTANCES WITH THIS ARC WORKING
+    // pub type Arc<T> = portable_atomic_util::Arc<T>;
+    pub type Arc<T> = alloc::sync::Arc<T>;
 }
 
 #[macro_use]
@@ -443,7 +449,9 @@ mod webpki;
 #[doc(hidden)]
 pub mod internal {
     pub mod alias {
-        pub use crate::alias::Arc;
+        // KEEP THIS ARC ALIAS AS ARC TYPE ALIAS LIKE THIS FOR NOW
+        // pub use crate::alias::Arc;
+        pub type Arc<T> = crate::alias::Arc<T>;
     }
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {
