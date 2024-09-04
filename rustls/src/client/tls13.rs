@@ -8,6 +8,7 @@ use subtle::ConstantTimeEq;
 use super::client_conn::ClientConnectionData;
 use super::hs::ClientContext;
 
+use crate::alias::Arc;
 use crate::alias::ZZXArc;
 use crate::check::inappropriate_handshake_message;
 use crate::client::common::{ClientAuthDetails, ClientHelloDetails, ServerCertDetails};
@@ -61,7 +62,7 @@ static DISALLOWED_TLS13_EXTS: &[ExtensionType] = &[
 ];
 
 pub(super) fn handle_server_hello(
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     cx: &mut ClientContext<'_>,
     server_hello: &ServerHelloPayload,
     mut resuming_session: Option<persist::Tls13ClientSessionValue>,
@@ -392,7 +393,7 @@ fn validate_encrypted_extensions(
 }
 
 struct ExpectEncryptedExtensions {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls13ClientSessionValue>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
@@ -528,7 +529,7 @@ impl State<ClientConnectionData> for ExpectEncryptedExtensions {
 }
 
 struct ExpectCertificateOrCompressedCertificateOrCertReq {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -620,7 +621,7 @@ impl State<ClientConnectionData> for ExpectCertificateOrCompressedCertificateOrC
 }
 
 struct ExpectCertificateOrCompressedCertificate {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -694,7 +695,7 @@ impl State<ClientConnectionData> for ExpectCertificateOrCompressedCertificate {
 }
 
 struct ExpectCertificateOrCertReq {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -770,7 +771,7 @@ impl State<ClientConnectionData> for ExpectCertificateOrCertReq {
 // Certificate. Unfortunately the CertificateRequest type changed in an annoying way
 // in TLS1.3.
 struct ExpectCertificateRequest {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -877,7 +878,7 @@ impl State<ClientConnectionData> for ExpectCertificateRequest {
 }
 
 struct ExpectCompressedCertificate {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -983,7 +984,7 @@ impl State<ClientConnectionData> for ExpectCompressedCertificate {
 }
 
 struct ExpectCertificate {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -1056,7 +1057,7 @@ impl State<ClientConnectionData> for ExpectCertificate {
 
 // --- TLS1.3 CertificateVerify ---
 struct ExpectCertificateVerify<'a> {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -1269,7 +1270,7 @@ fn emit_end_of_early_data_tls13(transcript: &mut HandshakeHash, common: &mut Com
 }
 
 struct ExpectFinished {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -1399,7 +1400,7 @@ impl State<ClientConnectionData> for ExpectFinished {
         }
 
         let st = ExpectTraffic {
-            config: ZZXArc::clone(&st.config),
+            config: Arc::clone(&st.config),
             session_storage: ZZXArc::clone(&st.config.resumption.store),
             server_name: st.server_name,
             suite: st.suite,
@@ -1425,7 +1426,7 @@ impl State<ClientConnectionData> for ExpectFinished {
 // In this state we can be sent tickets, key updates,
 // and application data.
 struct ExpectTraffic {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     session_storage: ZZXArc<dyn ClientSessionStore>,
     server_name: ServerName<'static>,
     suite: &'static Tls13CipherSuite,

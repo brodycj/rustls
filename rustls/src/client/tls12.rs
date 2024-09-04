@@ -10,6 +10,7 @@ use subtle::ConstantTimeEq;
 use super::client_conn::ClientConnectionData;
 use super::hs::ClientContext;
 
+use crate::alias::Arc;
 use crate::alias::ZZXArc;
 use crate::check::{inappropriate_handshake_message, inappropriate_message};
 use crate::client::common::{ClientAuthDetails, ServerCertDetails};
@@ -41,7 +42,7 @@ mod server_hello {
     use crate::msgs::handshake::{HasServerExtensions, ServerHelloPayload};
 
     pub(in crate::client) struct CompleteServerHelloHandling {
-        pub(in crate::client) config: ZZXArc<ClientConfig>,
+        pub(in crate::client) config: Arc<ClientConfig>,
         pub(in crate::client) resuming_session: Option<persist::Tls12ClientSessionValue>,
         pub(in crate::client) server_name: ServerName<'static>,
         pub(in crate::client) randoms: ConnectionRandoms,
@@ -191,7 +192,7 @@ mod server_hello {
 }
 
 struct ExpectCertificate {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -256,7 +257,7 @@ impl State<ClientConnectionData> for ExpectCertificate {
 }
 
 struct ExpectCertificateStatusOrServerKx<'m> {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -346,7 +347,7 @@ impl State<ClientConnectionData> for ExpectCertificateStatusOrServerKx<'_> {
 }
 
 struct ExpectCertificateStatus<'a> {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -413,7 +414,7 @@ impl State<ClientConnectionData> for ExpectCertificateStatus<'_> {
 }
 
 struct ExpectServerKx<'a> {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -619,7 +620,7 @@ impl ServerKxDetails {
 // Existence of the CertificateRequest tells us the server is asking for
 // client auth.  Otherwise we go straight to ServerHelloDone.
 struct ExpectServerDoneOrCertReq<'a> {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -704,7 +705,7 @@ impl State<ClientConnectionData> for ExpectServerDoneOrCertReq<'_> {
 }
 
 struct ExpectCertificateRequest<'a> {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -786,7 +787,7 @@ impl State<ClientConnectionData> for ExpectCertificateRequest<'_> {
 }
 
 struct ExpectServerDone<'a> {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -1021,7 +1022,7 @@ impl State<ClientConnectionData> for ExpectServerDone<'_> {
 }
 
 struct ExpectNewTicket {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     secrets: ConnectionSecrets,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
@@ -1072,7 +1073,7 @@ impl State<ClientConnectionData> for ExpectNewTicket {
 
 // -- Waiting for their CCS --
 struct ExpectCcs {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     secrets: ConnectionSecrets,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
@@ -1133,7 +1134,7 @@ impl State<ClientConnectionData> for ExpectCcs {
 }
 
 struct ExpectFinished {
-    config: ZZXArc<ClientConfig>,
+    config: Arc<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
