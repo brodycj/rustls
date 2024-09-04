@@ -450,10 +450,10 @@ mod webpki;
 #[doc(hidden)]
 pub mod internal {
     pub mod alias {
-        // KEEP THIS ARC ALIAS AS ARC TYPE ALIAS LIKE THIS FOR NOW
-        // pub use crate::alias::Arc;
-        // XXX XXX WANT TO REPLACE USE OF THIS TYPE ALIAS WITH alias::Arc:
-        pub type ZZXArc<T> = crate::alias::ZZXArc<T>;
+        // XXX TODO WANT TO SWITCH TO USING THIS ONE:
+        pub use crate::alias::Arc;
+        // XXX XXX WANT TO REPLACE USE OF THIS ONE:
+        pub use crate::alias::ZZXArc;
     }
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {
