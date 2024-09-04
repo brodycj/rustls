@@ -3,6 +3,7 @@ use core::marker::PhantomData;
 
 use pki_types::{CertificateDer, PrivateKeyDer};
 
+use crate::alias::Arc;
 use crate::alias::ZZXArc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::crypto::CryptoProvider;
@@ -140,7 +141,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             ticketer: ZZXArc::new(handy::NeverProducesTickets {}),
             alpn_protocols: Vec::new(),
             versions: self.state.versions,
-            key_log: ZZXArc::new(NoKeyLog {}),
+            key_log: crate::internal_paa_aaa_arc_from_contents!(NoKeyLog {}),
             enable_secret_extraction: false,
             max_early_data_size: 0,
             send_half_rtt_data: false,

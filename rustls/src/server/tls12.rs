@@ -11,7 +11,7 @@ use super::common::ActiveCertifiedKey;
 use super::hs::{self, ServerContext};
 use super::server_conn::{ProducesTickets, ServerConfig, ServerConnectionData};
 
-use crate::alias::ZZXArc;
+use crate::alias::Arc;
 use crate::check::inappropriate_message;
 use crate::common_state::{CommonState, HandshakeKind, Side, State};
 use crate::conn::ConnectionRandoms;
@@ -50,7 +50,7 @@ mod client_hello {
     use crate::verify::DigitallySignedStruct;
 
     pub(in crate::server) struct CompleteClientHelloHandling {
-        pub(in crate::server) config: ZZXArc<ServerConfig>,
+        pub(in crate::server) config: Arc<ServerConfig>,
         pub(in crate::server) transcript: HandshakeHash,
         pub(in crate::server) session_id: SessionId,
         pub(in crate::server) suite: &'static Tls12CipherSuite,
@@ -490,7 +490,7 @@ mod client_hello {
 
 // --- Process client's Certificate for client auth ---
 struct ExpectCertificate {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     transcript: HandshakeHash,
     randoms: ConnectionRandoms,
     session_id: SessionId,
@@ -571,7 +571,7 @@ impl State<ServerConnectionData> for ExpectCertificate {
 
 // --- Process client's KeyExchange ---
 struct ExpectClientKx<'a> {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     transcript: HandshakeHash,
     randoms: ConnectionRandoms,
     session_id: SessionId,
@@ -667,7 +667,7 @@ impl State<ServerConnectionData> for ExpectClientKx<'_> {
 
 // --- Process client's certificate proof ---
 struct ExpectCertificateVerify<'a> {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,
@@ -749,7 +749,7 @@ impl State<ServerConnectionData> for ExpectCertificateVerify<'_> {
 
 // --- Process client's ChangeCipherSpec ---
 struct ExpectCcs {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,
@@ -892,7 +892,7 @@ fn emit_finished(
 }
 
 struct ExpectFinished {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,

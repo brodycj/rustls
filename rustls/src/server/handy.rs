@@ -53,6 +53,24 @@ mod cache {
             crate::internal_paa_aaa_arc_from_contents!(Self {
                 cache: Mutex::new(limited_cache::LimitedCache::new(size)),
             })
+            // crate::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new(Self {
+            //     // ---
+            //     cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            // }))
+            // Arc::from(
+            //     (|| {
+            //     // ---
+            //     let b = Box::new(
+            //         (|| {
+            //         Self {
+            //             // ---
+            //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //         }
+            //         })()
+            //     );
+            //     b
+            //     })()
+            // )
         }
 
         ///// XXX TODO XXX XXX

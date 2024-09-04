@@ -274,7 +274,7 @@ pub struct ServerConfig {
 
     /// How to output key material for debugging.  The default
     /// does nothing.
-    pub key_log: ZZXArc<dyn KeyLog>,
+    pub key_log: Arc<dyn KeyLog>,
 
     /// Allows traffic secrets to be extracted after the handshake,
     /// e.g. for kTLS setup.
@@ -522,7 +522,7 @@ mod connection {
 
     use super::{Accepted, Accepting, EarlyDataState, ServerConfig, ServerConnectionData};
 
-    use crate::alias::ZZXArc;
+    use crate::alias::Arc;
     use crate::common_state::{CommonState, Context, Side};
     use crate::conn::{ConnectionCommon, ConnectionCore};
     use crate::error::Error;
@@ -567,7 +567,7 @@ mod connection {
     impl ServerConnection {
         /// Make a new ServerConnection.  `config` controls how
         /// we behave in the TLS protocol.
-        pub fn new(config: ZZXArc<ServerConfig>) -> Result<Self, Error> {
+        pub fn new(config: Arc<ServerConfig>) -> Result<Self, Error> {
             Ok(Self {
                 inner: ConnectionCommon::from(ConnectionCore::for_server(config, Vec::new())?),
             })
@@ -865,7 +865,7 @@ pub struct UnbufferedServerConnection {
 
 impl UnbufferedServerConnection {
     /// Make a new ServerConnection. `config` controls how we behave in the TLS protocol.
-    pub fn new(config: ZZXArc<ServerConfig>) -> Result<Self, Error> {
+    pub fn new(config: Arc<ServerConfig>) -> Result<Self, Error> {
         Ok(Self {
             inner: UnbufferedConnectionCommon::from(ConnectionCore::for_server(
                 config,
@@ -924,7 +924,7 @@ impl Accepted {
     #[cfg(feature = "std")]
     pub fn into_connection(
         mut self,
-        config: ZZXArc<ServerConfig>,
+        config: Arc<ServerConfig>,
     ) -> Result<ServerConnection, (Error, AcceptedAlert)> {
         if let Err(err) = self
             .connection
@@ -1089,7 +1089,7 @@ impl Debug for EarlyDataState {
 
 impl ConnectionCore<ServerConnectionData> {
     pub(crate) fn for_server(
-        config: ZZXArc<ServerConfig>,
+        config: Arc<ServerConfig>,
         extra_exts: Vec<ServerExtension>,
     ) -> Result<Self, Error> {
         let mut common = CommonState::new(Side::Server);

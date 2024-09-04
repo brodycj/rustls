@@ -9,7 +9,7 @@ use subtle::ConstantTimeEq;
 use super::hs::{self, HandshakeHashOrBuffer, ServerContext};
 use super::server_conn::ServerConnectionData;
 
-use crate::alias::ZZXArc;
+use crate::alias::Arc;
 use crate::check::{inappropriate_handshake_message, inappropriate_message};
 use crate::common_state::{CommonState, HandshakeKind, Protocol, Side, State};
 use crate::conn::ConnectionRandoms;
@@ -61,7 +61,7 @@ mod client_hello {
     }
 
     pub(in crate::server) struct CompleteClientHelloHandling {
-        pub(in crate::server) config: ZZXArc<ServerConfig>,
+        pub(in crate::server) config: Arc<ServerConfig>,
         pub(in crate::server) transcript: HandshakeHash,
         pub(in crate::server) suite: &'static Tls13CipherSuite,
         pub(in crate::server) randoms: ConnectionRandoms,
@@ -910,7 +910,7 @@ impl State<ServerConnectionData> for ExpectAndSkipRejectedEarlyData {
 }
 
 struct ExpectCertificateOrCompressedCertificate {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -977,7 +977,7 @@ impl State<ServerConnectionData> for ExpectCertificateOrCompressedCertificate {
 }
 
 struct ExpectCompressedCertificate {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -1077,7 +1077,7 @@ impl State<ServerConnectionData> for ExpectCompressedCertificate {
 }
 
 struct ExpectCertificate {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -1164,7 +1164,7 @@ impl State<ServerConnectionData> for ExpectCertificate {
 }
 
 struct ExpectCertificateVerify {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -1225,7 +1225,7 @@ impl State<ServerConnectionData> for ExpectCertificateVerify {
 //     followed by a terminating handshake EndOfEarlyData message ---
 
 struct ExpectEarlyData {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -1317,7 +1317,7 @@ fn get_server_session_value(
 }
 
 struct ExpectFinished {
-    config: ZZXArc<ServerConfig>,
+    config: Arc<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,

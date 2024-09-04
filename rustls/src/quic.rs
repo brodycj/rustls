@@ -26,6 +26,7 @@ mod connection {
 
     use super::{DirectionalKeys, KeyChange, Version};
 
+    use crate::alias::Arc;
     use crate::alias::ZZXArc;
     use crate::client::{ClientConfig, ClientConnectionData};
     use crate::common_state::{CommonState, Protocol, DEFAULT_BUFFER_LIMIT};
@@ -237,7 +238,7 @@ mod connection {
         /// This differs from `ServerConnection::new()` in that it takes an extra `params` argument,
         /// which contains the TLS-encoded transport parameters to send.
         pub fn new(
-            config: ZZXArc<ServerConfig>,
+            config: Arc<ServerConfig>,
             quic_version: Version,
             params: Vec<u8>,
         ) -> Result<Self, Error> {
