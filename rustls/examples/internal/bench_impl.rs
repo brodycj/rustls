@@ -6,6 +6,7 @@
 use std::io::{self, Read, Write};
 use std::ops::{Deref, DerefMut};
 
+use rustls::internal::alias::Arc;
 use rustls::internal::alias::ZZXArc;
 
 use std::time::{Duration, Instant};
@@ -217,7 +218,9 @@ fn bench_handshake(
         1,
         ResumptionParam::No,
         client_config.clone(),
-        server_config.clone(),
+        // XXX TODO XXX
+        // server_config.clone(),
+        Arc::from(server_config.clone()),
     );
 
     if options.api.use_buffered() {
@@ -247,7 +250,7 @@ fn bench_handshake_buffered(
     rounds: u64,
     resume: ResumptionParam,
     client_config: ZZXArc<ClientConfig>,
-    server_config: ZZXArc<ServerConfig>,
+    server_config: Arc<ServerConfig>,
 ) -> Timings {
     let mut timings = Timings::default();
 
@@ -257,7 +260,7 @@ fn bench_handshake_buffered(
             ClientConnection::new(ZZXArc::clone(&client_config), server_name).unwrap()
         });
         let mut server = time(&mut timings.server, || {
-            ServerConnection::new(ZZXArc::clone(&server_config)).unwrap()
+            ServerConnection::new(Arc::clone(&server_config)).unwrap()
         });
 
         time(&mut timings.server, || {
@@ -287,7 +290,7 @@ fn bench_handshake_unbuffered(
     rounds: u64,
     resume: ResumptionParam,
     client_config: ZZXArc<ClientConfig>,
-    server_config: ZZXArc<ServerConfig>,
+    server_config: Arc<ServerConfig>,
 ) -> Timings {
     let mut timings = Timings::default();
 
@@ -297,7 +300,8 @@ fn bench_handshake_unbuffered(
             UnbufferedClientConnection::new(ZZXArc::clone(&client_config), server_name).unwrap()
         });
         let server = time(&mut timings.server, || {
-            UnbufferedServerConnection::new(ZZXArc::clone(&server_config)).unwrap()
+            // UnbufferedServerConnection::new(Arc::clone(&server_config)).unwrap()
+            UnbufferedServerConnection::new(Arc::from(server_config.clone())).unwrap()
         });
 
         // nb. buffer allocation is outside the library, so is outside the benchmark scope
@@ -414,7 +418,8 @@ fn bench_bulk(
             "bulk",
             bench_bulk_buffered(
                 client_config.clone(),
-                server_config.clone(),
+                // server_config.clone(),
+                Arc::from(server_config.clone()),
                 plaintext_size,
                 rounds,
             ),
@@ -439,7 +444,7 @@ fn bench_bulk(
 
 fn bench_bulk_buffered(
     client_config: ZZXArc<ClientConfig>,
-    server_config: ZZXArc<ServerConfig>,
+    server_config: Arc<ServerConfig>,
     plaintext_size: u64,
     rounds: u64,
 ) -> (f64, f64) {
@@ -468,7 +473,7 @@ fn bench_bulk_buffered(
 
 fn bench_bulk_unbuffered(
     client_config: ZZXArc<ClientConfig>,
-    server_config: ZZXArc<ServerConfig>,
+    server_config: Arc<ServerConfig>,
     plaintext_size: u64,
     rounds: u64,
 ) -> (f64, f64) {
@@ -544,7 +549,7 @@ fn bench_memory(params: &BenchmarkParam, conn_count: u64) {
     let mut clients = Vec::with_capacity(conn_count);
 
     for _i in 0..conn_count {
-        servers.push(ServerConnection::new(ZZXArc::clone(&server_config)).unwrap());
+        servers.push(ServerConnection::new(Arc::clone(&server_config)).unwrap());
         let server_name = "localhost".try_into().unwrap();
         clients.push(ClientConnection::new(ZZXArc::clone(&client_config), server_name).unwrap());
     }
@@ -578,7 +583,7 @@ fn make_server_config(
     client_auth: ClientAuth,
     resume: ResumptionParam,
     max_fragment_size: Option<usize>,
-) -> ZZXArc<ServerConfig> {
+) -> Arc<ServerConfig> {
     let provider = ZZXArc::new(provider::default_provider());
     let client_auth = match client_auth {
         ClientAuth::Yes => {
@@ -606,11 +611,11 @@ fn make_server_config(
     } else if resume == ResumptionParam::Tickets {
         cfg.ticketer = Ticketer::new().unwrap();
     } else {
-        cfg.session_storage = ZZXArc::new(NoServerSessionStorage {});
+        cfg.session_storage = rustls::paa_arc_from_contents!(NoServerSessionStorage {});
     }
 
     cfg.max_fragment_size = max_fragment_size;
-    ZZXArc::new(cfg)
+    Arc::new(cfg)
 }
 
 fn make_client_config(
