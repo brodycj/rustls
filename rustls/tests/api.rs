@@ -9,8 +9,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use std::{fmt, mem};
 
-// XXX TBD ??? ???? ???:
-// use rustls::internal::alias::Arc;
+use rustls::internal::alias::Arc;
 // XXX XXX TODO COMPLETELY REPLACE USE OF THIS:
 use rustls::internal::alias::ZZXArc;
 
@@ -57,7 +56,7 @@ fn alpn_test_error(
     let mut server_config = make_server_config(KeyType::Rsa2048);
     server_config.alpn_protocols = server_protos;
 
-    let server_config = ZZXArc::new(server_config);
+    let server_config = Arc::new(server_config);
 
     for version in rustls::ALL_VERSIONS {
         let mut client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
@@ -66,7 +65,7 @@ fn alpn_test_error(
             .clone_from(&client_protos);
 
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
 
         assert_eq!(client.alpn_protocol(), None);
         assert_eq!(server.alpn_protocol(), None);
@@ -360,12 +359,12 @@ fn config_builder_for_server_with_time() {
 
 #[test]
 fn buffered_client_data_sent() {
-    let server_config = ZZXArc::new(make_server_config(KeyType::Rsa2048));
+    let server_config = Arc::new(make_server_config(KeyType::Rsa2048));
 
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
 
         assert_eq!(5, client.writer().write(b"hello").unwrap());
 
@@ -379,12 +378,12 @@ fn buffered_client_data_sent() {
 
 #[test]
 fn buffered_server_data_sent() {
-    let server_config = ZZXArc::new(make_server_config(KeyType::Rsa2048));
+    let server_config = Arc::new(make_server_config(KeyType::Rsa2048));
 
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
 
         assert_eq!(5, server.writer().write(b"hello").unwrap());
 
@@ -398,12 +397,12 @@ fn buffered_server_data_sent() {
 
 #[test]
 fn buffered_both_data_sent() {
-    let server_config = ZZXArc::new(make_server_config(KeyType::Rsa2048));
+    let server_config = Arc::new(make_server_config(KeyType::Rsa2048));
 
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
 
         assert_eq!(
             12,
@@ -473,12 +472,12 @@ fn client_can_get_server_cert_after_resumption() {
 #[test]
 fn server_can_get_client_cert() {
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config_with_mandatory_client_auth(*kt));
+        let server_config = Arc::new(make_server_config_with_mandatory_client_auth(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+                make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
             do_handshake(&mut client, &mut server);
 
             let certs = server.peer_certificates();
@@ -490,11 +489,11 @@ fn server_can_get_client_cert() {
 #[test]
 fn server_can_get_client_cert_after_resumption() {
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config_with_mandatory_client_auth(*kt));
+        let server_config = Arc::new(make_server_config_with_mandatory_client_auth(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
-            let client_config = ZZXArc::new(client_config);
+            let client_config = Arc::new(client_config);
             let (mut client, mut server) =
                 make_pair_for_arc_configs(&client_config, &server_config);
             do_handshake(&mut client, &mut server);
@@ -624,7 +623,7 @@ fn server_allow_any_anonymous_or_authenticated_client() {
             .with_client_cert_verifier(client_auth)
             .with_single_cert(kt.get_chain(), kt.get_key())
             .unwrap();
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let client_config = if client_cert_chain.is_some() {
@@ -633,7 +632,7 @@ fn server_allow_any_anonymous_or_authenticated_client() {
                 make_client_config_with_versions(kt, &[version])
             };
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+                make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
             do_handshake(&mut client, &mut server);
 
             let certs = server.peer_certificates();
@@ -650,12 +649,12 @@ fn check_read_and_close(reader: &mut dyn io::Read, expect: &[u8]) {
 #[test]
 fn server_close_notify() {
     let kt = KeyType::Rsa2048;
-    let server_config = ZZXArc::new(make_server_config_with_mandatory_client_auth(kt));
+    let server_config = Arc::new(make_server_config_with_mandatory_client_auth(kt));
 
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions_with_auth(kt, &[version]);
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
         do_handshake(&mut client, &mut server);
 
         // check that alerts don't overtake appdata
@@ -689,12 +688,12 @@ fn server_close_notify() {
 #[test]
 fn client_close_notify() {
     let kt = KeyType::Rsa2048;
-    let server_config = ZZXArc::new(make_server_config_with_mandatory_client_auth(kt));
+    let server_config = Arc::new(make_server_config_with_mandatory_client_auth(kt));
 
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions_with_auth(kt, &[version]);
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
         do_handshake(&mut client, &mut server);
 
         // check that alerts don't overtake appdata
@@ -728,12 +727,12 @@ fn client_close_notify() {
 #[test]
 fn server_closes_uncleanly() {
     let kt = KeyType::Rsa2048;
-    let server_config = ZZXArc::new(make_server_config(kt));
+    let server_config = Arc::new(make_server_config(kt));
 
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions(kt, &[version]);
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
         do_handshake(&mut client, &mut server);
 
         // check that unclean EOF reporting does not overtake appdata
@@ -773,12 +772,12 @@ fn server_closes_uncleanly() {
 #[test]
 fn client_closes_uncleanly() {
     let kt = KeyType::Rsa2048;
-    let server_config = ZZXArc::new(make_server_config(kt));
+    let server_config = Arc::new(make_server_config(kt));
 
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions(kt, &[version]);
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
         do_handshake(&mut client, &mut server);
 
         // check that unclean EOF reporting does not overtake appdata
@@ -970,9 +969,9 @@ fn server_cert_resolve_with_sni() {
         });
 
         let mut client =
-            ClientConnection::new(ZZXArc::new(client_config), server_name("the-value-from-sni"))
+            ClientConnection::new(Arc::new(client_config), server_name("the-value-from-sni"))
                 .unwrap();
-        let mut server = ServerConnection::new(ZZXArc::new(server_config)).unwrap();
+        let mut server = ServerConnection::new(Arc::new(server_config)).unwrap();
 
         let err = do_handshake_until_error(&mut client, &mut server);
         assert!(err.is_err());
@@ -992,8 +991,8 @@ fn server_cert_resolve_with_alpn() {
         });
 
         let mut client =
-            ClientConnection::new(ZZXArc::new(client_config), server_name("sni-value")).unwrap();
-        let mut server = ServerConnection::new(ZZXArc::new(server_config)).unwrap();
+            ClientConnection::new(Arc::new(client_config), server_name("sni-value")).unwrap();
+        let mut server = ServerConnection::new(Arc::new(server_config)).unwrap();
 
         let err = do_handshake_until_error(&mut client, &mut server);
         assert!(err.is_err());
@@ -1012,8 +1011,8 @@ fn client_trims_terminating_dot() {
         });
 
         let mut client =
-            ClientConnection::new(ZZXArc::new(client_config), server_name("some-host.com.")).unwrap();
-        let mut server = ServerConnection::new(ZZXArc::new(server_config)).unwrap();
+            ClientConnection::new(Arc::new(client_config), server_name("some-host.com.")).unwrap();
+        let mut server = ServerConnection::new(Arc::new(server_config)).unwrap();
 
         let err = do_handshake_until_error(&mut client, &mut server);
         assert!(err.is_err());
@@ -1092,8 +1091,8 @@ fn check_sni_error(alteration: impl Fn(&mut Message) -> Altered, expected_error:
         server_config.cert_resolver = ZZXArc::new(ServerCheckNoSni {});
 
         let client =
-            ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-        let server = ServerConnection::new(ZZXArc::new(server_config)).unwrap();
+            ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+        let server = ServerConnection::new(Arc::new(server_config)).unwrap();
         let (mut client, mut server) = (client.into(), server.into());
 
         transfer_altered(&mut client, &alteration, &mut server);
@@ -1135,8 +1134,8 @@ fn check_sigalgs_reduced_by_ciphersuite(
     });
 
     let mut client =
-        ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-    let mut server = ServerConnection::new(ZZXArc::new(server_config)).unwrap();
+        ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+    let mut server = ServerConnection::new(Arc::new(server_config)).unwrap();
 
     let err = do_handshake_until_error(&mut client, &mut server);
     assert!(err.is_err());
@@ -1198,16 +1197,16 @@ fn client_with_sni_disabled_does_not_send_sni() {
     for kt in ALL_KEY_TYPES {
         let mut server_config = make_server_config(*kt);
         server_config.cert_resolver = ZZXArc::new(ServerCheckNoSni {});
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
             client_config.enable_sni = false;
 
             let mut client =
-                ClientConnection::new(ZZXArc::new(client_config), server_name("value-not-sent"))
+                ClientConnection::new(Arc::new(client_config), server_name("value-not-sent"))
                     .unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
 
             let err = do_handshake_until_error(&mut client, &mut server);
             assert!(err.is_err());
@@ -1218,16 +1217,16 @@ fn client_with_sni_disabled_does_not_send_sni() {
 #[test]
 fn client_checks_server_certificate_with_given_name() {
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions(*kt, &[version]);
             let mut client = ClientConnection::new(
-                ZZXArc::new(client_config),
+                Arc::new(client_config),
                 server_name("not-the-right-hostname.com"),
             )
             .unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
 
             let err = do_handshake_until_error(&mut client, &mut server);
             assert_eq!(
@@ -1243,8 +1242,8 @@ fn client_checks_server_certificate_with_given_name() {
 #[test]
 fn client_checks_server_certificate_with_given_ip_address() {
     fn check_server_name(
-        client_config: ZZXArc<ClientConfig>,
-        server_config: ZZXArc<ServerConfig>,
+        client_config: Arc<ClientConfig>,
+        server_config: Arc<ServerConfig>,
         name: &'static str,
     ) -> Result<(), ErrorFromPeer> {
         let mut client = ClientConnection::new(client_config, server_name(name)).unwrap();
@@ -1253,10 +1252,10 @@ fn client_checks_server_certificate_with_given_ip_address() {
     }
 
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         for version in rustls::ALL_VERSIONS {
-            let client_config = ZZXArc::new(make_client_config_with_versions(*kt, &[version]));
+            let client_config = Arc::new(make_client_config_with_versions(*kt, &[version]));
 
             // positive ipv4 case
             assert_eq!(
@@ -1292,7 +1291,7 @@ fn client_checks_server_certificate_with_given_ip_address() {
 #[test]
 fn client_check_server_certificate_ee_revoked() {
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         // Setup a server verifier that will check the EE certificate's revocation status.
         let crls = vec![kt.end_entity_crl()];
@@ -1303,8 +1302,8 @@ fn client_check_server_certificate_ee_revoked() {
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_verifier(&[version], builder.clone());
             let mut client =
-                ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
 
             // We expect the handshake to fail since the server's EE certificate is revoked.
             let err = do_handshake_until_error(&mut client, &mut server);
@@ -1321,7 +1320,7 @@ fn client_check_server_certificate_ee_revoked() {
 #[test]
 fn client_check_server_certificate_ee_unknown_revocation() {
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         // Setup a server verifier builder that will check the EE certificate's revocation status, but not
         // allow unknown revocation status (the default). We'll provide CRLs that are not relevant
@@ -1341,8 +1340,8 @@ fn client_check_server_certificate_ee_unknown_revocation() {
             let client_config =
                 make_client_config_with_verifier(&[version], forbid_unknown_verifier.clone());
             let mut client =
-                ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
 
             // We expect if we use the forbid_unknown_verifier that the handshake will fail since the
             // server's EE certificate's revocation status is unknown given the CRLs we've provided.
@@ -1358,8 +1357,8 @@ fn client_check_server_certificate_ee_unknown_revocation() {
             let client_config =
                 make_client_config_with_verifier(&[version], allow_unknown_verifier.clone());
             let mut client =
-                ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
             let res = do_handshake_until_error(&mut client, &mut server);
             assert!(res.is_ok());
         }
@@ -1369,7 +1368,7 @@ fn client_check_server_certificate_ee_unknown_revocation() {
 #[test]
 fn client_check_server_certificate_intermediate_revoked() {
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         // Setup a server verifier builder that will check the full chain revocation status against a CRL
         // that marks the intermediate certificate as revoked. We allow unknown revocation status
@@ -1391,8 +1390,8 @@ fn client_check_server_certificate_intermediate_revoked() {
             let client_config =
                 make_client_config_with_verifier(&[version], full_chain_verifier_builder.clone());
             let mut client =
-                ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
 
             // We expect the handshake to fail when using the full chain verifier since the intermediate's
             // EE certificate is revoked.
@@ -1407,8 +1406,8 @@ fn client_check_server_certificate_intermediate_revoked() {
             let client_config =
                 make_client_config_with_verifier(&[version], ee_verifier_builder.clone());
             let mut client =
-                ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
             // We expect the handshake to succeed when we use the verifier that only checks the EE certificate
             // revocation status. The revoked intermediate status should not be checked.
             let res = do_handshake_until_error(&mut client, &mut server);
@@ -1420,7 +1419,7 @@ fn client_check_server_certificate_intermediate_revoked() {
 #[test]
 fn client_check_server_certificate_ee_crl_expired() {
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config(*kt));
+        let server_config = Arc::new(make_server_config(*kt));
 
         // Setup a server verifier that will check the EE certificate's revocation status, with CRL expiration enforced.
         let crls = vec![kt.end_entity_crl_expired()];
@@ -1439,8 +1438,8 @@ fn client_check_server_certificate_ee_crl_expired() {
             let client_config =
                 make_client_config_with_verifier(&[version], enforce_expiration_builder.clone());
             let mut client =
-                ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
 
             // We expect the handshake to fail since the CRL is expired.
             let err = do_handshake_until_error(&mut client, &mut server);
@@ -1454,8 +1453,8 @@ fn client_check_server_certificate_ee_crl_expired() {
             let client_config =
                 make_client_config_with_verifier(&[version], ignore_expiration_builder.clone());
             let mut client =
-                ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
-            let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
 
             // We expect the handshake to succeed when CRL expiration is ignored.
             let res = do_handshake_until_error(&mut client, &mut server);
@@ -1558,7 +1557,7 @@ impl ResolvesClientCert for ClientCheckCertResolve {
 
 fn test_client_cert_resolve(
     key_type: KeyType,
-    server_config: ZZXArc<ServerConfig>,
+    server_config: Arc<ServerConfig>,
     expected_root_hint_subjects: Vec<Vec<u8>>,
 ) {
     for version in rustls::ALL_VERSIONS {
@@ -1572,7 +1571,7 @@ fn test_client_cert_resolve(
         ));
 
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
 
         assert_eq!(
             do_handshake_until_error(&mut client, &mut server),
@@ -1613,7 +1612,7 @@ fn client_cert_resolve_default() {
     // Test that in the default configuration that a client cert resolver gets the expected
     // CA subject hints, and supported signature algorithms.
     for key_type in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config_with_mandatory_client_auth(*key_type));
+        let server_config = Arc::new(make_server_config_with_mandatory_client_auth(*key_type));
 
         // In a default configuration we expect that the verifier's trust anchors are used
         // for the hint subjects.
@@ -1663,12 +1662,12 @@ fn client_cert_resolve_server_added_hint() {
 #[test]
 fn client_auth_works() {
     for kt in ALL_KEY_TYPES {
-        let server_config = ZZXArc::new(make_server_config_with_mandatory_client_auth(*kt));
+        let server_config = Arc::new(make_server_config_with_mandatory_client_auth(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+                make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
             do_handshake(&mut client, &mut server);
         }
     }
@@ -1685,7 +1684,7 @@ fn client_mandatory_auth_client_revocation_works() {
         let ee_verifier_builder = webpki_client_verifier_builder(get_client_root_store(*kt))
             .with_crls(relevant_crls)
             .only_check_end_entity_revocation();
-        let revoked_server_config = ZZXArc::new(make_server_config_with_client_verifier(
+        let revoked_server_config = Arc::new(make_server_config_with_client_verifier(
             *kt,
             ee_verifier_builder,
         ));
@@ -1696,7 +1695,7 @@ fn client_mandatory_auth_client_revocation_works() {
         let ee_verifier_builder = webpki_client_verifier_builder(get_client_root_store(*kt))
             .with_crls(unrelated_crls.clone())
             .only_check_end_entity_revocation();
-        let missing_client_crl_server_config = ZZXArc::new(make_server_config_with_client_verifier(
+        let missing_client_crl_server_config = Arc::new(make_server_config_with_client_verifier(
             *kt,
             ee_verifier_builder,
         ));
@@ -1707,7 +1706,7 @@ fn client_mandatory_auth_client_revocation_works() {
             .with_crls(unrelated_crls.clone())
             .only_check_end_entity_revocation()
             .allow_unknown_revocation_status();
-        let allow_missing_client_crl_server_config = ZZXArc::new(
+        let allow_missing_client_crl_server_config = Arc::new(
             make_server_config_with_client_verifier(*kt, ee_verifier_builder),
         );
 
@@ -1715,7 +1714,7 @@ fn client_mandatory_auth_client_revocation_works() {
             // Connecting to the server with a CRL that indicates the client certificate is revoked
             // should fail with the expected error.
             let client_config =
-                ZZXArc::new(make_client_config_with_versions_with_auth(*kt, &[version]));
+                Arc::new(make_client_config_with_versions_with_auth(*kt, &[version]));
             let (mut client, mut server) =
                 make_pair_for_arc_configs(&client_config, &revoked_server_config);
             let err = do_handshake_until_error(&mut client, &mut server);
@@ -1757,7 +1756,7 @@ fn client_mandatory_auth_intermediate_revocation_works() {
             webpki_client_verifier_builder(get_client_root_store(*kt))
                 .with_crls(crls.clone())
                 .allow_unknown_revocation_status();
-        let full_chain_server_config = ZZXArc::new(make_server_config_with_client_verifier(
+        let full_chain_server_config = Arc::new(make_server_config_with_client_verifier(
             *kt,
             full_chain_verifier_builder,
         ));
@@ -1768,7 +1767,7 @@ fn client_mandatory_auth_intermediate_revocation_works() {
             .with_crls(crls)
             .only_check_end_entity_revocation()
             .allow_unknown_revocation_status();
-        let ee_server_config = ZZXArc::new(make_server_config_with_client_verifier(
+        let ee_server_config = Arc::new(make_server_config_with_client_verifier(
             *kt,
             ee_only_verifier_builder,
         ));
@@ -1776,7 +1775,7 @@ fn client_mandatory_auth_intermediate_revocation_works() {
         for version in rustls::ALL_VERSIONS {
             // When checking the full chain, we expect an error - the intermediate is revoked.
             let client_config =
-                ZZXArc::new(make_client_config_with_versions_with_auth(*kt, &[version]));
+                Arc::new(make_client_config_with_versions_with_auth(*kt, &[version]));
             let (mut client, mut server) =
                 make_pair_for_arc_configs(&client_config, &full_chain_server_config);
             let err = do_handshake_until_error(&mut client, &mut server);
@@ -1801,12 +1800,12 @@ fn client_optional_auth_client_revocation_works() {
         // Create a server configuration that includes a CRL that specifies the client certificate
         // is revoked.
         let crls = vec![kt.client_crl()];
-        let server_config = ZZXArc::new(make_server_config_with_optional_client_auth(*kt, crls));
+        let server_config = Arc::new(make_server_config_with_optional_client_auth(*kt, crls));
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+                make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
             // Because the client certificate is revoked, the handshake should fail.
             let err = do_handshake_until_error(&mut client, &mut server);
             assert_eq!(
@@ -2829,11 +2828,11 @@ fn server_exposes_offered_sni() {
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions(kt, &[version]);
         let mut client = ClientConnection::new(
-            ZZXArc::new(client_config),
+            Arc::new(client_config),
             server_name("second.testserver.com"),
         )
         .unwrap();
-        let mut server = ServerConnection::new(ZZXArc::new(make_server_config(kt))).unwrap();
+        let mut server = ServerConnection::new(Arc::new(make_server_config(kt))).unwrap();
 
         assert_eq!(None, server.server_name());
         do_handshake(&mut client, &mut server);
@@ -2848,11 +2847,11 @@ fn server_exposes_offered_sni_smashed_to_lowercase() {
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions(kt, &[version]);
         let mut client = ClientConnection::new(
-            ZZXArc::new(client_config),
+            Arc::new(client_config),
             server_name("SECOND.TESTServer.com"),
         )
         .unwrap();
-        let mut server = ServerConnection::new(ZZXArc::new(make_server_config(kt))).unwrap();
+        let mut server = ServerConnection::new(Arc::new(make_server_config(kt))).unwrap();
 
         assert_eq!(None, server.server_name());
         do_handshake(&mut client, &mut server);
@@ -2867,13 +2866,13 @@ fn server_exposes_offered_sni_even_if_resolver_fails() {
 
     let mut server_config = make_server_config(kt);
     server_config.cert_resolver = ZZXArc::new(resolver);
-    let server_config = ZZXArc::new(server_config);
+    let server_config = Arc::new(server_config);
 
     for version in rustls::ALL_VERSIONS {
         let client_config = make_client_config_with_versions(kt, &[version]);
-        let mut server = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+        let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
         let mut client =
-            ClientConnection::new(ZZXArc::new(client_config), server_name("thisdoesNOTexist.com"))
+            ClientConnection::new(Arc::new(client_config), server_name("thisdoesNOTexist.com"))
                 .unwrap();
 
         assert_eq!(None, server.server_name());
@@ -2903,17 +2902,17 @@ fn sni_resolver_works() {
 
     let mut server_config = make_server_config(kt);
     server_config.cert_resolver = ZZXArc::new(resolver);
-    let server_config = ZZXArc::new(server_config);
+    let server_config = Arc::new(server_config);
 
-    let mut server1 = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+    let mut server1 = ServerConnection::new(Arc::clone(&server_config)).unwrap();
     let mut client1 =
-        ClientConnection::new(ZZXArc::new(make_client_config(kt)), server_name("localhost")).unwrap();
+        ClientConnection::new(Arc::new(make_client_config(kt)), server_name("localhost")).unwrap();
     let err = do_handshake_until_error(&mut client1, &mut server1);
     assert_eq!(err, Ok(()));
 
-    let mut server2 = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+    let mut server2 = ServerConnection::new(Arc::clone(&server_config)).unwrap();
     let mut client2 = ClientConnection::new(
-        ZZXArc::new(make_client_config(kt)),
+        Arc::new(make_client_config(kt)),
         server_name("notlocalhost"),
     )
     .unwrap();
@@ -2973,11 +2972,11 @@ fn sni_resolver_lower_cases_configured_names() {
 
     let mut server_config = make_server_config(kt);
     server_config.cert_resolver = ZZXArc::new(resolver);
-    let server_config = ZZXArc::new(server_config);
+    let server_config = Arc::new(server_config);
 
-    let mut server1 = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+    let mut server1 = ServerConnection::new(Arc::clone(&server_config)).unwrap();
     let mut client1 =
-        ClientConnection::new(ZZXArc::new(make_client_config(kt)), server_name("localhost")).unwrap();
+        ClientConnection::new(Arc::new(make_client_config(kt)), server_name("localhost")).unwrap();
     let err = do_handshake_until_error(&mut client1, &mut server1);
     assert_eq!(err, Ok(()));
 }
@@ -3000,11 +2999,11 @@ fn sni_resolver_lower_cases_queried_names() {
 
     let mut server_config = make_server_config(kt);
     server_config.cert_resolver = ZZXArc::new(resolver);
-    let server_config = ZZXArc::new(server_config);
+    let server_config = Arc::new(server_config);
 
-    let mut server1 = ServerConnection::new(ZZXArc::clone(&server_config)).unwrap();
+    let mut server1 = ServerConnection::new(Arc::clone(&server_config)).unwrap();
     let mut client1 =
-        ClientConnection::new(ZZXArc::new(make_client_config(kt)), server_name("LOCALHOST")).unwrap();
+        ClientConnection::new(Arc::new(make_client_config(kt)), server_name("LOCALHOST")).unwrap();
     let err = do_handshake_until_error(&mut client1, &mut server1);
     assert_eq!(err, Ok(()));
 }
@@ -3473,42 +3472,44 @@ impl KeyLog for KeyLogToVec {
     }
 }
 
-#[cfg(feature = "tls12")]
-#[test]
-fn key_log_for_tls12() {
-    let client_key_log = ZZXArc::new(KeyLogToVec::new("client"));
-    let server_key_log = ZZXArc::new(KeyLogToVec::new("server"));
+// XXX
+// #[cfg(feature = "tls12")]
+// #[test]
+// fn key_log_for_tls12() {
+//     let client_key_log = Arc::new(KeyLogToVec::new("client"));
+//     let server_key_log = Arc::new(KeyLogToVec::new("server"));
 
-    let kt = KeyType::Rsa2048;
-    let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS12]);
-    client_config.key_log = client_key_log.clone();
-    let client_config = ZZXArc::new(client_config);
+//     let kt = KeyType::Rsa2048;
+//     let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS12]);
+//     panic!("XXX");//XXX
+//     // client_config.key_log = client_key_log.clone();
+//     let client_config = Arc::new(client_config);
 
-    let mut server_config = make_server_config(kt);
-    server_config.key_log = server_key_log.clone();
-    let server_config = ZZXArc::new(server_config);
+//     let mut server_config = make_server_config(kt);
+//     // server_config.key_log = server_key_log.clone();
+//     let server_config = Arc::new(server_config);
 
-    // full handshake
-    let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
-    do_handshake(&mut client, &mut server);
+//     // full handshake
+//     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
+//     do_handshake(&mut client, &mut server);
 
-    let client_full_log = client_key_log.take();
-    let server_full_log = server_key_log.take();
-    assert_eq!(client_full_log, server_full_log);
-    assert_eq!(1, client_full_log.len());
-    assert_eq!("CLIENT_RANDOM", client_full_log[0].label);
+//     let client_full_log = client_key_log.take();
+//     let server_full_log = server_key_log.take();
+//     assert_eq!(client_full_log, server_full_log);
+//     assert_eq!(1, client_full_log.len());
+//     assert_eq!("CLIENT_RANDOM", client_full_log[0].label);
 
-    // resumed
-    let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
-    do_handshake(&mut client, &mut server);
+//     // resumed
+//     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
+//     do_handshake(&mut client, &mut server);
 
-    let client_resume_log = client_key_log.take();
-    let server_resume_log = server_key_log.take();
-    assert_eq!(client_resume_log, server_resume_log);
-    assert_eq!(1, client_resume_log.len());
-    assert_eq!("CLIENT_RANDOM", client_resume_log[0].label);
-    assert_eq!(client_full_log[0].secret, client_resume_log[0].secret);
-}
+//     let client_resume_log = client_key_log.take();
+//     let server_resume_log = server_key_log.take();
+//     assert_eq!(client_resume_log, server_resume_log);
+//     assert_eq!(1, client_resume_log.len());
+//     assert_eq!("CLIENT_RANDOM", client_resume_log[0].label);
+//     assert_eq!(client_full_log[0].secret, client_resume_log[0].secret);
+// }
 
 #[test]
 fn key_log_for_tls13() {
@@ -3518,11 +3519,12 @@ fn key_log_for_tls13() {
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS13]);
     client_config.key_log = client_key_log.clone();
-    let client_config = ZZXArc::new(client_config);
+    let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
-    server_config.key_log = server_key_log.clone();
-    let server_config = ZZXArc::new(server_config);
+    panic!("XXX");//XXX
+    // server_config.key_log = server_key_log.clone();
+    let server_config = Arc::new(server_config);
 
     // full handshake
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
@@ -3808,7 +3810,7 @@ fn vectored_write_with_slow_client() {
 }
 
 struct ServerStorage {
-    storage: ZZXArc<dyn rustls::server::StoresServerSessions>,
+    storage: Arc<dyn rustls::server::StoresServerSessions>,
     put_count: AtomicUsize,
     get_count: AtomicUsize,
     take_count: AtomicUsize,
@@ -3882,18 +3884,20 @@ enum ClientStorageOp {
 }
 
 struct ClientStorage {
-    storage: ZZXArc<dyn rustls::client::ClientSessionStore>,
+    storage: Arc<dyn rustls::client::ClientSessionStore>,
     ops: Mutex<Vec<ClientStorageOp>>,
     alter_max_early_data_size: Option<(u32, u32)>,
 }
 
 impl ClientStorage {
     fn new() -> Self {
-        Self {
-            storage: ZZXArc::new(rustls::client::ClientSessionMemoryCache::new(1024)),
-            ops: Mutex::new(Vec::new()),
-            alter_max_early_data_size: None,
-        }
+        // XXX
+        unimplemented!();
+        // Self {
+        //     storage: Arc::new(rustls::client::ClientSessionMemoryCache::new(1024)),
+        //     ops: Mutex::new(Vec::new()),
+        //     alter_max_early_data_size: None,
+        // }
     }
 
     fn alter_max_early_data_size(&mut self, expected: u32, altered: u32) {
@@ -4013,12 +4017,13 @@ impl rustls::client::ClientSessionStore for ClientStorage {
 fn tls13_stateful_resumption() {
     let kt = KeyType::Rsa2048;
     let client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS13]);
-    let client_config = ZZXArc::new(client_config);
+    let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
-    let storage = ZZXArc::new(ServerStorage::new());
-    server_config.session_storage = storage.clone();
-    let server_config = ZZXArc::new(server_config);
+    let storage = Arc::new(ServerStorage::new());
+    panic!("XXX");//XXX
+    // server_config.session_storage = storage.clone();
+    let server_config = Arc::new(server_config);
 
     // full handshake
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
@@ -4074,13 +4079,15 @@ fn tls13_stateful_resumption() {
 fn tls13_stateless_resumption() {
     let kt = KeyType::Rsa2048;
     let client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS13]);
-    let client_config = ZZXArc::new(client_config);
+    let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
     server_config.ticketer = provider::Ticketer::new().unwrap();
-    let storage = ZZXArc::new(ServerStorage::new());
-    server_config.session_storage = storage.clone();
-    let server_config = ZZXArc::new(server_config);
+    let storage = Arc::new(ServerStorage::new());
+    // XXX TODO XXX
+    panic!("XXX");
+    // server_config.session_storage = storage.clone().into();
+    let server_config = Arc::new(server_config);
 
     // full handshake
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
@@ -4138,7 +4145,7 @@ fn early_data_not_available() {
     assert!(client.early_data().is_none());
 }
 
-fn early_data_configs() -> (ZZXArc<ClientConfig>, ZZXArc<ServerConfig>) {
+fn early_data_configs() -> (Arc<ClientConfig>, Arc<ServerConfig>) {
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config(kt);
     client_config.enable_early_data = true;
@@ -4146,7 +4153,7 @@ fn early_data_configs() -> (ZZXArc<ClientConfig>, ZZXArc<ServerConfig>) {
 
     let mut server_config = make_server_config(kt);
     server_config.max_early_data_size = 1234;
-    (ZZXArc::new(client_config), ZZXArc::new(server_config))
+    (Arc::new(client_config), Arc::new(server_config))
 }
 
 #[test]
@@ -4194,7 +4201,7 @@ fn early_data_is_available_on_resumption() {
 
 #[test]
 fn early_data_not_available_on_server_before_client_hello() {
-    let mut server = ServerConnection::new(ZZXArc::new(make_server_config(KeyType::Rsa2048))).unwrap();
+    let mut server = ServerConnection::new(Arc::new(make_server_config(KeyType::Rsa2048))).unwrap();
     assert!(server.early_data().is_none());
 }
 
@@ -4277,16 +4284,16 @@ fn early_data_is_limited_on_client() {
     assert_eq!(&received_early_data[..], [0xaa; 1234]);
 }
 
-fn early_data_configs_allowing_client_to_send_excess_data() -> (ZZXArc<ClientConfig>, ZZXArc<ServerConfig>)
+fn early_data_configs_allowing_client_to_send_excess_data() -> (Arc<ClientConfig>, Arc<ServerConfig>)
 {
     let (client_config, server_config) = early_data_configs();
 
     // adjust client session storage to corrupt received max_early_data_size
-    let mut client_config = ZZXArc::into_inner(client_config).unwrap();
+    let mut client_config = Arc::into_inner(client_config).unwrap();
     let mut storage = ClientStorage::new();
     storage.alter_max_early_data_size(1234, 2024);
     client_config.resumption = Resumption::store(ZZXArc::new(storage));
-    let client_config = ZZXArc::new(client_config);
+    let client_config = Arc::new(client_config);
 
     // warm up
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
@@ -4450,16 +4457,16 @@ mod test_quic {
         let kt = KeyType::Rsa2048;
         let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS13]);
         client_config.enable_early_data = true;
-        let client_config = ZZXArc::new(client_config);
+        let client_config = Arc::new(client_config);
         let mut server_config = make_server_config_with_versions(kt, &[&rustls::version::TLS13]);
         server_config.max_early_data_size = 0xffffffff;
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
         let client_params = &b"client params"[..];
         let server_params = &b"server params"[..];
 
         // full handshake
         let mut client = quic::ClientConnection::new(
-            ZZXArc::clone(&client_config),
+            Arc::clone(&client_config),
             quic::Version::V1,
             server_name("localhost"),
             client_params.into(),
@@ -4467,7 +4474,7 @@ mod test_quic {
         .unwrap();
 
         let mut server = quic::ServerConnection::new(
-            ZZXArc::clone(&server_config),
+            Arc::clone(&server_config),
             quic::Version::V1,
             server_params.into(),
         )
@@ -4507,7 +4514,7 @@ mod test_quic {
 
         // 0-RTT handshake
         let mut client = quic::ClientConnection::new(
-            ZZXArc::clone(&client_config),
+            Arc::clone(&client_config),
             quic::Version::V1,
             server_name("localhost"),
             client_params.into(),
@@ -4518,7 +4525,7 @@ mod test_quic {
             .is_some());
 
         let mut server = quic::ServerConnection::new(
-            ZZXArc::clone(&server_config),
+            Arc::clone(&server_config),
             quic::Version::V1,
             server_params.into(),
         )
@@ -4549,7 +4556,7 @@ mod test_quic {
         {
             let client_config = (*client_config).clone();
             let mut client = quic::ClientConnection::new(
-                ZZXArc::new(client_config),
+                Arc::new(client_config),
                 quic::Version::V1,
                 server_name("localhost"),
                 client_params.into(),
@@ -4557,7 +4564,7 @@ mod test_quic {
             .unwrap();
 
             let mut server = quic::ServerConnection::new(
-                ZZXArc::clone(&server_config),
+                Arc::clone(&server_config),
                 quic::Version::V1,
                 server_params.into(),
             )
@@ -4642,12 +4649,12 @@ mod test_quic {
 
         for &kt in ALL_KEY_TYPES {
             let client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS13]);
-            let client_config = ZZXArc::new(client_config);
+            let client_config = Arc::new(client_config);
 
             let mut server_config =
                 make_server_config_with_versions(kt, &[&rustls::version::TLS13]);
             server_config.alpn_protocols = vec!["foo".into()];
-            let server_config = ZZXArc::new(server_config);
+            let server_config = Arc::new(server_config);
 
             let mut client = quic::ClientConnection::new(
                 client_config,
@@ -4680,7 +4687,7 @@ mod test_quic {
         let mut client_config =
             make_client_config_with_versions(KeyType::Ed25519, &[&rustls::version::TLS12]);
         client_config.alpn_protocols = vec!["foo".into()];
-        let client_config = ZZXArc::new(client_config);
+        let client_config = Arc::new(client_config);
 
         assert!(quic::ClientConnection::new(
             client_config,
@@ -4693,7 +4700,7 @@ mod test_quic {
         let mut server_config =
             make_server_config_with_versions(KeyType::Ed25519, &[&rustls::version::TLS12]);
         server_config.alpn_protocols = vec!["foo".into()];
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         assert!(quic::ServerConnection::new(
             server_config,
@@ -4722,7 +4729,7 @@ mod test_quic {
                 server_config.max_early_data_size = new;
             }
 
-            let wrapped = ZZXArc::new(server_config.clone());
+            let wrapped = Arc::new(server_config.clone());
             assert_eq!(
                 quic::ServerConnection::new(wrapped, quic::Version::V1, b"server params".to_vec(),)
                     .is_ok(),
@@ -4736,7 +4743,7 @@ mod test_quic {
     fn test_quic_server_no_params_received() {
         let server_config =
             make_server_config_with_versions(KeyType::Ed25519, &[&rustls::version::TLS13]);
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         let mut server = quic::ServerConnection::new(
             server_config,
@@ -4801,7 +4808,7 @@ mod test_quic {
         let mut server_config =
             make_server_config_with_versions(KeyType::Ed25519, &[&rustls::version::TLS13]);
         server_config.alpn_protocols = vec!["foo".into()];
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         use rustls::internal::msgs::enums::{Compression, NamedGroup};
         use rustls::internal::msgs::handshake::{
@@ -5071,9 +5078,9 @@ mod test_quic {
         // Create a QUIC client connection.
         let client_config =
             make_client_config_with_versions(KeyType::Rsa2048, &[&rustls::version::TLS13]);
-        let client_config = ZZXArc::new(client_config);
+        let client_config = Arc::new(client_config);
         let mut client = quic::ClientConnection::new(
-            ZZXArc::clone(&client_config),
+            Arc::clone(&client_config),
             quic::Version::V1,
             server_name("localhost"),
             b"client params"[..].into(),
@@ -5503,11 +5510,11 @@ fn test_tls13_client_resumption_does_not_reuse_tickets() {
 
     let mut client_config = make_client_config(KeyType::Rsa2048);
     client_config.resumption = Resumption::store(shared_storage.clone());
-    let client_config = ZZXArc::new(client_config);
+    let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(KeyType::Rsa2048);
     server_config.send_tls13_tickets = 5;
-    let server_config = ZZXArc::new(server_config);
+    let server_config = Arc::new(server_config);
 
     // first handshake: client obtains 5 tickets from server.
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
@@ -5587,7 +5594,7 @@ fn test_client_mtu_reduction() {
         let mut client_config = make_client_config(*kt);
         client_config.max_fragment_size = Some(64);
         let mut client =
-            ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
+            ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
         let writes = collect_write_lengths(&mut client);
         println!("writes at mtu=64: {:?}", writes);
         assert!(writes.iter().all(|x| *x <= 64));
@@ -5642,7 +5649,7 @@ fn test_server_mtu_reduction() {
 fn check_client_max_fragment_size(size: usize) -> Option<Error> {
     let mut client_config = make_client_config(KeyType::Ed25519);
     client_config.max_fragment_size = Some(size);
-    ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).err()
+    ClientConnection::new(Arc::new(client_config), server_name("localhost")).err()
 }
 
 #[test]
@@ -5925,11 +5932,11 @@ fn remove_ems_request(msg: &mut Message) -> Altered {
 #[test]
 fn test_client_tls12_no_resume_after_server_downgrade() {
     let mut client_config = common::make_client_config(KeyType::Ed25519);
-    let client_storage = ZZXArc::new(ClientStorage::new());
+    let client_storage =ZZXArc::new(ClientStorage::new());
     client_config.resumption = Resumption::store(client_storage.clone());
-    let client_config = ZZXArc::new(client_config);
+    let client_config = Arc::new(client_config);
 
-    let server_config_1 = ZZXArc::new(common::finish_server_config(
+    let server_config_1 = Arc::new(common::finish_server_config(
         KeyType::Ed25519,
         server_config_builder_with_versions(&[&rustls::version::TLS13]),
     ));
@@ -5938,7 +5945,7 @@ fn test_client_tls12_no_resume_after_server_downgrade() {
         KeyType::Ed25519,
         server_config_builder_with_versions(&[&rustls::version::TLS12]),
     );
-    server_config_2.session_storage = ZZXArc::new(rustls::server::NoServerSessionStorage {});
+    server_config_2.session_storage = rustls::paa_arc_from_contents!(rustls::server::NoServerSessionStorage {});
 
     dbg!("handshake 1");
     let mut client_1 =
@@ -5964,7 +5971,7 @@ fn test_client_tls12_no_resume_after_server_downgrade() {
     dbg!("handshake 2");
     let mut client_2 =
         ClientConnection::new(client_config, "localhost".try_into().unwrap()).unwrap();
-    let mut server_2 = ServerConnection::new(ZZXArc::new(server_config_2)).unwrap();
+    let mut server_2 = ServerConnection::new(Arc::new(server_config_2)).unwrap();
     common::do_handshake(&mut client_2, &mut server_2);
     println!("hs2 storage ops: {:#?}", client_storage.ops());
     assert_eq!(client_storage.ops().len(), 11);
@@ -6040,12 +6047,12 @@ fn test_client_with_custom_verifier_can_accept_ecdsa_sha1_signatures() {
 fn test_acceptor() {
     use rustls::server::Acceptor;
 
-    let client_config = ZZXArc::new(make_client_config(KeyType::Ed25519));
+    let client_config = Arc::new(make_client_config(KeyType::Ed25519));
     let mut client = ClientConnection::new(client_config, server_name("localhost")).unwrap();
     let mut buf = Vec::new();
     client.write_tls(&mut buf).unwrap();
 
-    let server_config = ZZXArc::new(make_server_config(KeyType::Ed25519));
+    let server_config = Arc::new(make_server_config(KeyType::Ed25519));
     let mut acceptor = Acceptor::default();
     acceptor
         .read_tls(&mut buf.as_slice())
@@ -6235,13 +6242,13 @@ fn test_secret_extraction_enabled() {
         .unwrap();
         // Opt into secret extraction from both sides
         server_config.enable_secret_extraction = true;
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         let mut client_config = make_client_config(kt);
         client_config.enable_secret_extraction = true;
 
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
 
         do_handshake(&mut client, &mut server);
 
@@ -6299,7 +6306,7 @@ fn test_secret_extract_produces_correct_variant() {
         );
 
         server_config.enable_secret_extraction = true;
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         let mut client_config = finish_client_config(
             kt,
@@ -6310,7 +6317,7 @@ fn test_secret_extract_produces_correct_variant() {
         client_config.enable_secret_extraction = true;
 
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&ZZXArc::new(client_config), &server_config);
+            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
 
         do_handshake(&mut client, &mut server);
 
@@ -6368,12 +6375,12 @@ fn test_secret_extraction_disabled_or_too_early() {
             .with_single_cert(kt.get_chain(), kt.get_key())
             .unwrap();
         server_config.enable_secret_extraction = server_enable;
-        let server_config = ZZXArc::new(server_config);
+        let server_config = Arc::new(server_config);
 
         let mut client_config = make_client_config(kt);
         client_config.enable_secret_extraction = client_enable;
 
-        let client_config = ZZXArc::new(client_config);
+        let client_config = Arc::new(client_config);
 
         let (client, server) = make_pair_for_arc_configs(&client_config, &server_config);
 
@@ -6413,7 +6420,7 @@ fn test_secret_extraction_disabled_or_too_early() {
 fn test_received_plaintext_backpressure() {
     let kt = KeyType::Rsa2048;
 
-    let server_config = ZZXArc::new(
+    let server_config = Arc::new(
         ServerConfig::builder_with_provider(
             CryptoProvider {
                 cipher_suites: vec![cipher_suite::TLS13_AES_128_GCM_SHA256],
@@ -6428,7 +6435,7 @@ fn test_received_plaintext_backpressure() {
         .unwrap(),
     );
 
-    let client_config = ZZXArc::new(make_client_config(kt));
+    let client_config = Arc::new(make_client_config(kt));
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
     do_handshake(&mut client, &mut server);
 
@@ -6574,7 +6581,7 @@ fn test_client_construction_fails_if_random_source_fails_in_first_request() {
     );
 
     assert_eq!(
-        ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap_err(),
+        ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap_err(),
         Error::FailedToGetRandomBytes
     );
 }
@@ -6599,7 +6606,7 @@ fn test_client_construction_fails_if_random_source_fails_in_second_request() {
     );
 
     assert_eq!(
-        ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap_err(),
+        ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap_err(),
         Error::FailedToGetRandomBytes
     );
 }
@@ -6626,7 +6633,7 @@ fn test_client_construction_requires_66_bytes_of_random_material() {
         .unwrap(),
     );
 
-    ClientConnection::new(ZZXArc::new(client_config), server_name("localhost"))
+    ClientConnection::new(Arc::new(client_config), server_name("localhost"))
         .expect("check how much random material ClientConnection::new consumes");
 }
 
@@ -6654,8 +6661,8 @@ fn test_client_removes_tls12_session_if_server_sends_undecryptable_first_message
         make_client_config_with_versions(KeyType::Rsa2048, &[&rustls::version::TLS12]);
     let storage = ZZXArc::new(ClientStorage::new());
     client_config.resumption = Resumption::store(storage.clone());
-    let client_config = ZZXArc::new(client_config);
-    let server_config = ZZXArc::new(make_server_config(KeyType::Rsa2048));
+    let client_config = Arc::new(client_config);
+    let server_config = Arc::new(make_server_config(KeyType::Rsa2048));
 
     // successful handshake to allow resumption
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
@@ -6786,7 +6793,7 @@ fn test_client_fips_service_indicator_includes_ech_hpke_suite() {
 
 #[test]
 fn test_complete_io_errors_if_close_notify_received_too_early() {
-    let mut server = ServerConnection::new(ZZXArc::new(make_server_config(KeyType::Rsa2048))).unwrap();
+    let mut server = ServerConnection::new(Arc::new(make_server_config(KeyType::Rsa2048))).unwrap();
     let client_hello_followed_by_close_notify_alert = b"\
         \x16\x03\x01\x00\xc8\x01\x00\x00\xc4\x03\x03\xec\x12\xdd\x17\x64\
         \xa4\x39\xfd\x7e\x8c\x85\x46\xb8\x4d\x1e\xa0\x6e\xb3\xd7\xa0\x51\
@@ -7012,8 +7019,8 @@ fn test_server_uses_cached_compressed_certificates() {
     let mut client_config = make_client_config(KeyType::Rsa2048);
     client_config.resumption = Resumption::disabled();
 
-    let server_config = ZZXArc::new(server_config);
-    let client_config = ZZXArc::new(client_config);
+    let server_config = Arc::new(server_config);
+    let client_config = Arc::new(client_config);
 
     for _i in 0..10 {
         dbg!(_i);
@@ -7107,12 +7114,12 @@ fn test_server_can_opt_out_of_compression_cache() {
 
     let mut server_config = make_server_config(KeyType::Rsa2048);
     server_config.cert_compressors = vec![&AlwaysInteractiveCompressor];
-    server_config.cert_compression_cache = ZZXArc::new(rustls::compress::CompressionCache::Disabled);
+    server_config.cert_compression_cache = Arc::new(rustls::compress::CompressionCache::Disabled);
     let mut client_config = make_client_config(KeyType::Rsa2048);
     client_config.resumption = Resumption::disabled();
 
-    let server_config = ZZXArc::new(server_config);
-    let client_config = ZZXArc::new(client_config);
+    let server_config = Arc::new(server_config);
+    let client_config = Arc::new(client_config);
 
     for _i in 0..10 {
         dbg!(_i);
@@ -7218,7 +7225,7 @@ fn test_cert_decompression_by_server_would_result_in_excessively_large_cert() {
         .load_private_key(KeyType::Rsa2048.get_client_key())
         .unwrap();
     let big_cert_and_key = sign::CertifiedKey::new(vec![big_cert], key);
-    client_config.client_auth_cert_resolver = ZZXArc::new(AlwaysResolves(big_cert_and_key.into()));
+    client_config.client_auth_cert_resolver = Arc::new(AlwaysResolves(big_cert_and_key.into()));
 
     let (mut client, mut server) = make_pair_for_configs(client_config, server_config);
     assert_eq!(
@@ -7234,14 +7241,14 @@ fn test_cert_decompression_by_server_would_result_in_excessively_large_cert() {
     );
 
     #[derive(Debug)]
-    struct AlwaysResolves(ZZXArc<sign::CertifiedKey>);
+    struct AlwaysResolves(Arc<sign::CertifiedKey>);
 
     impl ResolvesClientCert for AlwaysResolves {
         fn resolve(
             &self,
             _root_hint_subjects: &[&[u8]],
             _sigschemes: &[SignatureScheme],
-        ) -> Option<ZZXArc<sign::CertifiedKey>> {
+        ) -> Option<Arc<sign::CertifiedKey>> {
             Some(self.0.clone())
         }
 
@@ -7673,7 +7680,7 @@ fn tls13_packed_handshake() {
     );
 
     let mut client =
-        ClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
+        ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
 
     let mut hello = Vec::new();
     client

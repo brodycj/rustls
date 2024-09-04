@@ -12,6 +12,7 @@ use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, Server
 use rustls::client::{ServerCertVerifierBuilder, WebPkiServerVerifier};
 use rustls::crypto::cipher::{InboundOpaqueMessage, MessageDecrypter, MessageEncrypter};
 use rustls::crypto::CryptoProvider;
+use rustls::internal::alias::Arc;
 use rustls::internal::alias::ZZXArc;
 use rustls::internal::msgs::codec::{Codec, Reader};
 use rustls::internal::msgs::message::{Message, OutboundOpaqueMessage, PlainMessage};
@@ -627,16 +628,16 @@ pub fn make_pair_for_configs(
     client_config: ClientConfig,
     server_config: ServerConfig,
 ) -> (ClientConnection, ServerConnection) {
-    make_pair_for_arc_configs(&ZZXArc::new(client_config), &ZZXArc::new(server_config))
+    make_pair_for_arc_configs(&Arc::new(client_config), &Arc::new(server_config))
 }
 
 pub fn make_pair_for_arc_configs(
-    client_config: &ZZXArc<ClientConfig>,
-    server_config: &ZZXArc<ServerConfig>,
+    client_config: &Arc<ClientConfig>,
+    server_config: &Arc<ServerConfig>,
 ) -> (ClientConnection, ServerConnection) {
     (
-        ClientConnection::new(ZZXArc::clone(client_config), server_name("localhost")).unwrap(),
-        ServerConnection::new(ZZXArc::clone(server_config)).unwrap(),
+        ClientConnection::new(Arc::clone(client_config), server_name("localhost")).unwrap(),
+        ServerConnection::new(Arc::clone(server_config)).unwrap(),
     )
 }
 
