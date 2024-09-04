@@ -6,6 +6,7 @@
 use std::io::{self, Read, Write};
 use std::ops::{Deref, DerefMut};
 
+use rustls::internal::alias::Arc;
 use rustls::internal::alias::ZZXArc;
 
 use std::time::{Duration, Instant};
@@ -246,18 +247,18 @@ fn bench_handshake(
 fn bench_handshake_buffered(
     rounds: u64,
     resume: ResumptionParam,
-    client_config: ZZXArc<ClientConfig>,
-    server_config: ZZXArc<ServerConfig>,
+    client_config: Arc<ClientConfig>,
+    server_config: Arc<ServerConfig>,
 ) -> Timings {
     let mut timings = Timings::default();
 
     for _ in 0..rounds {
         let mut client = time(&mut timings.client, || {
             let server_name = "localhost".try_into().unwrap();
-            ClientConnection::new(ZZXArc::clone(&client_config), server_name).unwrap()
+            ClientConnection::new(Arc::clone(&client_config), server_name).unwrap()
         });
         let mut server = time(&mut timings.server, || {
-            ServerConnection::new(ZZXArc::clone(&server_config)).unwrap()
+            ServerConnection::new(Arc::clone(&server_config)).unwrap()
         });
 
         time(&mut timings.server, || {
@@ -286,18 +287,18 @@ fn bench_handshake_buffered(
 fn bench_handshake_unbuffered(
     rounds: u64,
     resume: ResumptionParam,
-    client_config: ZZXArc<ClientConfig>,
-    server_config: ZZXArc<ServerConfig>,
+    client_config: Arc<ClientConfig>,
+    server_config: Arc<ServerConfig>,
 ) -> Timings {
     let mut timings = Timings::default();
 
     for _ in 0..rounds {
         let client = time(&mut timings.client, || {
             let server_name = "localhost".try_into().unwrap();
-            UnbufferedClientConnection::new(ZZXArc::clone(&client_config), server_name).unwrap()
+            UnbufferedClientConnection::new(Arc::clone(&client_config), server_name).unwrap()
         });
         let server = time(&mut timings.server, || {
-            UnbufferedServerConnection::new(ZZXArc::clone(&server_config)).unwrap()
+            UnbufferedServerConnection::new(Arc::clone(&server_config)).unwrap()
         });
 
         // nb. buffer allocation is outside the library, so is outside the benchmark scope
@@ -438,8 +439,8 @@ fn bench_bulk(
 }
 
 fn bench_bulk_buffered(
-    client_config: ZZXArc<ClientConfig>,
-    server_config: ZZXArc<ServerConfig>,
+    client_config: Arc<ClientConfig>,
+    server_config: Arc<ServerConfig>,
     plaintext_size: u64,
     rounds: u64,
 ) -> (f64, f64) {
@@ -467,8 +468,8 @@ fn bench_bulk_buffered(
 }
 
 fn bench_bulk_unbuffered(
-    client_config: ZZXArc<ClientConfig>,
-    server_config: ZZXArc<ServerConfig>,
+    client_config: Arc<ClientConfig>,
+    server_config: Arc<ServerConfig>,
     plaintext_size: u64,
     rounds: u64,
 ) -> (f64, f64) {
@@ -544,9 +545,9 @@ fn bench_memory(params: &BenchmarkParam, conn_count: u64) {
     let mut clients = Vec::with_capacity(conn_count);
 
     for _i in 0..conn_count {
-        servers.push(ServerConnection::new(ZZXArc::clone(&server_config)).unwrap());
+        servers.push(ServerConnection::new(Arc::clone(&server_config)).unwrap());
         let server_name = "localhost".try_into().unwrap();
-        clients.push(ClientConnection::new(ZZXArc::clone(&client_config), server_name).unwrap());
+        clients.push(ClientConnection::new(Arc::clone(&client_config), server_name).unwrap());
     }
 
     for _step in 0..5 {
@@ -578,7 +579,7 @@ fn make_server_config(
     client_auth: ClientAuth,
     resume: ResumptionParam,
     max_fragment_size: Option<usize>,
-) -> ZZXArc<ServerConfig> {
+) -> Arc<ServerConfig> {
     let provider = ZZXArc::new(provider::default_provider());
     let client_auth = match client_auth {
         ClientAuth::Yes => {
@@ -606,18 +607,20 @@ fn make_server_config(
     } else if resume == ResumptionParam::Tickets {
         cfg.ticketer = Ticketer::new().unwrap();
     } else {
-        cfg.session_storage = ZZXArc::new(NoServerSessionStorage {});
+        // XXX
+        panic!("XXX");
+        // cfg.session_storage = ZZXArc::new(NoServerSessionStorage {});
     }
 
     cfg.max_fragment_size = max_fragment_size;
-    ZZXArc::new(cfg)
+    Arc::new(cfg)
 }
 
 fn make_client_config(
     params: &BenchmarkParam,
     clientauth: ClientAuth,
     resume: ResumptionParam,
-) -> ZZXArc<ClientConfig> {
+) -> Arc<ClientConfig> {
     let mut root_store = RootCertStore::empty();
     let mut rootbuf =
         io::BufReader::new(fs::File::open(params.key_type.path_for("ca.cert")).unwrap());
@@ -652,7 +655,7 @@ fn make_client_config(
         cfg.resumption = Resumption::disabled();
     }
 
-    ZZXArc::new(cfg)
+    Arc::new(cfg)
 }
 
 fn lookup_matching_benches(name: &str) -> Vec<&BenchmarkParam> {
