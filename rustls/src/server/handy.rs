@@ -87,6 +87,19 @@ macro_rules! bbxx {
 };
 }
 
+macro_rules! bbz {
+    ($x:expr) => {
+        ///
+        // $x
+        paa_arc_from_box(
+            {
+                // ---
+                alloc::boxed::Box::new($x)
+            }
+        )
+};
+}
+
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod cache {
     use alloc::vec::Vec;
@@ -223,12 +236,42 @@ mod cache {
             //         })()
             //     ))
             // )
-            bbxx!(
-                alloc::boxed::Box::new(
-                    Self {
-                        cache: Mutex::new(limited_cache::LimitedCache::new(size)),
-                    }
-                )
+            // bbxx!(
+            //     alloc::boxed::Box::new(
+            //         Self {
+            //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //         }
+            //     )
+            // )
+            // paa_arc_from_box(
+            //     // bbx!((
+            //         // (|| {
+            //         //     alloc::boxed::Box::new(
+            //         //         Self {
+            //         //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //         //         }
+            //         //     )
+            //         // })()
+            //     // ))
+            //     // {
+            //     //     alloc::boxed::Box::new(
+            //     //         Self {
+            //     //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //     //         }
+            //     //     )
+            //     // }
+            //     bbz!(
+            //         // ---
+            //         Self {
+            //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //         }
+            //     )
+            // )
+            bbz!(
+                // ---
+                Self {
+                    cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+                }
             )
         }
 
