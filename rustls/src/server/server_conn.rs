@@ -250,7 +250,7 @@ pub struct ServerConfig {
     pub max_fragment_size: Option<usize>,
 
     /// How to store client sessions.
-    pub session_storage: Arc<dyn StoresServerSessions>,
+    pub session_storage: crate::paa::Arc<dyn StoresServerSessions>,
 
     /// How to produce tickets.
     pub ticketer: Arc<dyn ProducesTickets>,

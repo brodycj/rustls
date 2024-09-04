@@ -398,6 +398,11 @@ mod alias {
     pub use alloc::rc::Rc as Arc;
 }
 
+pub(crate) mod paa {
+    extern crate portable_atomic_util;
+    pub use portable_atomic_util::Arc;
+}
+
 #[macro_use]
 mod trait_macros;
 

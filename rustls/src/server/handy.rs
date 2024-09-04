@@ -24,6 +24,69 @@ impl server::StoresServerSessions for NoServerSessionStorage {
     }
 }
 
+fn paa_arc_from<T, U: ?Sized> (x: U) -> crate::paa::Arc<U> where U: From<T> {//alloc::boxed::Box<U>: From<alloc::boxed::Box<U>> {
+    // ---
+    // crate::paa::Arc::from(
+    //     alloc::boxed::Box::<U>::from(alloc::boxed::Box::new(x)),
+    // )
+    let b1 = alloc::boxed::Box::<U>::new(x);
+    crate::paa::Arc::<U>::from(b1)
+}
+
+use core::convert::Into;
+
+fn contents_from<T, U: ?Sized> (x: T) -> alloc::boxed::Box<U> where U: From<T>
+{
+    // alloc::boxed::Box::<U>::from(alloc::boxed::Box::new(x) as alloc::boxed::Box::<U>)
+    // alloc::boxed::Box::<U>::from(alloc::boxed::Box::new(x))
+    alloc::boxed::Box::new(x.into())
+}
+
+fn contents_from11<T: Sized, U: ?Sized> (x: T) -> alloc::boxed::Box<U> where alloc::boxed::Box::<U>: From<alloc::boxed::Box<T>> //U: From<alloc::boxed::Box<T>>
+{
+    // alloc::boxed::Box::<U>::from(alloc::boxed::Box::new(x) as alloc::boxed::Box::<U>)
+    // alloc::boxed::Box::<U>::from(alloc::boxed::Box::new(x))
+    // alloc::boxed::Box::new(x.into())
+    // U::from(alloc::boxed::Box::new(x))
+    alloc::boxed::Box::<U>::from(alloc::boxed::Box::<T>::new(x))
+}
+
+// fn contents_from22<T: Sized, U: ?Sized> (x: T) -> alloc::boxed::Box<U> where U: From<T>
+// {
+//     // alloc::boxed::Box::<U>::from(alloc::boxed::Box::new(x) as alloc::boxed::Box::<U>)
+//     // alloc::boxed::Box::<U>::from(alloc::boxed::Box::new(x))
+//     // alloc::boxed::Box::new(x.into())
+//     // U::from(alloc::boxed::Box::new(x))
+//     alloc::boxed::Box::<U>::from(alloc::boxed::Box::<T>::new(x))
+//     // let x: alloc::boxed::Box<U> = alloc::boxed::Box::<T>::new(x);
+//     // x
+// }
+
+fn paa_arc_from_box<U: ?Sized> (x: alloc::boxed::Box<U>) -> crate::paa::Arc<U> {
+    crate::paa::Arc::from(x)
+}
+
+macro_rules! bbx {
+    ($x:expr) => {
+        ///
+        $x
+    };
+}
+
+macro_rules! bbxx {
+    ($x:expr) => {
+        ///
+        // $x
+        paa_arc_from_box(
+            bbx!((
+                (|| {
+                    $x
+                })()
+            ))
+        )
+};
+}
+
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod cache {
     use alloc::vec::Vec;
@@ -32,6 +95,8 @@ mod cache {
     use crate::alias::Arc;
     use crate::lock::Mutex;
     use crate::{limited_cache, server};
+
+    use super::{contents_from11, paa_arc_from, paa_arc_from_box};
 
     /// An implementer of `StoresServerSessions` that stores everything
     /// in memory.  If enforces a limit on the number of stored sessions
@@ -44,22 +109,139 @@ mod cache {
         /// Make a new ServerSessionMemoryCache.  `size` is the maximum
         /// number of stored sessions, and may be rounded-up for
         /// efficiency.
-        #[cfg(feature = "std")]
-        pub fn new(size: usize) -> Arc<Self> {
-            Arc::new(Self {
-                cache: Mutex::new(limited_cache::LimitedCache::new(size)),
-            })
+        ////// XXX TBD XXX XXX
+        // #[cfg(feature = "std")]
+        pub fn new(size: usize) -> crate::paa::Arc<dyn server::StoresServerSessions> {
+            // crate::paa::Arc::from(
+            //     alloc::boxed::Box::<dyn server::StoresServerSessions>::from(alloc::boxed::Box::new(
+            //         Self {
+            //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //         }
+            //     ))
+            //     // (|| {
+            //     //     // alloc::boxed::Box::<dyn server::StoresServerSessions>::from(alloc::boxed::Box::new(
+            //     //     //     Self {
+            //     //     //         cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //     //     //     }
+            //     //     // ))
+            //     //     let xx = alloc::boxed::Box::new(
+            //     //         Self {
+            //     //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //     //         }
+            //     //     );
+            //     //     alloc::boxed::Box::<dyn server::StoresServerSessions>::from(xx)
+            //     // })()
+            //     // contents_from(
+            //     //     Self {
+            //     //         cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //     //     }
+            //     // )
+            // )
+            // paa_arc_from(
+            //     Self {
+            //         cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //     }
+            // )
+        //     crate::paa::Arc::<dyn server::StoresServerSessions>::from(
+        //         alloc::boxed::Box::<dyn server::StoresServerSessions>::from(alloc::boxed::Box::new(
+        //             Self {
+        //                 cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //             }
+        //         ))
+        //    )
+        // paa_arc_from_box(
+        //     // alloc::boxed::Box::<dyn server::StoresServerSessions>::from(alloc::boxed::Box::new(
+        //     //     Self {
+        //     //         cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //     //     }
+        //     // ))
+        //     // contents_from(
+        //     //     Self {
+        //     //         cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //     //     }
+        //     // )
+        //     // contents_from11(
+        //     //     Self {
+        //     //         cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //     //     }
+        //     // )
+        //     // (|| {
+        //     //     let x1 = alloc::boxed::Box::new(
+        //     //         // Self {
+        //     //         //     cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //     //         // }
+        //     //         (|| {
+        //     //             let x = Self {
+        //     //                 cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //     //             };
+        //     //             x
+        //     //         })()
+        //     //     );
+        //     //     // let x2: alloc::boxed::Box<dyn server::StoresServerSessions> = alloc::boxed::Box::<dyn server::StoresServerSessions>::from(x1);
+        //     //     // x2
+        //     //     x1
+        //     // })()
+        //     bbx!((
+        //         // xxx
+        //         // alloc::boxed::Box::<dyn server::StoresServerSessions>::from(alloc::boxed::Box::new(
+        //         //     Self {
+        //         //         cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //         //     }
+        //         // ))
+        //         // (|| {
+        //         //     let x1 = alloc::boxed::Box::new(
+        //         //         Self {
+        //         //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //         //         }
+        //         //         // (|| {
+        //         //         //     let x = Self {
+        //         //         //         cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //         //         //     };
+        //         //         //     x
+        //         //         // })()
+        //         //     );
+        //         //     // let x2: alloc::boxed::Box<dyn server::StoresServerSessions> = alloc::boxed::Box::<dyn server::StoresServerSessions>::from(x1);
+        //         //     // x2
+        //         //     x1
+        //         // })()
+        //         (|| {
+        //             alloc::boxed::Box::new(
+        //                 Self {
+        //                     cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+        //                 }
+        //             )
+        //         })()
+        //     ))
+            // paa_arc_from_box(
+            //     bbx!((
+            //         (|| {
+            //             alloc::boxed::Box::new(
+            //                 Self {
+            //                     cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //                 }
+            //             )
+            //         })()
+            //     ))
+            // )
+            bbxx!(
+                alloc::boxed::Box::new(
+                    Self {
+                        cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+                    }
+                )
+            )
         }
 
-        /// Make a new ServerSessionMemoryCache.  `size` is the maximum
-        /// number of stored sessions, and may be rounded-up for
-        /// efficiency.
-        #[cfg(not(feature = "std"))]
-        pub fn new<M: crate::lock::MakeMutex>(size: usize) -> Arc<Self> {
-            Arc::new(Self {
-                cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
-            })
-        }
+        ////// XXX TBD ??? ???:
+        //// /// Make a new ServerSessionMemoryCache.  `size` is the maximum
+        //// /// number of stored sessions, and may be rounded-up for
+        //// /// efficiency.
+        // #[cfg(not(feature = "std"))]
+        // pub fn new<M: crate::lock::MakeMutex>(size: usize) -> Arc<Self> {
+        //     Arc::new(Self {
+        //         cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
+        //     })
+        // }
     }
 
     impl server::StoresServerSessions for ServerSessionMemoryCache {
