@@ -308,7 +308,7 @@ test_for_each_provider! {
 
     use super::{VerifierBuilderError, WebPkiServerVerifier};
 
-    use crate::internal::alias::Arc;
+    use crate::internal::alias::ZZXArc;
 
     use crate::RootCertStore;
 
@@ -331,7 +331,7 @@ test_for_each_provider! {
         ])
     }
 
-    fn load_roots(roots_der: &[&[u8]]) -> Arc<RootCertStore> {
+    fn load_roots(roots_der: &[&[u8]]) -> ZZXArc<RootCertStore> {
         let mut roots = RootCertStore::empty();
         roots_der.iter().for_each(|der| {
             roots
@@ -341,7 +341,7 @@ test_for_each_provider! {
         roots.into()
     }
 
-    fn test_roots() -> Arc<RootCertStore> {
+    fn test_roots() -> ZZXArc<RootCertStore> {
         load_roots(&[
             include_bytes!("../../../test-ca/ecdsa-p256/ca.der").as_slice(),
             include_bytes!("../../../test-ca/rsa-2048/ca.der").as_slice(),

@@ -2,7 +2,7 @@
 
 use std::num::NonZeroUsize;
 
-use rustls::internal::alias::Arc;
+use rustls::internal::alias::ZZXArc;
 
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
 use rustls::server::{ServerConnectionData, UnbufferedServerConnection};
@@ -117,9 +117,9 @@ fn handshake(version: &'static rustls::SupportedProtocolVersion) -> Outcome {
     let client_config = make_client_config(KeyType::Rsa2048);
 
     run(
-        Arc::new(client_config),
+        ZZXArc::new(client_config),
         &mut NO_ACTIONS.clone(),
-        Arc::new(server_config),
+        ZZXArc::new(server_config),
         &mut NO_ACTIONS.clone(),
     )
 }
@@ -138,9 +138,9 @@ fn app_data_client_to_server() {
         };
 
         let outcome = run(
-            Arc::new(client_config),
+            ZZXArc::new(client_config),
             &mut client_actions,
-            Arc::new(server_config),
+            ZZXArc::new(server_config),
             &mut NO_ACTIONS.clone(),
         );
 
@@ -170,9 +170,9 @@ fn app_data_server_to_client() {
         };
 
         let outcome = run(
-            Arc::new(client_config),
+            ZZXArc::new(client_config),
             &mut NO_ACTIONS.clone(),
-            Arc::new(server_config),
+            ZZXArc::new(server_config),
             &mut server_actions,
         );
 
@@ -194,11 +194,11 @@ fn early_data() {
 
     let mut server_config = make_server_config(KeyType::Rsa2048);
     server_config.max_early_data_size = 128;
-    let server_config = Arc::new(server_config);
+    let server_config = ZZXArc::new(server_config);
 
     let mut client_config = make_client_config_with_versions(KeyType::Rsa2048, &[&TLS13]);
     client_config.enable_early_data = true;
-    let client_config = Arc::new(client_config);
+    let client_config = ZZXArc::new(client_config);
 
     // first handshake allows the second to be a resumption and use 0-RTT
     run(
@@ -270,9 +270,9 @@ fn early_data() {
 }
 
 fn run(
-    client_config: Arc<ClientConfig>,
+    client_config: ZZXArc<ClientConfig>,
     client_actions: &mut Actions,
-    server_config: Arc<ServerConfig>,
+    server_config: ZZXArc<ServerConfig>,
     server_actions: &mut Actions,
 ) -> Outcome {
     let mut outcome = Outcome::default();
@@ -436,9 +436,9 @@ fn close_notify_client_to_server() {
         };
 
         let outcome = run(
-            Arc::new(client_config),
+            ZZXArc::new(client_config),
             &mut client_actions,
-            Arc::new(server_config),
+            ZZXArc::new(server_config),
             &mut NO_ACTIONS.clone(),
         );
 
@@ -460,9 +460,9 @@ fn close_notify_server_to_client() {
         };
 
         let outcome = run(
-            Arc::new(client_config),
+            ZZXArc::new(client_config),
             &mut NO_ACTIONS.clone(),
-            Arc::new(server_config),
+            ZZXArc::new(server_config),
             &mut server_actions,
         );
 
@@ -672,9 +672,9 @@ fn refresh_traffic_keys_automatically() {
 
     let server_config = make_server_config(KeyType::Rsa2048);
     let mut outcome = run(
-        Arc::new(client_config),
+        ZZXArc::new(client_config),
         &mut NO_ACTIONS.clone(),
-        Arc::new(server_config),
+        ZZXArc::new(server_config),
         &mut NO_ACTIONS.clone(),
     );
     let mut server = outcome.server.take().unwrap();
@@ -741,9 +741,9 @@ fn tls12_connection_fails_after_key_reaches_confidentiality_limit() {
 
     let server_config = make_server_config(KeyType::Ed25519);
     let mut outcome = run(
-        Arc::new(client_config),
+        ZZXArc::new(client_config),
         &mut NO_ACTIONS.clone(),
-        Arc::new(server_config),
+        ZZXArc::new(server_config),
         &mut NO_ACTIONS.clone(),
     );
     let mut server = outcome.server.take().unwrap();
@@ -815,7 +815,7 @@ fn tls13_packed_handshake() {
     );
 
     let mut client =
-        UnbufferedClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+        UnbufferedClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
 
     let (_hello, _) = encode_tls_data(client.process_tls_records(&mut []));
     confirm_transmit_tls_data(client.process_tls_records(&mut []));
@@ -835,7 +835,7 @@ fn tls13_packed_handshake() {
 #[test]
 fn rejects_junk() {
     let mut server =
-        UnbufferedServerConnection::new(Arc::new(make_server_config(KeyType::Rsa2048))).unwrap();
+        UnbufferedServerConnection::new(ZZXArc::new(make_server_config(KeyType::Rsa2048))).unwrap();
 
     let mut buf = [0xff; 5];
     let UnbufferedStatus { discard, state } = server.process_tls_records(&mut buf);
@@ -1272,8 +1272,8 @@ fn make_connection_pair(
     let client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
 
     let client =
-        UnbufferedClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
-    let server = UnbufferedServerConnection::new(Arc::new(server_config)).unwrap();
+        UnbufferedClientConnection::new(ZZXArc::new(client_config), server_name("localhost")).unwrap();
+    let server = UnbufferedServerConnection::new(ZZXArc::new(server_config)).unwrap();
     (client, server)
 }
 

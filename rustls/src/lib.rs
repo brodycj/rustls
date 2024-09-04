@@ -452,7 +452,8 @@ pub mod internal {
     pub mod alias {
         // KEEP THIS ARC ALIAS AS ARC TYPE ALIAS LIKE THIS FOR NOW
         // pub use crate::alias::Arc;
-        pub type Arc<T> = crate::alias::ZZXArc<T>;
+        // XXX XXX WANT TO REPLACE USE OF THIS TYPE ALIAS WITH alias::Arc:
+        pub type ZZXArc<T> = crate::alias::ZZXArc<T>;
     }
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {
