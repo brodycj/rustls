@@ -31,7 +31,6 @@ use crate::{compress, internal_paa_aaa_arc_from_contents, sign, verify, versions
 #[cfg(doc)]
 use crate::{crypto, DistinguishedName};
 
-//// XXX TODO FIX API DOC HERE
 /// A trait for the ability to store client session data, so that sessions
 /// can be resumed in future connections.
 ///
@@ -42,7 +41,7 @@ use crate::{crypto, DistinguishedName};
 /// `set_`, `insert_`, `remove_` and `take_` operations are mutating; this isn't
 /// expressed in the type system to allow implementations freedom in
 /// how to achieve interior mutability.  `Mutex` is a common choice.
-pub_api_trait!(ClientSessionStore, {
+pub trait ClientSessionStore: fmt::Debug + Send + Sync {
     /// Remember what `NamedGroup` the given server chose.
     fn set_kx_hint(&self, server_name: ServerName<'static>, group: NamedGroup);
 
@@ -92,12 +91,11 @@ pub_api_trait!(ClientSessionStore, {
         &self,
         server_name: &ServerName<'static>,
     ) -> Option<persist::Tls13ClientSessionValue>;
-});
+}
 
-//// XXX TODO FIX API DOC HERE
 /// A trait for the ability to choose a certificate chain and
 /// private key for the purposes of client authentication.
-pub_api_trait!(ResolvesClientCert, {
+pub trait ResolvesClientCert: fmt::Debug + Send + Sync {
     /// Resolve a client certificate chain/private key to use as the client's
     /// identity.
     ///
@@ -125,7 +123,7 @@ pub_api_trait!(ResolvesClientCert, {
 
     /// Return true if any certificates at all are available.
     fn has_certs(&self) -> bool;
-});
+}
 
 /// Common configuration for (typically) all connections made by a program.
 ///
