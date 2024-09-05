@@ -603,7 +603,7 @@ fn make_server_config(
         .expect("bad certs/private key?");
 
     if resume == ResumptionParam::SessionId {
-        cfg.session_storage = ServerSessionMemoryCache::new(128);
+        cfg.session_storage = rustls::paa_aaa_aaa_from_arc!(ServerSessionMemoryCache::new(128));
     } else if resume == ResumptionParam::Tickets {
         cfg.ticketer = Ticketer::new().unwrap();
     } else {

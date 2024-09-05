@@ -8,6 +8,7 @@ use crate::alias::ZZXArc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::crypto::CryptoProvider;
 use crate::error::Error;
+use crate::internal_paa_aaa_aaa_from_arc;
 use crate::server::{handy, ResolvesServerCert, ServerConfig};
 use crate::sign::CertifiedKey;
 use crate::time_provider::TimeProvider;
@@ -134,7 +135,8 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             ignore_client_order: false,
             max_fragment_size: None,
             // #[cfg(feature = "std")]
-            session_storage: handy::ServerSessionMemoryCache::new(256),
+            // session_storage: handy::ServerSessionMemoryCache::new(256),
+            session_storage: internal_paa_aaa_aaa_from_arc!(handy::ServerSessionMemoryCache::new(256)),
             // XXX TODO XXX
             // #[cfg(not(feature = "std"))]
             // session_storage: Arc::new(handy::NoServerSessionStorage {}),

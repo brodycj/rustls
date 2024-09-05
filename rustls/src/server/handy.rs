@@ -49,8 +49,8 @@ mod cache {
         /// number of stored sessions, and may be rounded-up for
         /// efficiency.
         #[cfg(feature = "std")]
-        pub fn new(size: usize) -> Arc<dyn server::StoresServerSessions> {
-            crate::internal_paa_aaa_arc_from_contents!(Self {
+        pub fn new(size: usize) -> Arc<Self> {
+            Arc::new(Self {
                 cache: Mutex::new(limited_cache::LimitedCache::new(size)),
             })
             // crate::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new(Self {

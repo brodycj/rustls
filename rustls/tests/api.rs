@@ -3826,7 +3826,7 @@ impl Drop for ServerStorage {
 impl ServerStorage {
     fn new() -> Self {
         Self {
-            storage: rustls::server::ServerSessionMemoryCache::new(1024),
+            storage: rustls::paa_aaa_aaa_from_arc!(rustls::server::ServerSessionMemoryCache::new(1024)),
             put_count: AtomicUsize::new(0),
             get_count: AtomicUsize::new(0),
             take_count: AtomicUsize::new(0),

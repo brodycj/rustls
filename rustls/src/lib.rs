@@ -444,6 +444,15 @@ pub mod aaa_aaa_arc {
             }
         };
     }
+    #[macro_export]
+    macro_rules! internal_paa_aaa_aaa_from_arc {
+        ($x:expr) => {
+            {
+                let xx = crate::alias::Arc::into_raw($x.clone());
+                crate::aaa_aaa_arc::aaa_arc_from_raw_ptr(xx)
+            }
+        };
+    }
 }
 
 #[macro_use]
