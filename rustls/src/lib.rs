@@ -456,9 +456,6 @@ pub mod aaa_aaa_arc {
 }
 
 #[macro_use]
-mod trait_macros;
-
-#[macro_use]
 mod msgs;
 mod common_state;
 pub mod compress;

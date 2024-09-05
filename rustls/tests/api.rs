@@ -3470,44 +3470,45 @@ impl KeyLog for KeyLogToVec {
     }
 }
 
-// XXX
-// #[cfg(feature = "tls12")]
-// #[test]
-// fn key_log_for_tls12() {
-//     let client_key_log = Arc::new(KeyLogToVec::new("client"));
-//     let server_key_log = Arc::new(KeyLogToVec::new("server"));
+#[cfg(feature = "tls12")]
+#[test]
+fn key_log_for_tls12() {
+    let client_key_log = Arc::new(KeyLogToVec::new("client"));
+    let server_key_log = Arc::new(KeyLogToVec::new("server"));
 
-//     let kt = KeyType::Rsa2048;
-//     let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS12]);
-//     panic!("XXX");//XXX
-//     // client_config.key_log = client_key_log.clone();
-//     let client_config = Arc::new(client_config);
+    let kt = KeyType::Rsa2048;
+    let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS12]);
+    // panic!("XXX");//XXX
+    // client_config.key_log = client_key_log.clone();
+    client_config.key_log = rustls::paa_aaa_aaa_from_arc!(client_key_log.clone());
+    let client_config = Arc::new(client_config);
 
-//     let mut server_config = make_server_config(kt);
-//     // server_config.key_log = server_key_log.clone();
-//     let server_config = Arc::new(server_config);
+    let mut server_config = make_server_config(kt);
+    // server_config.key_log = server_key_log.clone();
+    server_config.key_log = rustls::paa_aaa_aaa_from_arc!(server_key_log.clone());
+    let server_config = Arc::new(server_config);
 
-//     // full handshake
-//     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
-//     do_handshake(&mut client, &mut server);
+    // full handshake
+    let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
+    do_handshake(&mut client, &mut server);
 
-//     let client_full_log = client_key_log.take();
-//     let server_full_log = server_key_log.take();
-//     assert_eq!(client_full_log, server_full_log);
-//     assert_eq!(1, client_full_log.len());
-//     assert_eq!("CLIENT_RANDOM", client_full_log[0].label);
+    let client_full_log = client_key_log.take();
+    let server_full_log = server_key_log.take();
+    assert_eq!(client_full_log, server_full_log);
+    assert_eq!(1, client_full_log.len());
+    assert_eq!("CLIENT_RANDOM", client_full_log[0].label);
 
-//     // resumed
-//     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
-//     do_handshake(&mut client, &mut server);
+    // resumed
+    let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
+    do_handshake(&mut client, &mut server);
 
-//     let client_resume_log = client_key_log.take();
-//     let server_resume_log = server_key_log.take();
-//     assert_eq!(client_resume_log, server_resume_log);
-//     assert_eq!(1, client_resume_log.len());
-//     assert_eq!("CLIENT_RANDOM", client_resume_log[0].label);
-//     assert_eq!(client_full_log[0].secret, client_resume_log[0].secret);
-// }
+    let client_resume_log = client_key_log.take();
+    let server_resume_log = server_key_log.take();
+    assert_eq!(client_resume_log, server_resume_log);
+    assert_eq!(1, client_resume_log.len());
+    assert_eq!("CLIENT_RANDOM", client_resume_log[0].label);
+    assert_eq!(client_full_log[0].secret, client_resume_log[0].secret);
+}
 
 // #[ignore]//XXX
 #[test]
