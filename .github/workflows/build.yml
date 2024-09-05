@@ -54,6 +54,12 @@ jobs:
       - name: cargo test (debug; rustls package with the critical-section feature enabled)
         run: cargo test --features critical-section --package rustls
 
+      - name: cargo build (debug; rustls package with only aws-lc-rs,critical-section features enabled)
+        run: cargo build --locked --no-default-features --features aws-lc-rs,critical-section --package rustls
+
+      - name: cargo test (debug; rustls package with only aws-lc-rs,critical-section,std features enabled)
+        run: cargo test --no-default-features --features aws-lc-rs,critical-section,std --package rustls
+
       - name: cargo build (debug; rustls package with withrcalias & critical-section features enabled)
         run: cargo build --locked --features withrcalias,critical-section --package rustls
 
