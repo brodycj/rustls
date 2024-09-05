@@ -3511,11 +3511,11 @@ impl KeyLog for KeyLogToVec {
 //     assert_eq!(client_full_log[0].secret, client_resume_log[0].secret);
 // }
 
-#[ignore]//XXX
+// #[ignore]//XXX
 #[test]
 fn key_log_for_tls13() {
     let client_key_log = ZZXArc::new(KeyLogToVec::new("client"));
-    let server_key_log = ZZXArc::new(KeyLogToVec::new("server"));
+    let server_key_log = Arc::new(KeyLogToVec::new("server"));
 
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS13]);
@@ -3523,9 +3523,8 @@ fn key_log_for_tls13() {
     let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
-    // XXX TODO EXTRACT THIS INTO XXX XXX XXX
-    // server_config.key_log = unsafe {Arc::from_raw(server_key_log.clone().as_ref())};
-    panic!("XXX");
+    server_config.key_log = rustls::paa_aaa_aaa_from_arc!(server_key_log.clone());
+    // panic!("XXX");
     let server_config = Arc::new(server_config);
 
     // full handshake
@@ -3899,13 +3898,11 @@ struct ClientStorage {
 
 impl ClientStorage {
     fn new() -> Self {
-        // XXX
-        unimplemented!();
-        // Self {
-        //     storage: Arc::new(rustls::client::ClientSessionMemoryCache::new(1024)),
-        //     ops: Mutex::new(Vec::new()),
-        //     alter_max_early_data_size: None,
-        // }
+        Self {
+            storage: rustls::paa_arc_from_contents!(rustls::client::ClientSessionMemoryCache::new(1024)),
+            ops: Mutex::new(Vec::new()),
+            alter_max_early_data_size: None,
+        }
     }
 
     fn alter_max_early_data_size(&mut self, expected: u32, altered: u32) {
@@ -4165,10 +4162,10 @@ fn tls13_stateful_resumption() {
     );
     assert_eq!(client.handshake_kind(), Some(HandshakeKind::Resumed));
     assert_eq!(server.handshake_kind(), Some(HandshakeKind::Resumed));
-    panic!("XXX XXX END OF HANDSHAKE TEST")
+    // panic!("XXX XXX END OF HANDSHAKE TEST")
 }
 
-#[ignore]//XXX
+// #[ignore]//XXX
 #[test]
 fn tls13_stateless_resumption() {
     let kt = KeyType::Rsa2048;
@@ -4179,8 +4176,9 @@ fn tls13_stateless_resumption() {
     server_config.ticketer = provider::Ticketer::new().unwrap();
     let storage = Arc::new(ServerStorage::new());
     // XXX TODO XXX
-    panic!("XXX");
+    // panic!("XXX");
     // server_config.session_storage = storage.clone().into();
+    server_config.session_storage = rustls::paa_aaa_aaa_from_arc!(storage.clone());
     let server_config = Arc::new(server_config);
 
     // full handshake
@@ -6040,8 +6038,8 @@ fn test_client_tls12_no_resume_after_server_downgrade() {
         server_config_builder_with_versions(&[&rustls::version::TLS12]),
     );
     // XXX XXX
-    panic!("XXX");
-    // server_config_2.session_storage = rustls::paa_arc_from_contents!(rustls::server::NoServerSessionStorage {});
+    // panic!("XXX");
+    server_config_2.session_storage = rustls::paa_arc_from_contents!(rustls::server::NoServerSessionStorage {});
 
     dbg!("handshake 1");
     let mut client_1 =
