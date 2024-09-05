@@ -1,5 +1,4 @@
 use alloc::vec::Vec;
-
 use core::fmt::Debug;
 
 use pki_types::{CertificateDer, ServerName, UnixTime};
@@ -64,11 +63,10 @@ impl ClientCertVerified {
     }
 }
 
-///// XXX TODO XXX XXX DOC XXX XXX
 /// Something that can verify a server certificate chain, and verify
 /// signatures made by certificates.
 #[allow(unreachable_pub)]
-pub_api_trait!(ServerCertVerifier, {
+pub trait ServerCertVerifier: Debug + Send + Sync {
     /// Verify the end-entity certificate `end_entity` is valid for the
     /// hostname `dns_name` and chains to at least one trust anchor.
     ///
@@ -138,12 +136,11 @@ pub_api_trait!(ServerCertVerifier, {
     ///
     /// This should be in priority order, with the most preferred first.
     fn supported_verify_schemes(&self) -> Vec<SignatureScheme>;
-});
+}
 
-///// XXX TODO XXX XXX DOC XXX XXX
 /// Something that can verify a client certificate chain
 #[allow(unreachable_pub)]
-pub_api_trait!(ClientCertVerifier, {
+pub trait ClientCertVerifier: Debug + Send + Sync {
     /// Returns `true` to enable the server to request a client certificate and
     /// `false` to skip requesting a client certificate. Defaults to `true`.
     fn offer_client_auth(&self) -> bool {
@@ -252,7 +249,7 @@ pub_api_trait!(ClientCertVerifier, {
     ///
     /// This should be in priority order, with the most preferred first.
     fn supported_verify_schemes(&self) -> Vec<SignatureScheme>;
-});
+}
 
 /// Turns off client authentication. In contrast to using
 /// `WebPkiClientVerifier::builder(roots).allow_unauthenticated().build()`, the `NoClientAuth`
