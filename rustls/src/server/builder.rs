@@ -133,12 +133,10 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             cert_resolver,
             ignore_client_order: false,
             max_fragment_size: None,
-            // #[cfg(feature = "std")]
-            // session_storage: handy::ServerSessionMemoryCache::new(256),
+            #[cfg(feature = "std")]
             session_storage: internal_paa_aaa_aaa_from_arc!(handy::ServerSessionMemoryCache::new(256)),
-            // XXX TODO XXX
-            // #[cfg(not(feature = "std"))]
-            // session_storage: Arc::new(handy::NoServerSessionStorage {}),
+            #[cfg(not(feature = "std"))]
+            session_storage: internal_paa_aaa_arc_from_contents!(handy::NoServerSessionStorage {}),
             ticketer: internal_paa_aaa_arc_from_contents!(handy::NeverProducesTickets {}),
             alpn_protocols: Vec::new(),
             versions: self.state.versions,
