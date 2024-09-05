@@ -3,7 +3,7 @@ use alloc::vec::Vec;
 use pki_types::{CertificateDer, CertificateRevocationListDer, ServerName, UnixTime};
 use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, UnknownStatusPolicy};
 
-use crate::alias::ZZXArc;
+use crate::alias::Arc;
 use crate::crypto::{CryptoProvider, WebPkiSupportedAlgorithms};
 use crate::log::trace;
 use crate::verify::{
@@ -23,7 +23,7 @@ use crate::{Error, RootCertStore, SignatureScheme};
 /// For more information, see the [`WebPkiServerVerifier`] documentation.
 #[derive(Debug, Clone)]
 pub struct ServerCertVerifierBuilder {
-    roots: ZZXArc<RootCertStore>,
+    roots: Arc<RootCertStore>,
     crls: Vec<CertificateRevocationListDer<'static>>,
     revocation_check_depth: RevocationCheckDepth,
     unknown_revocation_policy: UnknownStatusPolicy,
@@ -33,7 +33,7 @@ pub struct ServerCertVerifierBuilder {
 
 impl ServerCertVerifierBuilder {
     pub(crate) fn new(
-        roots: ZZXArc<RootCertStore>,
+        roots: Arc<RootCertStore>,
         supported_algs: WebPkiSupportedAlgorithms,
     ) -> Self {
         Self {
@@ -111,7 +111,7 @@ impl ServerCertVerifierBuilder {
     /// This function will return a [`VerifierBuilderError`] if:
     /// 1. No trust anchors have been provided.
     /// 2. DER encoded CRLs have been provided that can not be parsed successfully.
-    pub fn build(self) -> Result<ZZXArc<WebPkiServerVerifier>, VerifierBuilderError> {
+    pub fn build(self) -> Result<Arc<WebPkiServerVerifier>, VerifierBuilderError> {
         if self.roots.is_empty() {
             return Err(VerifierBuilderError::NoRootAnchors);
         }
@@ -132,7 +132,7 @@ impl ServerCertVerifierBuilder {
 #[allow(unreachable_pub)]
 #[derive(Debug)]
 pub struct WebPkiServerVerifier {
-    roots: ZZXArc<RootCertStore>,
+    roots: Arc<RootCertStore>,
     crls: Vec<CertRevocationList<'static>>,
     revocation_check_depth: RevocationCheckDepth,
     unknown_revocation_policy: UnknownStatusPolicy,
@@ -150,7 +150,7 @@ impl WebPkiServerVerifier {
     /// Use [`Self::builder_with_provider`] if you wish to specify an explicit provider.
     ///
     /// For more information, see the [`ServerCertVerifierBuilder`] documentation.
-    pub fn builder(roots: ZZXArc<RootCertStore>) -> ServerCertVerifierBuilder {
+    pub fn builder(roots: Arc<RootCertStore>) -> ServerCertVerifierBuilder {
         Self::builder_with_provider(
             roots,
             CryptoProvider::get_default_or_install_from_crate_features().clone(),
@@ -166,8 +166,8 @@ impl WebPkiServerVerifier {
     ///
     /// For more information, see the [`ServerCertVerifierBuilder`] documentation.
     pub fn builder_with_provider(
-        roots: ZZXArc<RootCertStore>,
-        provider: ZZXArc<CryptoProvider>,
+        roots: Arc<RootCertStore>,
+        provider: Arc<CryptoProvider>,
     ) -> ServerCertVerifierBuilder {
         ServerCertVerifierBuilder::new(roots, provider.signature_verification_algorithms)
     }
@@ -175,7 +175,7 @@ impl WebPkiServerVerifier {
     /// Short-cut for creating a `WebPkiServerVerifier` that does not perform certificate revocation
     /// checking, avoiding the need to use a builder.
     pub(crate) fn new_without_revocation(
-        roots: impl Into<ZZXArc<RootCertStore>>,
+        roots: impl Into<Arc<RootCertStore>>,
         supported_algs: WebPkiSupportedAlgorithms,
     ) -> Self {
         Self::new(
@@ -200,7 +200,7 @@ impl WebPkiServerVerifier {
     /// * `supported` is the set of supported algorithms that will be used for
     ///   certificate verification and TLS handshake signature verification.
     pub(crate) fn new(
-        roots: impl Into<ZZXArc<RootCertStore>>,
+        roots: impl Into<Arc<RootCertStore>>,
         crls: Vec<CertRevocationList<'static>>,
         revocation_check_depth: RevocationCheckDepth,
         unknown_revocation_policy: UnknownStatusPolicy,
@@ -308,7 +308,7 @@ test_for_each_provider! {
 
     use super::{VerifierBuilderError, WebPkiServerVerifier};
 
-    use crate::internal::alias::ZZXArc;
+    use crate::internal::alias::Arc;
 
     use crate::RootCertStore;
 
@@ -331,7 +331,7 @@ test_for_each_provider! {
         ])
     }
 
-    fn load_roots(roots_der: &[&[u8]]) -> ZZXArc<RootCertStore> {
+    fn load_roots(roots_der: &[&[u8]]) -> Arc<RootCertStore> {
         let mut roots = RootCertStore::empty();
         roots_der.iter().for_each(|der| {
             roots
@@ -341,7 +341,7 @@ test_for_each_provider! {
         roots.into()
     }
 
-    fn test_roots() -> ZZXArc<RootCertStore> {
+    fn test_roots() -> Arc<RootCertStore> {
         load_roots(&[
             include_bytes!("../../../test-ca/ecdsa-p256/ca.der").as_slice(),
             include_bytes!("../../../test-ca/rsa-2048/ca.der").as_slice(),

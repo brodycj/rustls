@@ -12,7 +12,6 @@ use pki_types::{DnsName, UnixTime};
 use super::hs;
 
 use crate::alias::Arc;
-use crate::alias::ZZXArc;
 use crate::builder::ConfigBuilder;
 use crate::common_state::{CommonState, Side};
 #[cfg(feature = "std")]
@@ -122,7 +121,7 @@ pub_api_trait!(ResolvesServerCert, {
     /// ClientHello information.
     ///
     /// Return `None` to abort the handshake.
-    fn resolve(&self, client_hello: ClientHello<'_>) -> Option<ZZXArc<sign::CertifiedKey>>;
+    fn resolve(&self, client_hello: ClientHello<'_>) -> Option<Arc<sign::CertifiedKey>>;
 });
 
 /// A struct representing the received Client Hello
@@ -230,7 +229,7 @@ impl<'a> ClientHello<'a> {
 #[derive(Clone, Debug)]
 pub struct ServerConfig {
     /// Source of randomness and other crypto.
-    pub(super) provider: ZZXArc<CryptoProvider>,
+    pub(super) provider: Arc<CryptoProvider>,
 
     /// Ignore the client's ciphersuite order. Instead,
     /// choose the top ciphersuite in the server list
@@ -254,12 +253,12 @@ pub struct ServerConfig {
     pub session_storage: Arc<dyn StoresServerSessions>,
 
     /// How to produce tickets.
-    pub ticketer: ZZXArc<dyn ProducesTickets>,
+    pub ticketer: Arc<dyn ProducesTickets>,
 
     /// How to choose a server cert and key. This is usually set by
     /// [ConfigBuilder::with_single_cert] or [ConfigBuilder::with_cert_resolver].
     /// For async applications, see also [Acceptor].
-    pub cert_resolver: ZZXArc<dyn ResolvesServerCert>,
+    pub cert_resolver: Arc<dyn ResolvesServerCert>,
 
     /// Protocol names we support, most preferred first.
     /// If empty we don't do ALPN at all.
@@ -270,7 +269,7 @@ pub struct ServerConfig {
     pub(super) versions: versions::EnabledVersions,
 
     /// How to verify client certificates.
-    pub(super) verifier: ZZXArc<dyn verify::ClientCertVerifier>,
+    pub(super) verifier: Arc<dyn verify::ClientCertVerifier>,
 
     /// How to output key material for debugging.  The default
     /// does nothing.
@@ -360,7 +359,7 @@ pub struct ServerConfig {
     ///
     /// This is optional: [`compress::CompressionCache::Disabled`] gives
     /// a cache that does no caching.
-    pub cert_compression_cache: ZZXArc<compress::CompressionCache>,
+    pub cert_compression_cache: Arc<compress::CompressionCache>,
 
     /// How to decompress the clients's certificate chain.
     ///
@@ -423,7 +422,7 @@ impl ServerConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     #[cfg(feature = "std")]
     pub fn builder_with_provider(
-        provider: ZZXArc<CryptoProvider>,
+        provider: Arc<CryptoProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {
@@ -449,7 +448,7 @@ impl ServerConfig {
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
-        provider: ZZXArc<CryptoProvider>,
+        provider: Arc<CryptoProvider>,
         time_provider: Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
@@ -480,7 +479,7 @@ impl ServerConfig {
     }
 
     /// Return the crypto provider used to construct this client configuration.
-    pub fn crypto_provider(&self) -> &ZZXArc<CryptoProvider> {
+    pub fn crypto_provider(&self) -> &Arc<CryptoProvider> {
         &self.provider
     }
 

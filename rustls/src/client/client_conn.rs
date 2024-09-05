@@ -9,7 +9,6 @@ use super::handy::NoClientSessionStorage;
 use super::hs;
 
 use crate::alias::Arc;
-use crate::alias::ZZXArc;
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
 use crate::common_state::{CommonState, Protocol, Side};
@@ -28,7 +27,7 @@ use crate::time_provider::TimeProvider;
 use crate::unbuffered::{EncryptError, TransmitTlsData};
 #[cfg(feature = "std")]
 use crate::WantsVerifier;
-use crate::{compress, sign, verify, versions, KeyLog, WantsVersions};
+use crate::{compress, internal_paa_aaa_arc_from_contents, sign, verify, versions, KeyLog, WantsVersions};
 #[cfg(doc)]
 use crate::{crypto, DistinguishedName};
 
@@ -122,7 +121,7 @@ pub_api_trait!(ResolvesClientCert, {
         &self,
         root_hint_subjects: &[&[u8]],
         sigschemes: &[SignatureScheme],
-    ) -> Option<ZZXArc<sign::CertifiedKey>>;
+    ) -> Option<Arc<sign::CertifiedKey>>;
 
     /// Return true if any certificates at all are available.
     fn has_certs(&self) -> bool;
@@ -179,7 +178,7 @@ pub struct ClientConfig {
     pub max_fragment_size: Option<usize>,
 
     /// How to decide what client auth certificate/keys to use.
-    pub client_auth_cert_resolver: ZZXArc<dyn ResolvesClientCert>,
+    pub client_auth_cert_resolver: Arc<dyn ResolvesClientCert>,
 
     /// Whether to send the Server Name Indication (SNI) extension
     /// during the client handshake.
@@ -189,7 +188,7 @@ pub struct ClientConfig {
 
     /// How to output key material for debugging.  The default
     /// does nothing.
-    pub key_log: ZZXArc<dyn KeyLog>,
+    pub key_log: Arc<dyn KeyLog>,
 
     /// Allows traffic secrets to be extracted after the handshake,
     /// e.g. for kTLS setup.
@@ -220,14 +219,14 @@ pub struct ClientConfig {
     pub time_provider: crate::alias::Arc<dyn TimeProvider>,
 
     /// Source of randomness and other crypto.
-    pub(super) provider: ZZXArc<CryptoProvider>,
+    pub(super) provider: Arc<CryptoProvider>,
 
     /// Supported versions, in no particular order.  The default
     /// is all supported versions.
     pub(super) versions: versions::EnabledVersions,
 
     /// How to verify the server certificate chain.
-    pub(super) verifier: ZZXArc<dyn verify::ServerCertVerifier>,
+    pub(super) verifier: Arc<dyn verify::ServerCertVerifier>,
 
     /// How to decompress the server's certificate chain.
     ///
@@ -257,7 +256,7 @@ pub struct ClientConfig {
     ///
     /// This is optional: [`compress::CompressionCache::Disabled`] gives
     /// a cache that does no caching.
-    pub cert_compression_cache: ZZXArc<compress::CompressionCache>,
+    pub cert_compression_cache: Arc<compress::CompressionCache>,
 
     /// How to offer Encrypted Client Hello (ECH). The default is to not offer ECH.
     pub(super) ech_mode: Option<EchMode>,
@@ -310,7 +309,7 @@ impl ClientConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     #[cfg(feature = "std")]
     pub fn builder_with_provider(
-        provider: ZZXArc<CryptoProvider>,
+        provider: Arc<CryptoProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {
@@ -335,7 +334,7 @@ impl ClientConfig {
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
-        provider: ZZXArc<CryptoProvider>,
+        provider: Arc<CryptoProvider>,
         time_provider: crate::alias::Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
@@ -369,7 +368,7 @@ impl ClientConfig {
     }
 
     /// Return the crypto provider used to construct this client configuration.
-    pub fn crypto_provider(&self) -> &ZZXArc<CryptoProvider> {
+    pub fn crypto_provider(&self) -> &Arc<CryptoProvider> {
         &self.provider
     }
 
@@ -427,7 +426,7 @@ impl ClientConfig {
 pub struct Resumption {
     /// How we store session data or tickets. The default is to use an in-memory
     /// [super::handy::ClientSessionMemoryCache].
-    pub(super) store: ZZXArc<dyn ClientSessionStore>,
+    pub(super) store: Arc<dyn ClientSessionStore>,
 
     /// What mechanism is used for resuming a TLS 1.2 session.
     pub(super) tls12_resumption: Tls12Resumption,
@@ -441,7 +440,7 @@ impl Resumption {
     #[cfg(feature = "std")]
     pub fn in_memory_sessions(num: usize) -> Self {
         Self {
-            store: ZZXArc::new(super::handy::ClientSessionMemoryCache::new(num)),
+            store: internal_paa_aaa_arc_from_contents!(super::handy::ClientSessionMemoryCache::new(num)),
             tls12_resumption: Tls12Resumption::SessionIdOrTickets,
         }
     }
@@ -449,7 +448,7 @@ impl Resumption {
     /// Use a custom [`ClientSessionStore`] implementation to store sessions.
     ///
     /// By default, enables resuming a TLS 1.2 session with a session id or RFC 5077 ticket.
-    pub fn store(store: ZZXArc<dyn ClientSessionStore>) -> Self {
+    pub fn store(store: Arc<dyn ClientSessionStore>) -> Self {
         Self {
             store,
             tls12_resumption: Tls12Resumption::SessionIdOrTickets,
@@ -459,7 +458,7 @@ impl Resumption {
     /// Disable all use of session resumption.
     pub fn disabled() -> Self {
         Self {
-            store: ZZXArc::new(NoClientSessionStorage),
+            store: internal_paa_aaa_arc_from_contents!(NoClientSessionStorage),
             tls12_resumption: Tls12Resumption::Disabled,
         }
     }
@@ -509,7 +508,7 @@ pub(super) mod danger {
     use super::verify::ServerCertVerifier;
     use super::ClientConfig;
 
-    use crate::alias::ZZXArc;
+    use crate::alias::Arc;
 
     /// Accessor for dangerous configuration options.
     #[derive(Debug)]
@@ -520,7 +519,7 @@ pub(super) mod danger {
 
     impl<'a> DangerousClientConfig<'a> {
         /// Overrides the default `ServerCertVerifier` with something else.
-        pub fn set_certificate_verifier(&mut self, verifier: ZZXArc<dyn ServerCertVerifier>) {
+        pub fn set_certificate_verifier(&mut self, verifier: Arc<dyn ServerCertVerifier>) {
             self.cfg.verifier = verifier;
         }
     }

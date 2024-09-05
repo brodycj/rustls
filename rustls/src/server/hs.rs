@@ -9,7 +9,6 @@ use super::server_conn::ServerConnectionData;
 use super::tls12;
 
 use crate::alias::Arc;
-use crate::alias::ZZXArc;
 use crate::common_state::{KxState, Protocol, State};
 use crate::conn::ConnectionRandoms;
 use crate::crypto::SupportedKxGroup;

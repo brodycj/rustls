@@ -35,7 +35,6 @@ use common::{
 };
 
 use rustls::internal::alias::Arc;
-use rustls::internal::alias::ZZXArc;
 
 #[test]
 fn exercise_key_log_file_for_client() {
@@ -45,7 +44,7 @@ fn exercise_key_log_file_for_client() {
 
         for version in rustls::ALL_VERSIONS {
             let mut client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
-            client_config.key_log = ZZXArc::new(rustls::KeyLogFile::new());
+            client_config.key_log = rustls::paa_arc_from_contents!(rustls::KeyLogFile::new());
 
             let (mut client, mut server) =
                 make_pair_for_arc_configs(&Arc::new(client_config), &server_config);

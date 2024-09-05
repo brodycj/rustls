@@ -38,12 +38,12 @@ mod no_std_lock {
     use core::fmt::Debug;
     use core::ops::DerefMut;
 
-    use crate::alias::ZZXArc;
+    use crate::alias::Arc;
 
     #[derive(Debug)]
     /// A no-std compatible wrapper around [`Lock`].
     pub struct Mutex<T> {
-        inner: ZZXArc<dyn Lock<T>>,
+        inner: Arc<dyn Lock<T>>,
     }
 
     impl<T: Send + 'static> Mutex<T> {
@@ -76,7 +76,7 @@ mod no_std_lock {
     /// A lock builder.
     pub trait MakeMutex {
         /// Create a new mutex.
-        fn make_mutex<T>(value: T) -> ZZXArc<dyn Lock<T>>
+        fn make_mutex<T>(value: T) -> Arc<dyn Lock<T>>
         where
             T: Send + 'static;
     }

@@ -12,7 +12,7 @@ use aws_lc_rs::encoding::{AsBigEndian, Curve25519SeedBin, EcPrivateKeyBin};
 use zeroize::Zeroize;
 
 #[cfg(feature = "std")]
-use crate::alias::ZZXArc;
+use crate::alias::Arc;
 use crate::crypto::aws_lc_rs::hmac::{HMAC_SHA256, HMAC_SHA384, HMAC_SHA512};
 use crate::crypto::aws_lc_rs::unspecified_err;
 use crate::crypto::hpke::{
@@ -21,7 +21,7 @@ use crate::crypto::hpke::{
 use crate::crypto::tls13::{expand, HkdfExpander, HkdfPrkExtract, HkdfUsingHmac};
 use crate::msgs::enums::{HpkeAead, HpkeKdf, HpkeKem};
 use crate::msgs::handshake::HpkeSymmetricCipherSuite;
-use crate::{Error, OtherError};
+use crate::{internal_paa_aaa_arc_from_contents, Error, OtherError};
 
 /// Default [RFC 9180] Hybrid Public Key Encryption (HPKE) suites supported by aws-lc-rs cryptography.
 pub static ALL_SUPPORTED_SUITES: &[&dyn Hpke] = &[
@@ -931,7 +931,7 @@ fn key_rejected_err(_e: aws_lc_rs::error::KeyRejected) -> Error {
     #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     {
-        Error::Other(OtherError(ZZXArc::new(_e)))
+        Error::Other(OtherError(internal_paa_aaa_arc_from_contents!(_e)))
     }
     #[cfg(any(feature = "withrcalias", not(feature = "std")))]
     {

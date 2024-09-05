@@ -8,14 +8,14 @@ pub(crate) use aws_lc_rs as ring_like;
 use pki_types::PrivateKeyDer;
 use webpki::aws_lc_rs as webpki_algs;
 
-use crate::alias::ZZXArc;
+use crate::alias::Arc;
 use crate::crypto::{CryptoProvider, KeyProvider, SecureRandom};
 use crate::enums::SignatureScheme;
 use crate::rand::GetRandomFailed;
 use crate::sign::SigningKey;
 use crate::suites::SupportedCipherSuite;
 use crate::webpki::WebPkiSupportedAlgorithms;
-use crate::{Error, OtherError};
+use crate::{internal_paa_aaa_arc_from_contents, Error, OtherError};
 
 /// Hybrid public key encryption (HPKE).
 pub mod hpke;
@@ -83,7 +83,7 @@ impl KeyProvider for AwsLcRs {
     fn load_private_key(
         &self,
         key_der: PrivateKeyDer<'static>,
-    ) -> Result<ZZXArc<dyn SigningKey>, Error> {
+    ) -> Result<Arc<dyn SigningKey>, Error> {
         sign::any_supported_type(&key_der)
     }
 
@@ -258,7 +258,7 @@ pub(super) fn unspecified_err(_e: aws_lc_rs::error::Unspecified) -> Error {
     #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     {
-        Error::Other(OtherError(ZZXArc::new(_e)))
+        Error::Other(OtherError(internal_paa_aaa_arc_from_contents!(_e)))
     }
     #[cfg(any(feature = "withrcalias", not(feature = "std")))]
     {

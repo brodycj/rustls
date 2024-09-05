@@ -1,6 +1,6 @@
 use pki_types::ServerName;
 
-use crate::alias::ZZXArc;
+use crate::alias::Arc;
 use crate::enums::SignatureScheme;
 use crate::error::Error;
 use crate::msgs::handshake::CertificateChain;
@@ -202,7 +202,7 @@ impl client::ResolvesClientCert for FailResolveClientCert {
         &self,
         _root_hint_subjects: &[&[u8]],
         _sigschemes: &[SignatureScheme],
-    ) -> Option<ZZXArc<sign::CertifiedKey>> {
+    ) -> Option<Arc<sign::CertifiedKey>> {
         None
     }
 
@@ -212,14 +212,14 @@ impl client::ResolvesClientCert for FailResolveClientCert {
 }
 
 #[derive(Debug)]
-pub(super) struct AlwaysResolvesClientCert(ZZXArc<sign::CertifiedKey>);
+pub(super) struct AlwaysResolvesClientCert(Arc<sign::CertifiedKey>);
 
 impl AlwaysResolvesClientCert {
     pub(super) fn new(
-        private_key: ZZXArc<dyn sign::SigningKey>,
+        private_key: Arc<dyn sign::SigningKey>,
         chain: CertificateChain<'static>,
     ) -> Result<Self, Error> {
-        Ok(Self(ZZXArc::new(sign::CertifiedKey::new(
+        Ok(Self(Arc::new(sign::CertifiedKey::new(
             chain.0,
             private_key,
         ))))
@@ -231,8 +231,8 @@ impl client::ResolvesClientCert for AlwaysResolvesClientCert {
         &self,
         _root_hint_subjects: &[&[u8]],
         _sigschemes: &[SignatureScheme],
-    ) -> Option<ZZXArc<sign::CertifiedKey>> {
-        Some(ZZXArc::clone(&self.0))
+    ) -> Option<Arc<sign::CertifiedKey>> {
+        Some(Arc::clone(&self.0))
     }
 
     fn has_certs(&self) -> bool {

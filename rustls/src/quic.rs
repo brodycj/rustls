@@ -27,7 +27,6 @@ mod connection {
     use super::{DirectionalKeys, KeyChange, Version};
 
     use crate::alias::Arc;
-    use crate::alias::ZZXArc;
     use crate::client::{ClientConfig, ClientConnectionData};
     use crate::common_state::{CommonState, Protocol, DEFAULT_BUFFER_LIMIT};
     use crate::conn::{ConnectionCore, SideData};

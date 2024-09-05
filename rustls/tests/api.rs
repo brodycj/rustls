@@ -10,8 +10,6 @@ use std::sync::Mutex;
 use std::{fmt, mem};
 
 use rustls::internal::alias::Arc;
-// XXX XXX TODO COMPLETELY REPLACE USE OF THIS:
-use rustls::internal::alias::ZZXArc;
 
 use pki_types::{CertificateDer, IpAddr, ServerName, UnixTime};
 use rustls::client::{verify_server_cert_signed_by_trust_anchor, ResolvesClientCert, Resumption};
@@ -906,7 +904,7 @@ struct ServerCheckCertResolve {
 }
 
 impl ResolvesServerCert for ServerCheckCertResolve {
-    fn resolve(&self, client_hello: ClientHello) -> Option<ZZXArc<sign::CertifiedKey>> {
+    fn resolve(&self, client_hello: ClientHello) -> Option<Arc<sign::CertifiedKey>> {
         if client_hello
             .signature_schemes()
             .is_empty()
@@ -963,7 +961,7 @@ fn server_cert_resolve_with_sni() {
         let client_config = make_client_config(*kt);
         let mut server_config = make_server_config(*kt);
 
-        server_config.cert_resolver = ZZXArc::new(ServerCheckCertResolve {
+        server_config.cert_resolver = rustls::paa_arc_from_contents!(ServerCheckCertResolve {
             expected_sni: Some("the-value-from-sni".into()),
             ..Default::default()
         });
@@ -985,7 +983,7 @@ fn server_cert_resolve_with_alpn() {
         client_config.alpn_protocols = vec!["foo".into(), "bar".into()];
 
         let mut server_config = make_server_config(*kt);
-        server_config.cert_resolver = ZZXArc::new(ServerCheckCertResolve {
+        server_config.cert_resolver = rustls::paa_arc_from_contents!(ServerCheckCertResolve {
             expected_alpn: Some(vec![b"foo".to_vec(), b"bar".to_vec()]),
             ..Default::default()
         });
@@ -1005,7 +1003,7 @@ fn client_trims_terminating_dot() {
         let client_config = make_client_config(*kt);
         let mut server_config = make_server_config(*kt);
 
-        server_config.cert_resolver = ZZXArc::new(ServerCheckCertResolve {
+        server_config.cert_resolver = rustls::paa_arc_from_contents!(ServerCheckCertResolve {
             expected_sni: Some("some-host.com".into()),
             ..Default::default()
         });
@@ -1088,7 +1086,7 @@ fn check_sni_error(alteration: impl Fn(&mut Message) -> Altered, expected_error:
         let client_config = make_client_config(*kt);
         let mut server_config = make_server_config(*kt);
 
-        server_config.cert_resolver = ZZXArc::new(ServerCheckNoSni {});
+        server_config.cert_resolver = rustls::paa_arc_from_contents!(ServerCheckNoSni {});
 
         let client =
             ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
@@ -1127,7 +1125,7 @@ fn check_sigalgs_reduced_by_ciphersuite(
 
     let mut server_config = make_server_config(kt);
 
-    server_config.cert_resolver = ZZXArc::new(ServerCheckCertResolve {
+    server_config.cert_resolver = rustls::paa_arc_from_contents!(ServerCheckCertResolve {
         expected_sigalgs: Some(expected_sigalgs),
         expected_cipher_suites: Some(vec![suite, CipherSuite::TLS_EMPTY_RENEGOTIATION_INFO_SCSV]),
         ..Default::default()
@@ -1185,7 +1183,7 @@ fn server_cert_resolve_reduces_sigalgs_for_ecdsa_ciphersuite() {
 struct ServerCheckNoSni {}
 
 impl ResolvesServerCert for ServerCheckNoSni {
-    fn resolve(&self, client_hello: ClientHello) -> Option<ZZXArc<sign::CertifiedKey>> {
+    fn resolve(&self, client_hello: ClientHello) -> Option<Arc<sign::CertifiedKey>> {
         assert!(client_hello.server_name().is_none());
 
         None
@@ -1196,7 +1194,7 @@ impl ResolvesServerCert for ServerCheckNoSni {
 fn client_with_sni_disabled_does_not_send_sni() {
     for kt in ALL_KEY_TYPES {
         let mut server_config = make_server_config(*kt);
-        server_config.cert_resolver = ZZXArc::new(ServerCheckNoSni {});
+        server_config.cert_resolver = rustls::paa_arc_from_contents!(ServerCheckNoSni {});
         let server_config = Arc::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
@@ -1536,7 +1534,7 @@ impl ResolvesClientCert for ClientCheckCertResolve {
         &self,
         root_hint_subjects: &[&[u8]],
         sigschemes: &[SignatureScheme],
-    ) -> Option<ZZXArc<sign::CertifiedKey>> {
+    ) -> Option<Arc<sign::CertifiedKey>> {
         self.query_count
             .fetch_add(1, Ordering::SeqCst);
 
@@ -1564,7 +1562,7 @@ fn test_client_cert_resolve(
         println!("{:?} {:?}:", version.version, key_type);
 
         let mut client_config = make_client_config_with_versions(key_type, &[version]);
-        client_config.client_auth_cert_resolver = ZZXArc::new(ClientCheckCertResolve::new(
+        client_config.client_auth_cert_resolver = rustls::paa_arc_from_contents!(ClientCheckCertResolve::new(
             1,
             expected_root_hint_subjects.clone(),
             default_signature_schemes(version.version),
@@ -2865,7 +2863,7 @@ fn server_exposes_offered_sni_even_if_resolver_fails() {
     let resolver = rustls::server::ResolvesServerCertUsingSni::new();
 
     let mut server_config = make_server_config(kt);
-    server_config.cert_resolver = ZZXArc::new(resolver);
+    server_config.cert_resolver = rustls::paa_arc_from_contents!(resolver);
     let server_config = Arc::new(server_config);
 
     for version in rustls::ALL_VERSIONS {
@@ -2892,7 +2890,7 @@ fn sni_resolver_works() {
     let kt = KeyType::Rsa2048;
     let mut resolver = rustls::server::ResolvesServerCertUsingSni::new();
     let signing_key = RsaSigningKey::new(&kt.get_key()).unwrap();
-    let signing_key: ZZXArc<dyn sign::SigningKey> = ZZXArc::new(signing_key);
+    let signing_key: Arc<dyn sign::SigningKey> = rustls::paa_arc_from_contents!(signing_key);
     resolver
         .add(
             "localhost",
@@ -2901,7 +2899,7 @@ fn sni_resolver_works() {
         .unwrap();
 
     let mut server_config = make_server_config(kt);
-    server_config.cert_resolver = ZZXArc::new(resolver);
+    server_config.cert_resolver = rustls::paa_arc_from_contents!(resolver);
     let server_config = Arc::new(server_config);
 
     let mut server1 = ServerConnection::new(Arc::clone(&server_config)).unwrap();
@@ -2930,7 +2928,7 @@ fn sni_resolver_rejects_wrong_names() {
     let kt = KeyType::Rsa2048;
     let mut resolver = rustls::server::ResolvesServerCertUsingSni::new();
     let signing_key = RsaSigningKey::new(&kt.get_key()).unwrap();
-    let signing_key: ZZXArc<dyn sign::SigningKey> = ZZXArc::new(signing_key);
+    let signing_key: Arc<dyn sign::SigningKey> = rustls::paa_arc_from_contents!(signing_key);
 
     assert_eq!(
         Ok(()),
@@ -2960,7 +2958,7 @@ fn sni_resolver_lower_cases_configured_names() {
     let kt = KeyType::Rsa2048;
     let mut resolver = rustls::server::ResolvesServerCertUsingSni::new();
     let signing_key = RsaSigningKey::new(&kt.get_key()).unwrap();
-    let signing_key: ZZXArc<dyn sign::SigningKey> = ZZXArc::new(signing_key);
+    let signing_key: Arc<dyn sign::SigningKey> = rustls::paa_arc_from_contents!(signing_key);
 
     assert_eq!(
         Ok(()),
@@ -2971,7 +2969,7 @@ fn sni_resolver_lower_cases_configured_names() {
     );
 
     let mut server_config = make_server_config(kt);
-    server_config.cert_resolver = ZZXArc::new(resolver);
+    server_config.cert_resolver = rustls::paa_arc_from_contents!(resolver);
     let server_config = Arc::new(server_config);
 
     let mut server1 = ServerConnection::new(Arc::clone(&server_config)).unwrap();
@@ -2987,7 +2985,7 @@ fn sni_resolver_lower_cases_queried_names() {
     let kt = KeyType::Rsa2048;
     let mut resolver = rustls::server::ResolvesServerCertUsingSni::new();
     let signing_key = RsaSigningKey::new(&kt.get_key()).unwrap();
-    let signing_key: ZZXArc<dyn sign::SigningKey> = ZZXArc::new(signing_key);
+    let signing_key: Arc<dyn sign::SigningKey> = rustls::paa_arc_from_contents!(signing_key);
 
     assert_eq!(
         Ok(()),
@@ -2998,7 +2996,7 @@ fn sni_resolver_lower_cases_queried_names() {
     );
 
     let mut server_config = make_server_config(kt);
-    server_config.cert_resolver = ZZXArc::new(resolver);
+    server_config.cert_resolver = rustls::paa_arc_from_contents!(resolver);
     let server_config = Arc::new(server_config);
 
     let mut server1 = ServerConnection::new(Arc::clone(&server_config)).unwrap();
@@ -3013,7 +3011,7 @@ fn sni_resolver_rejects_bad_certs() {
     let kt = KeyType::Rsa2048;
     let mut resolver = rustls::server::ResolvesServerCertUsingSni::new();
     let signing_key = RsaSigningKey::new(&kt.get_key()).unwrap();
-    let signing_key: ZZXArc<dyn sign::SigningKey> = ZZXArc::new(signing_key);
+    let signing_key: Arc<dyn sign::SigningKey> = rustls::paa_arc_from_contents!(signing_key);
 
     assert_eq!(
         Err(Error::NoCertificatesPresented),
@@ -3037,12 +3035,12 @@ fn sni_resolver_rejects_bad_certs() {
 fn test_keys_match() {
     // Consistent: Both of these should have the same SPKI values
     let expect_consistent =
-        sign::CertifiedKey::new(KeyType::Rsa2048.get_chain(), ZZXArc::new(SigningKeySomeSpki));
+        sign::CertifiedKey::new(KeyType::Rsa2048.get_chain(), rustls::paa_arc_from_contents!(SigningKeySomeSpki));
     assert!(matches!(expect_consistent.keys_match(), Ok(())));
 
     // Inconsistent: These should not have the same SPKI values
     let expect_inconsistent =
-        sign::CertifiedKey::new(KeyType::EcdsaP256.get_chain(), ZZXArc::new(SigningKeySomeSpki));
+        sign::CertifiedKey::new(KeyType::EcdsaP256.get_chain(), rustls::paa_arc_from_contents!(SigningKeySomeSpki));
     assert!(matches!(
         expect_inconsistent.keys_match(),
         Err(Error::InconsistentKeys(InconsistentKeys::KeyMismatch))
@@ -3050,7 +3048,7 @@ fn test_keys_match() {
 
     // Unknown: This signing key returns None for its SPKI, so we can't tell if the certified key is consistent
     let expect_unknown =
-        sign::CertifiedKey::new(KeyType::Rsa2048.get_chain(), ZZXArc::new(SigningKeyNoneSpki));
+        sign::CertifiedKey::new(KeyType::Rsa2048.get_chain(), rustls::paa_arc_from_contents!(SigningKeyNoneSpki));
     assert!(matches!(
         expect_unknown.keys_match(),
         Err(Error::InconsistentKeys(InconsistentKeys::Unknown))
@@ -3514,12 +3512,12 @@ impl KeyLog for KeyLogToVec {
 // #[ignore]//XXX
 #[test]
 fn key_log_for_tls13() {
-    let client_key_log = ZZXArc::new(KeyLogToVec::new("client"));
+    let client_key_log = Arc::new(KeyLogToVec::new("client"));
     let server_key_log = Arc::new(KeyLogToVec::new("server"));
 
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS13]);
-    client_config.key_log = client_key_log.clone();
+    client_config.key_log = rustls::paa_aaa_aaa_from_arc!(client_key_log.clone());
     let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
@@ -4241,7 +4239,7 @@ fn early_data_configs() -> (Arc<ClientConfig>, Arc<ServerConfig>) {
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config(kt);
     client_config.enable_early_data = true;
-    client_config.resumption = Resumption::store(ZZXArc::new(ClientStorage::new()));
+    client_config.resumption = Resumption::store(rustls::paa_arc_from_contents!(ClientStorage::new()));
 
     let mut server_config = make_server_config(kt);
     server_config.max_early_data_size = 1234;
@@ -4384,7 +4382,7 @@ fn early_data_configs_allowing_client_to_send_excess_data() -> (Arc<ClientConfig
     let mut client_config = Arc::into_inner(client_config).unwrap();
     let mut storage = ClientStorage::new();
     storage.alter_max_early_data_size(1234, 2024);
-    client_config.resumption = Resumption::store(ZZXArc::new(storage));
+    client_config.resumption = Resumption::store(rustls::paa_arc_from_contents!(storage));
     let client_config = Arc::new(client_config);
 
     // warm up
@@ -5268,8 +5266,8 @@ fn test_client_sends_helloretryrequest() {
         vec![provider::kx_group::SECP384R1, provider::kx_group::X25519],
     );
 
-    let storage = ZZXArc::new(ClientStorage::new());
-    client_config.resumption = Resumption::store(storage.clone());
+    let storage = Arc::new(ClientStorage::new());
+    client_config.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(storage.clone()));
 
     // but server only accepts x25519, so a HRR is required
     let server_config =
@@ -5461,19 +5459,19 @@ fn test_client_rejects_hrr_with_varied_session_id() {
 #[test]
 fn test_client_attempts_to_use_unsupported_kx_group() {
     // common to both client configs
-    let shared_storage = ZZXArc::new(ClientStorage::new());
+    let shared_storage = Arc::new(ClientStorage::new());
 
     // first, client sends a secp-256 share and server agrees. secp-256 is inserted
     //   into kx group cache.
     let mut client_config_1 =
         make_client_config_with_kx_groups(KeyType::Rsa2048, vec![provider::kx_group::SECP256R1]);
-    client_config_1.resumption = Resumption::store(shared_storage.clone());
+    client_config_1.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(shared_storage.clone()));
 
     // second, client only supports secp-384 and so kx group cache
     //   contains an unusable value.
     let mut client_config_2 =
         make_client_config_with_kx_groups(KeyType::Rsa2048, vec![provider::kx_group::SECP384R1]);
-    client_config_2.resumption = Resumption::store(shared_storage.clone());
+    client_config_2.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(shared_storage.clone()));
 
     let server_config = make_server_config(KeyType::Rsa2048);
 
@@ -5514,13 +5512,13 @@ fn test_client_sends_share_for_less_preferred_group() {
     // https://datatracker.ietf.org/doc/draft-davidben-tls-key-share-prediction/
 
     // common to both client configs
-    let shared_storage = ZZXArc::new(ClientStorage::new());
+    let shared_storage = Arc::new(ClientStorage::new());
 
     // first, client sends a secp384r1 share and server agrees. secp384r1 is inserted
     //   into kx group cache.
     let mut client_config_1 =
         make_client_config_with_kx_groups(KeyType::Rsa2048, vec![provider::kx_group::SECP384R1]);
-    client_config_1.resumption = Resumption::store(shared_storage.clone());
+    client_config_1.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(shared_storage.clone()));
 
     // second, client supports (x25519, secp384r1) and so kx group cache
     //   contains a supported but less-preferred group.
@@ -5528,7 +5526,7 @@ fn test_client_sends_share_for_less_preferred_group() {
         KeyType::Rsa2048,
         vec![provider::kx_group::X25519, provider::kx_group::SECP384R1],
     );
-    client_config_2.resumption = Resumption::store(shared_storage.clone());
+    client_config_2.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(shared_storage.clone()));
 
     let server_config =
         make_server_config_with_kx_groups(KeyType::Rsa2048, provider::ALL_KX_GROUPS.to_vec());
@@ -5598,10 +5596,10 @@ fn test_client_sends_share_for_less_preferred_group() {
 #[cfg(feature = "tls12")]
 #[test]
 fn test_tls13_client_resumption_does_not_reuse_tickets() {
-    let shared_storage = ZZXArc::new(ClientStorage::new());
+    let shared_storage = Arc::new(ClientStorage::new());
 
     let mut client_config = make_client_config(KeyType::Rsa2048);
-    client_config.resumption = Resumption::store(shared_storage.clone());
+    client_config.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(shared_storage.clone()));
     let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(KeyType::Rsa2048);
@@ -6024,8 +6022,8 @@ fn remove_ems_request(msg: &mut Message) -> Altered {
 #[test]
 fn test_client_tls12_no_resume_after_server_downgrade() {
     let mut client_config = common::make_client_config(KeyType::Ed25519);
-    let client_storage =ZZXArc::new(ClientStorage::new());
-    client_config.resumption = Resumption::store(client_storage.clone());
+    let client_storage =Arc::new(ClientStorage::new());
+    client_config.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(client_storage.clone()));
     let client_config = Arc::new(client_config);
 
     let server_config_1 = Arc::new(common::finish_server_config(
@@ -6037,8 +6035,6 @@ fn test_client_tls12_no_resume_after_server_downgrade() {
         KeyType::Ed25519,
         server_config_builder_with_versions(&[&rustls::version::TLS12]),
     );
-    // XXX XXX
-    // panic!("XXX");
     server_config_2.session_storage = rustls::paa_arc_from_contents!(rustls::server::NoServerSessionStorage {});
 
     dbg!("handshake 1");
@@ -6122,7 +6118,7 @@ fn test_client_with_custom_verifier_can_accept_ecdsa_sha1_signatures() {
     .with_protocol_versions(&[&rustls::version::TLS12])
     .unwrap()
     .dangerous()
-    .with_custom_certificate_verifier(ZZXArc::new(MockServerVerifier::accepts_anything()))
+    .with_custom_certificate_verifier(rustls::paa_arc_from_contents!(MockServerVerifier::accepts_anything()))
     .with_no_client_auth();
     let server_config = make_server_config_with_kx_groups(KeyType::EcdsaP256, kx_groups.to_vec());
     let (mut client, mut server) = make_pair_for_configs(client_config, server_config);
@@ -6386,7 +6382,7 @@ fn test_secret_extract_produces_correct_variant() {
     fn check(suite: SupportedCipherSuite, f: impl Fn(ConnectionTrafficSecrets) -> bool) {
         let kt = KeyType::Rsa2048;
 
-        let provider: ZZXArc<CryptoProvider> = CryptoProvider {
+        let provider: Arc<CryptoProvider> = CryptoProvider {
             cipher_suites: vec![suite],
             ..provider::default_provider()
         }
@@ -6456,7 +6452,7 @@ fn test_secret_extract_produces_correct_variant() {
 #[test]
 fn test_secret_extraction_disabled_or_too_early() {
     let kt = KeyType::Rsa2048;
-    let provider = ZZXArc::new(CryptoProvider {
+    let provider = Arc::new(CryptoProvider {
         cipher_suites: vec![cipher_suite::TLS13_AES_128_GCM_SHA256],
         ..provider::default_provider()
     });
@@ -6753,8 +6749,8 @@ fn test_client_removes_tls12_session_if_server_sends_undecryptable_first_message
 
     let mut client_config =
         make_client_config_with_versions(KeyType::Rsa2048, &[&rustls::version::TLS12]);
-    let storage = ZZXArc::new(ClientStorage::new());
-    client_config.resumption = Resumption::store(storage.clone());
+    let storage = Arc::new(ClientStorage::new());
+    client_config.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(storage.clone()));
     let client_config = Arc::new(client_config);
     let server_config = Arc::new(make_server_config(KeyType::Rsa2048));
 
@@ -7093,7 +7089,7 @@ fn test_pinned_ocsp_response_given_to_custom_server_cert_verifier() {
 
         let client_config = client_config_builder_with_versions(&[version])
             .dangerous()
-            .with_custom_certificate_verifier(ZZXArc::new(MockServerVerifier::expects_ocsp_response(
+            .with_custom_certificate_verifier(rustls::paa_arc_from_contents!(MockServerVerifier::expects_ocsp_response(
                 ocsp_response,
             )))
             .with_no_client_auth();

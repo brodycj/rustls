@@ -13,7 +13,6 @@ use rustls::client::{ServerCertVerifierBuilder, WebPkiServerVerifier};
 use rustls::crypto::cipher::{InboundOpaqueMessage, MessageDecrypter, MessageEncrypter};
 use rustls::crypto::CryptoProvider;
 use rustls::internal::alias::Arc;
-use rustls::internal::alias::ZZXArc;
 use rustls::internal::msgs::codec::{Codec, Reader};
 use rustls::internal::msgs::message::{Message, OutboundOpaqueMessage, PlainMessage};
 use rustls::server::{ClientCertVerifierBuilder, WebPkiClientVerifier};
@@ -471,7 +470,7 @@ pub fn make_server_config_with_kx_groups(
     )
 }
 
-pub fn get_client_root_store(kt: KeyType) -> ZZXArc<RootCertStore> {
+pub fn get_client_root_store(kt: KeyType) -> Arc<RootCertStore> {
     // The key type's chain file contains the DER encoding of the EE cert, the intermediate cert,
     // and the root trust anchor. We want only the trust anchor to build the root cert store.
     let chain = kt.get_chain();
@@ -600,11 +599,11 @@ pub fn make_client_config_with_verifier(
 ) -> ClientConfig {
     client_config_builder_with_versions(versions)
         .dangerous()
-        .with_custom_certificate_verifier(verifier_builder.build().unwrap())
+        .with_custom_certificate_verifier(rustls::paa_aaa_aaa_from_arc!(verifier_builder.build().unwrap()))
         .with_no_client_auth()
 }
 
-pub fn webpki_client_verifier_builder(roots: ZZXArc<RootCertStore>) -> ClientCertVerifierBuilder {
+pub fn webpki_client_verifier_builder(roots: Arc<RootCertStore>) -> ClientCertVerifierBuilder {
     if exactly_one_provider() {
         WebPkiClientVerifier::builder(roots)
     } else {
@@ -612,7 +611,7 @@ pub fn webpki_client_verifier_builder(roots: ZZXArc<RootCertStore>) -> ClientCer
     }
 }
 
-pub fn webpki_server_verifier_builder(roots: ZZXArc<RootCertStore>) -> ServerCertVerifierBuilder {
+pub fn webpki_server_verifier_builder(roots: Arc<RootCertStore>) -> ServerCertVerifierBuilder {
     if exactly_one_provider() {
         WebPkiServerVerifier::builder(roots)
     } else {
@@ -1100,7 +1099,7 @@ impl RawTls {
     }
 }
 
-pub fn aes_128_gcm_with_1024_confidentiality_limit() -> ZZXArc<CryptoProvider> {
+pub fn aes_128_gcm_with_1024_confidentiality_limit() -> Arc<CryptoProvider> {
     const CONFIDENTIALITY_LIMIT: u64 = 1024;
 
     // needed to extend lifetime of Tls13CipherSuite to 'static
@@ -1146,7 +1145,7 @@ pub fn aes_128_gcm_with_1024_confidentiality_limit() -> ZZXArc<CryptoProvider> {
     .into()
 }
 
-pub fn unsafe_plaintext_crypto_provider() -> ZZXArc<CryptoProvider> {
+pub fn unsafe_plaintext_crypto_provider() -> Arc<CryptoProvider> {
     static TLS13_PLAIN_SUITE: OnceCell<rustls::Tls13CipherSuite> = OnceCell::new();
 
     let tls13 = TLS13_PLAIN_SUITE.get_or_init(|| {

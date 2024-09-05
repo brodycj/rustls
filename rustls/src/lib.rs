@@ -402,7 +402,7 @@ mod alias {
     // XXX TODO WANT TO GET INSTANCES WITH THIS ARC WORKING EITHER WAY BETWEEN BUILT-IN ARC VS portable_atomic_util::Arc
     pub use portable_atomic_util::Arc;
     // XXX TBD OLD ALIAS TYPE TO BE REPLACED WITH WORKING USAGE OF OPTIONAL ALIASING TO portable_atomic_util::Arc
-    pub type ZZXArc<T> = alloc::sync::Arc<T>;
+    // pub type Arc<T> = // XXX
 }
 
 // XXX TBD CRATE NAMING FOR THIS ???
@@ -502,8 +502,8 @@ pub mod internal {
     pub mod alias {
         // XXX TODO WANT TO SWITCH TO USING THIS ONE:
         pub use crate::alias::Arc;
-        // XXX XXX WANT TO REPLACE USE OF THIS ONE:
-        pub use crate::alias::ZZXArc;
+        // XXX XXX GONE:
+        // pub use crate::alias::Arc;
     }
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {

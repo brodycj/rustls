@@ -5,7 +5,7 @@ use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, Unknown
 
 use super::{pki_error, VerifierBuilderError};
 
-use crate::alias::ZZXArc;
+use crate::alias::Arc;
 #[cfg(doc)]
 use crate::crypto;
 use crate::crypto::{CryptoProvider, WebPkiSupportedAlgorithms};
@@ -19,14 +19,14 @@ use crate::webpki::parse_crls;
 use crate::webpki::verify::{verify_tls12_signature, verify_tls13_signature, ParsedCertificate};
 #[cfg(doc)]
 use crate::ConfigBuilder;
-use crate::{DistinguishedName, Error, RootCertStore, SignatureScheme};
+use crate::{internal_paa_aaa_arc_from_contents, DistinguishedName, Error, RootCertStore, SignatureScheme};
 
 /// A builder for configuring a `webpki` client certificate verifier.
 ///
 /// For more information, see the [`WebPkiClientVerifier`] documentation.
 #[derive(Debug, Clone)]
 pub struct ClientCertVerifierBuilder {
-    roots: ZZXArc<RootCertStore>,
+    roots: Arc<RootCertStore>,
     root_hint_subjects: Vec<DistinguishedName>,
     crls: Vec<CertificateRevocationListDer<'static>>,
     revocation_check_depth: RevocationCheckDepth,
@@ -38,7 +38,7 @@ pub struct ClientCertVerifierBuilder {
 
 impl ClientCertVerifierBuilder {
     pub(crate) fn new(
-        roots: ZZXArc<RootCertStore>,
+        roots: Arc<RootCertStore>,
         supported_algs: WebPkiSupportedAlgorithms,
     ) -> Self {
         Self {
@@ -170,12 +170,12 @@ impl ClientCertVerifierBuilder {
     /// This function will return a [`VerifierBuilderError`] if:
     /// 1. No trust anchors have been provided.
     /// 2. DER encoded CRLs have been provided that can not be parsed successfully.
-    pub fn build(self) -> Result<ZZXArc<dyn ClientCertVerifier>, VerifierBuilderError> {
+    pub fn build(self) -> Result<Arc<dyn ClientCertVerifier>, VerifierBuilderError> {
         if self.roots.is_empty() {
             return Err(VerifierBuilderError::NoRootAnchors);
         }
 
-        Ok(ZZXArc::new(WebPkiClientVerifier::new(
+        Ok(internal_paa_aaa_arc_from_contents!(WebPkiClientVerifier::new(
             self.roots,
             self.root_hint_subjects,
             parse_crls(self.crls)?,
@@ -249,7 +249,7 @@ impl ClientCertVerifierBuilder {
 /// [^1]: <https://github.com/rustls/webpki>
 #[derive(Debug)]
 pub struct WebPkiClientVerifier {
-    roots: ZZXArc<RootCertStore>,
+    roots: Arc<RootCertStore>,
     root_hint_subjects: Vec<DistinguishedName>,
     crls: Vec<CertRevocationList<'static>>,
     revocation_check_depth: RevocationCheckDepth,
@@ -270,7 +270,7 @@ impl WebPkiClientVerifier {
     /// Use [`Self::builder_with_provider`] if you wish to specify an explicit provider.
     ///
     /// For more information, see the [`ClientCertVerifierBuilder`] documentation.
-    pub fn builder(roots: ZZXArc<RootCertStore>) -> ClientCertVerifierBuilder {
+    pub fn builder(roots: Arc<RootCertStore>) -> ClientCertVerifierBuilder {
         Self::builder_with_provider(
             roots,
             CryptoProvider::get_default_or_install_from_crate_features().clone(),
@@ -288,8 +288,8 @@ impl WebPkiClientVerifier {
     ///
     /// For more information, see the [`ClientCertVerifierBuilder`] documentation.
     pub fn builder_with_provider(
-        roots: ZZXArc<RootCertStore>,
-        provider: ZZXArc<CryptoProvider>,
+        roots: Arc<RootCertStore>,
+        provider: Arc<CryptoProvider>,
     ) -> ClientCertVerifierBuilder {
         ClientCertVerifierBuilder::new(roots, provider.signature_verification_algorithms)
     }
@@ -299,8 +299,8 @@ impl WebPkiClientVerifier {
     ///
     /// This is in contrast to using `WebPkiClientVerifier::builder().allow_unauthenticated().build()`,
     /// which will produce a verifier that will offer client authentication, but not require it.
-    pub fn no_client_auth() -> ZZXArc<dyn ClientCertVerifier> {
-        ZZXArc::new(NoClientAuth {})
+    pub fn no_client_auth() -> Arc<dyn ClientCertVerifier> {
+        internal_paa_aaa_arc_from_contents!(NoClientAuth {})
     }
 
     /// Construct a new `WebpkiClientVerifier`.
@@ -318,7 +318,7 @@ impl WebPkiClientVerifier {
     ///   clients can connect.
     /// * `supported_algs` specifies which signature verification algorithms should be used.
     pub(crate) fn new(
-        roots: ZZXArc<RootCertStore>,
+        roots: Arc<RootCertStore>,
         root_hint_subjects: Vec<DistinguishedName>,
         crls: Vec<CertRevocationList<'static>>,
         revocation_check_depth: RevocationCheckDepth,
@@ -430,7 +430,7 @@ pub(crate) enum AnonymousClientPolicy {
 test_for_each_provider! {
     use super::WebPkiClientVerifier;
 
-    use crate::internal::alias::ZZXArc;
+    use crate::internal::alias::Arc;
 
     use crate::server::VerifierBuilderError;
     use crate::RootCertStore;
@@ -460,7 +460,7 @@ test_for_each_provider! {
         ])
     }
 
-    fn load_roots(roots_der: &[&[u8]]) -> ZZXArc<RootCertStore> {
+    fn load_roots(roots_der: &[&[u8]]) -> Arc<RootCertStore> {
         let mut roots = RootCertStore::empty();
         roots_der.iter().for_each(|der| {
             roots
@@ -470,7 +470,7 @@ test_for_each_provider! {
         roots.into()
     }
 
-    fn test_roots() -> ZZXArc<RootCertStore> {
+    fn test_roots() -> Arc<RootCertStore> {
         load_roots(&[
             include_bytes!("../../../test-ca/ecdsa-p256/ca.der").as_slice(),
             include_bytes!("../../../test-ca/rsa-2048/ca.der").as_slice(),

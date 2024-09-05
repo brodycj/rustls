@@ -4,11 +4,10 @@ use core::marker::PhantomData;
 use pki_types::{CertificateDer, PrivateKeyDer};
 
 use crate::alias::Arc;
-use crate::alias::ZZXArc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::crypto::CryptoProvider;
 use crate::error::Error;
-use crate::internal_paa_aaa_aaa_from_arc;
+use crate::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
 use crate::server::{handy, ResolvesServerCert, ServerConfig};
 use crate::sign::CertifiedKey;
 use crate::time_provider::TimeProvider;
@@ -19,7 +18,7 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
     /// Choose how to verify client certificates.
     pub fn with_client_cert_verifier(
         self,
-        client_cert_verifier: ZZXArc<dyn ClientCertVerifier>,
+        client_cert_verifier: Arc<dyn ClientCertVerifier>,
     ) -> ConfigBuilder<ServerConfig, WantsServerCert> {
         ConfigBuilder {
             state: WantsServerCert {
@@ -34,7 +33,7 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
 
     /// Disable client authentication.
     pub fn with_no_client_auth(self) -> ConfigBuilder<ServerConfig, WantsServerCert> {
-        self.with_client_cert_verifier(ZZXArc::new(NoClientAuth))
+        self.with_client_cert_verifier(internal_paa_aaa_arc_from_contents!(NoClientAuth))
     }
 }
 
@@ -44,9 +43,9 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
 /// For more information, see the [`ConfigBuilder`] documentation.
 #[derive(Clone, Debug)]
 pub struct WantsServerCert {
-    provider: ZZXArc<CryptoProvider>,
+    provider: Arc<CryptoProvider>,
     versions: versions::EnabledVersions,
-    verifier: ZZXArc<dyn ClientCertVerifier>,
+    verifier: Arc<dyn ClientCertVerifier>,
     time_provider: crate::alias::Arc<dyn TimeProvider>,
 }
 
@@ -87,7 +86,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
         }
 
         let resolver = handy::AlwaysResolvesChain::new(certified_key);
-        Ok(self.with_cert_resolver(ZZXArc::new(resolver)))
+        Ok(self.with_cert_resolver(internal_paa_aaa_arc_from_contents!(resolver)))
     }
 
     /// Sets a single certificate chain, matching private key and optional OCSP
@@ -123,11 +122,11 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
         }
 
         let resolver = handy::AlwaysResolvesChain::new_with_extras(certified_key, ocsp);
-        Ok(self.with_cert_resolver(ZZXArc::new(resolver)))
+        Ok(self.with_cert_resolver(internal_paa_aaa_arc_from_contents!(resolver)))
     }
 
     /// Sets a custom [`ResolvesServerCert`].
-    pub fn with_cert_resolver(self, cert_resolver: ZZXArc<dyn ResolvesServerCert>) -> ServerConfig {
+    pub fn with_cert_resolver(self, cert_resolver: Arc<dyn ResolvesServerCert>) -> ServerConfig {
         ServerConfig {
             provider: self.state.provider,
             verifier: self.state.verifier,
@@ -140,7 +139,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             // XXX TODO XXX
             // #[cfg(not(feature = "std"))]
             // session_storage: Arc::new(handy::NoServerSessionStorage {}),
-            ticketer: ZZXArc::new(handy::NeverProducesTickets {}),
+            ticketer: internal_paa_aaa_arc_from_contents!(handy::NeverProducesTickets {}),
             alpn_protocols: Vec::new(),
             versions: self.state.versions,
             key_log: crate::internal_paa_aaa_arc_from_contents!(NoKeyLog {}),
@@ -152,7 +151,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             require_ems: cfg!(feature = "fips"),
             time_provider: self.state.time_provider,
             cert_compressors: compress::default_cert_compressors().to_vec(),
-            cert_compression_cache: ZZXArc::new(compress::CompressionCache::default()),
+            cert_compression_cache: Arc::new(compress::CompressionCache::default()),
             cert_decompressors: compress::default_cert_decompressors().to_vec(),
         }
     }

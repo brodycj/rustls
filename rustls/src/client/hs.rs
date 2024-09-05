@@ -11,7 +11,6 @@ use super::tls12;
 use super::Tls12Resumption;
 
 use crate::alias::Arc;
-use crate::alias::ZZXArc;
 #[cfg(feature = "logging")]
 use crate::bs_debug;
 use crate::check::inappropriate_handshake_message;

@@ -7,7 +7,6 @@ use std::io::{self, Read, Write};
 use std::ops::{Deref, DerefMut};
 
 use rustls::internal::alias::Arc;
-use rustls::internal::alias::ZZXArc;
 
 use std::time::{Duration, Instant};
 use std::{fs, mem};
@@ -580,7 +579,7 @@ fn make_server_config(
     resume: ResumptionParam,
     max_fragment_size: Option<usize>,
 ) -> Arc<ServerConfig> {
-    let provider = ZZXArc::new(provider::default_provider());
+    let provider = Arc::new(provider::default_provider());
     let client_auth = match client_auth {
         ClientAuth::Yes => {
             let roots = params.key_type.get_chain();
@@ -607,9 +606,7 @@ fn make_server_config(
     } else if resume == ResumptionParam::Tickets {
         cfg.ticketer = Ticketer::new().unwrap();
     } else {
-        // XXX
-        panic!("XXX");
-        // cfg.session_storage = ZZXArc::new(NoServerSessionStorage {});
+        cfg.session_storage = rustls::paa_arc_from_contents!(NoServerSessionStorage {});
     }
 
     cfg.max_fragment_size = max_fragment_size;

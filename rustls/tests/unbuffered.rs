@@ -3,7 +3,6 @@
 use std::num::NonZeroUsize;
 
 use rustls::internal::alias::Arc;
-use rustls::internal::alias::ZZXArc;
 
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
 use rustls::server::{ServerConnectionData, UnbufferedServerConnection};

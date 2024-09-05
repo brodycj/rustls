@@ -9,7 +9,6 @@ use super::client_conn::ClientConnectionData;
 use super::hs::ClientContext;
 
 use crate::alias::Arc;
-use crate::alias::ZZXArc;
 use crate::check::inappropriate_handshake_message;
 use crate::client::common::{ClientAuthDetails, ClientHelloDetails, ServerCertDetails};
 use crate::client::ech::{self, EchState, EchStatus};
@@ -1401,7 +1400,7 @@ impl State<ClientConnectionData> for ExpectFinished {
 
         let st = ExpectTraffic {
             config: Arc::clone(&st.config),
-            session_storage: ZZXArc::clone(&st.config.resumption.store),
+            session_storage: Arc::clone(&st.config.resumption.store),
             server_name: st.server_name,
             suite: st.suite,
             transcript: st.transcript,
@@ -1427,7 +1426,7 @@ impl State<ClientConnectionData> for ExpectFinished {
 // and application data.
 struct ExpectTraffic {
     config: Arc<ClientConfig>,
-    session_storage: ZZXArc<dyn ClientSessionStore>,
+    session_storage: Arc<dyn ClientSessionStore>,
     server_name: ServerName<'static>,
     suite: &'static Tls13CipherSuite,
     transcript: HandshakeHash,

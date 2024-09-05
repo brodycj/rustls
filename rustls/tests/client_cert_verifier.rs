@@ -17,7 +17,6 @@ use pki_types::{CertificateDer, UnixTime};
 
 use rustls::client::danger::HandshakeSignatureValid;
 use rustls::internal::alias::Arc;
-use rustls::internal::alias::ZZXArc;
 use rustls::internal::msgs::handshake::DistinguishedName;
 use rustls::server::danger::{ClientCertVerified, ClientCertVerifier};
 use rustls::{
@@ -45,7 +44,7 @@ fn server_config_with_verifier(
     client_cert_verifier: MockClientVerifier,
 ) -> ServerConfig {
     server_config_builder()
-        .with_client_cert_verifier(ZZXArc::new(client_cert_verifier))
+        .with_client_cert_verifier(rustls::paa_arc_from_contents!(client_cert_verifier))
         .with_single_cert(kt.get_chain(), kt.get_key())
         .unwrap()
 }
@@ -143,7 +142,7 @@ fn client_verifier_fails_properly() {
 
 #[derive(Debug)]
 pub struct MockClientVerifier {
-    parent: ZZXArc<dyn ClientCertVerifier>,
+    parent: Arc<dyn ClientCertVerifier>,
     pub verified: fn() -> Result<ClientCertVerified, Error>,
     pub subjects: Vec<DistinguishedName>,
     pub mandatory: bool,

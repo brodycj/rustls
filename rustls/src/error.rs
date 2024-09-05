@@ -626,7 +626,7 @@ mod other_error {
     use super::Error;
 
     #[cfg(feature = "std")]
-    use crate::alias::ZZXArc;
+    use crate::alias::Arc;
 
     /// Any other error that cannot be expressed by a more specific [`Error`] variant.
     ///
@@ -638,7 +638,7 @@ mod other_error {
     pub struct OtherError(
         #[cfg(not(feature = "withrcalias"))]
         #[cfg(feature = "std")]
-        pub ZZXArc<dyn StdError + Send + Sync>,
+        pub Arc<dyn StdError + Send + Sync>,
     );
 
     impl PartialEq<Self> for OtherError {
@@ -684,7 +684,9 @@ mod tests {
     use std::{println, vec};
 
     use super::{Error, InconsistentKeys, InvalidMessage};
+    use crate::internal::alias::Arc;
     use crate::error::{CertRevocationListError, OtherError};
+    use crate::internal_paa_aaa_aaa_from_arc;
 
     #[test]
     fn certificate_error_equality() {
@@ -705,7 +707,7 @@ mod tests {
         let other = Other(OtherError(
             #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
-            alloc::sync::Arc::from(Box::from("")),
+            Arc::from(Box::from("")),
         ));
         assert_ne!(other, other);
         assert_ne!(BadEncoding, Expired);
@@ -730,7 +732,7 @@ mod tests {
         let other = Other(OtherError(
             #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
-            alloc::sync::Arc::from(Box::from("")),
+            Arc::from(Box::from("")),
         ));
         assert_ne!(other, other);
         assert_ne!(BadSignature, InvalidCrlNumber);
@@ -740,7 +742,7 @@ mod tests {
     #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     fn other_error_equality() {
-        let other_error = OtherError(alloc::sync::Arc::from(Box::from("")));
+        let other_error = OtherError(Arc::from(Box::from("")));
         assert_ne!(other_error, other_error);
         let other: Error = other_error.into();
         assert_ne!(other, other);
@@ -779,7 +781,7 @@ mod tests {
             Error::Other(OtherError(
                 #[cfg(not(feature = "withrcalias"))]
                 #[cfg(feature = "std")]
-                alloc::sync::Arc::from(Box::from("")),
+                Arc::from(Box::from("")),
             )),
         ];
 
