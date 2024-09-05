@@ -697,10 +697,10 @@ mod connection {
     ///
     /// ```no_run
     /// # #[cfg(feature = "aws_lc_rs")] {
-    /// # use rustls::internal::alias::ZZXArc;
+    /// # use rustls::internal::alias::Arc;
     /// # fn choose_server_config(
     /// #     _: rustls::server::ClientHello,
-    /// # ) -> ZZXArc<rustls::ServerConfig> {
+    /// # ) -> Arc<rustls::ServerConfig> {
     /// #     unimplemented!();
     /// # }
     /// # #[allow(unused_variables)]
