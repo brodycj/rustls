@@ -335,8 +335,6 @@ fn config_builder_for_server_rejects_incompatible_cipher_suites() {
 fn config_builder_for_client_with_time() {
     ClientConfig::builder_with_details(
         provider::default_provider().into(),
-        // XXX TBD API FN FOR THIS - ??? ??? ???
-        // Arc::new(rustls::time_provider::DefaultTimeProvider),
         rustls::paa_arc_from_contents!(rustls::time_provider::DefaultTimeProvider),
     )
     .with_safe_default_protocol_versions()
@@ -347,8 +345,6 @@ fn config_builder_for_client_with_time() {
 fn config_builder_for_server_with_time() {
     ServerConfig::builder_with_details(
         provider::default_provider().into(),
-        // XXX TBD API FN FOR THIS - ??? ??? ???
-        // Arc::new(rustls::time_provider::DefaultTimeProvider),
         rustls::paa_arc_from_contents!(rustls::time_provider::DefaultTimeProvider),
     )
     .with_safe_default_protocol_versions()
@@ -3478,13 +3474,10 @@ fn key_log_for_tls12() {
 
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS12]);
-    // panic!("XXX");//XXX
-    // client_config.key_log = client_key_log.clone();
     client_config.key_log = rustls::paa_aaa_aaa_from_arc!(client_key_log.clone());
     let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
-    // server_config.key_log = server_key_log.clone();
     server_config.key_log = rustls::paa_aaa_aaa_from_arc!(server_key_log.clone());
     let server_config = Arc::new(server_config);
 
@@ -3510,7 +3503,6 @@ fn key_log_for_tls12() {
     assert_eq!(client_full_log[0].secret, client_resume_log[0].secret);
 }
 
-// #[ignore]//XXX
 #[test]
 fn key_log_for_tls13() {
     let client_key_log = Arc::new(KeyLogToVec::new("client"));
@@ -3523,7 +3515,6 @@ fn key_log_for_tls13() {
 
     let mut server_config = make_server_config(kt);
     server_config.key_log = rustls::paa_aaa_aaa_from_arc!(server_key_log.clone());
-    // panic!("XXX");
     let server_config = Arc::new(server_config);
 
     // full handshake
@@ -3816,12 +3807,6 @@ struct ServerStorage {
     take_count: AtomicUsize,
 }
 
-impl Drop for ServerStorage {
-    fn drop(&mut self) {
-        println!("DROPPED XXX")
-    }
-}
-
 impl ServerStorage {
     fn new() -> Self {
         Self {
@@ -4031,92 +4016,13 @@ fn tls13_stateful_resumption() {
 
     let mut server_config = make_server_config(kt);
     let storage = Arc::new(ServerStorage::new());
-    let st2 = storage.clone();
-    // XXX XXX
-    // server_config.session_storage = storage.clone();
-    // server_config.session_storage = (unsafe {Arc::from_raw(storage.clone().as_ref())});
-    // let s2 = storage.clone();
-    // server_config.session_storage = unsafe {
-    //     // Arc::from_raw(storage.clone().as_ref())
-    //     let xx = storage.clone();
-    //     let xx2 = storage.clone();
-    //     let xx3 = storage.clone();
-    //     let xx4 = storage.clone();
-    //     if Arc::strong_count(&xx) < 3 {
-    //         panic!("XXX COUNT XXX")
-    //     }
-    //     let xxx = xx.as_ref();
-    //     if Arc::strong_count(&xx) < 3 {
-    //         panic!("XXX COUNT XXX XXX")
-    //     }
-    //     Arc::from_raw(xxx)
-    // };
-    // drop(s2);
-    let xa = st2.as_ref();
-    // unsafe {
-    //     // ---
-    //     // let xxx = storage.clone();
-    //     // let xxx: Arc<Box<dyn StoresServerSessions>> = Arc::new(Box::from(st2));
-    //     let xxx = st2.clone();
-    //     let xxx2 = storage.clone();
-    //     // let xxxxx = xxx.as_ref();
-    //     let xxxxx = Arc::into_raw(xxx);
-    //     // let x = Arc::from_raw(xxxxx);
-    //     // server_config.session_storage = x;
-    //     // panic!("XXX XXX XXX XXX XXXX");
-    //     println!("AAA 1");
-    //     println!("{:?}", *xxxxx);
-    //     // panic!("XXX XXX XXX XXX");
-    //     // server_config.session_storage = Arc::from_raw(xxxxx);
-    //     Arc::increment_strong_count(xxx);
-    //     let xc = Arc::from_raw(xxxxx);
-    //     // let xc: Arc<dyn StoresServerSessions> = Arc::from_raw(xxxxx);
-    //     println!("AAA 2");
-    //     // let xd = xc.clone();
-    //     println!("AAA 3");
-    //     panic!("XXX XXX XXX XXX");
-    //     // server_config.session_storage = xc;
-    //     panic!("XXX XXX XXX XXX");
-    //     drop(xc);
-    //     // server_config.session_storage = server_config.session_storage.clone();
-    //     drop(xxx);
-    //     drop(xxx2);
-    // }
-    // unsafe {
-    //     // ---
-    //     // let xx1 = Arc::into_raw(st2);
-    //     let xx1 = Arc::into_raw(st2.clone());
-    //     // let xx2: Arc<dyn StoresServerSessions> = Arc::from_raw(xx1);
-    //     // server_config.session_storage = xx2;
-    //     server_config.session_storage = Arc::from_raw(xx1);
-    // }
-    // server_config.session_storage = {
-    //     let xx1 = Arc::into_raw(st2.clone());
-    //     unsafe { Arc::from_raw(xx1) }
-    // };
-    // server_config.session_storage = rustls::abc_arc_arc!(storage.clone());
-    // server_config.session_storage = {
-    //     let xx1: *const ServerStorage = Arc::into_raw(st2.clone());
-    //     let xx2: *const dyn StoresServerSessions = xx1;
-    //     // unsafe { Arc::from_raw(xx2) }
-    //     aaa_from_raw_ptr(xx2)
-    // };
-    // server_config.session_storage = {
-    //     let xx = Arc::into_raw(st2.clone());
-    //     aaa_from_raw_ptr(xx)
-    // };
-    // panic!("XXX XXX");
-    // server_config.session_storage = storage.clone();
     server_config.session_storage = rustls::paa_aaa_aaa_from_arc!(storage.clone());
     let server_config = Arc::new(server_config);
-    // panic!("XXX XXX XXX");
 
     // full handshake
     let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
     let (full_c2s, full_s2c) = do_handshake(&mut client, &mut server);
-    // panic!("XXX XXX XXX XXX");
     assert_eq!(storage.puts(), 4);
-    // panic!("XXX XXX XXX XXX");
     assert_eq!(storage.gets(), 0);
     assert_eq!(storage.takes(), 0);
     assert_eq!(
@@ -4161,10 +4067,8 @@ fn tls13_stateful_resumption() {
     );
     assert_eq!(client.handshake_kind(), Some(HandshakeKind::Resumed));
     assert_eq!(server.handshake_kind(), Some(HandshakeKind::Resumed));
-    // panic!("XXX XXX END OF HANDSHAKE TEST")
 }
 
-// #[ignore]//XXX
 #[test]
 fn tls13_stateless_resumption() {
     let kt = KeyType::Rsa2048;
@@ -4174,9 +4078,6 @@ fn tls13_stateless_resumption() {
     let mut server_config = make_server_config(kt);
     server_config.ticketer = provider::Ticketer::new().unwrap();
     let storage = Arc::new(ServerStorage::new());
-    // XXX TODO XXX
-    // panic!("XXX");
-    // server_config.session_storage = storage.clone().into();
     server_config.session_storage = rustls::paa_aaa_aaa_from_arc!(storage.clone());
     let server_config = Arc::new(server_config);
 
