@@ -371,7 +371,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ae74d9bd0a7530e8afd1770739ad34b36838829d6ad61818f9230f683f5ad77"
 dependencies = [
  "aws-lc-fips-sys",
- "aws-lc-sys 0.20.1",
+ "aws-lc-sys",
  "mirai-annotations",
  "paste",
  "untrusted 0.7.1",
@@ -383,21 +383,6 @@ name = "aws-lc-sys"
 version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0f0e249228c6ad2d240c2dc94b714d711629d52bad946075d8e9b2f5391f0703"
-dependencies = [
- "bindgen",
- "cc",
- "cmake",
- "dunce",
- "fs_extra",
- "libc",
- "paste",
-]
-
-[[package]]
-name = "aws-lc-sys"
-version = "0.21.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "234314bd569802ec87011d653d6815c6d7b9ffb969e9fee5b8b20ef860e8dce9"
 dependencies = [
  "bindgen",
  "cc",
@@ -2262,7 +2247,6 @@ name = "rustls"
 version = "0.23.12"
 dependencies = [
  "aws-lc-rs",
- "aws-lc-sys 0.21.1",
  "base64",
  "bencher",
  "brotli",
