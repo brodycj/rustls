@@ -4,7 +4,6 @@
 
 use std::io::{stdout, Read, Write};
 use std::net::TcpStream;
-use std::sync::Arc;
 
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
 
@@ -29,7 +28,8 @@ fn main() {
     .with_no_client_auth();
 
     let server_name = "www.rust-lang.org".try_into().unwrap();
-    let mut conn = rustls::ClientConnection::new(Arc::new(config), server_name).unwrap();
+    // XXX XXX USE IMPORT FOR CONFIG MACRO BELOW
+    let mut conn = rustls::ClientConnection::new(rustls::paa_arc_from_contents!(config), server_name).unwrap();
     let mut sock = TcpStream::connect("www.rust-lang.org:443").unwrap();
     let mut tls = rustls::Stream::new(&mut conn, &mut sock);
     tls.write_all(
