@@ -1,7 +1,7 @@
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
+use crate::alias::Arc;
 use crate::server::ClientHello;
 use crate::{server, sign};
 
@@ -26,10 +26,11 @@ impl server::StoresServerSessions for NoServerSessionStorage {
 
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod cache {
-    use alloc::sync::Arc;
+    use alloc::boxed::Box;
     use alloc::vec::Vec;
     use core::fmt::{Debug, Formatter};
 
+    use crate::alias::Arc;
     use crate::lock::Mutex;
     use crate::{limited_cache, server};
 
@@ -41,6 +42,7 @@ mod cache {
     }
 
     impl ServerSessionMemoryCache {
+        /////// XXX TBD APC API ??? ???
         /// Make a new ServerSessionMemoryCache.  `size` is the maximum
         /// number of stored sessions, and may be rounded-up for
         /// efficiency.
@@ -49,17 +51,36 @@ mod cache {
             Arc::new(Self {
                 cache: Mutex::new(limited_cache::LimitedCache::new(size)),
             })
+            // crate::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new(Self {
+            //     // ---
+            //     cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            // }))
+            // Arc::from(
+            //     (|| {
+            //     // ---
+            //     let b = Box::new(
+            //         (|| {
+            //         Self {
+            //             // ---
+            //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
+            //         }
+            //         })()
+            //     );
+            //     b
+            //     })()
+            // )
         }
 
-        /// Make a new ServerSessionMemoryCache.  `size` is the maximum
-        /// number of stored sessions, and may be rounded-up for
-        /// efficiency.
-        #[cfg(not(feature = "std"))]
-        pub fn new<M: crate::lock::MakeMutex>(size: usize) -> Arc<Self> {
-            Arc::new(Self {
-                cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
-            })
-        }
+        ///// XXX TODO XXX XXX
+        // /// Make a new ServerSessionMemoryCache.  `size` is the maximum
+        // /// number of stored sessions, and may be rounded-up for
+        // /// efficiency.
+        // #[cfg(not(feature = "std"))]
+        // pub fn new<M: crate::lock::MakeMutex>(size: usize) -> Arc<Self> {
+        //     Arc::new(Self {
+        //         cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
+        //     })
+        // }
     }
 
     impl server::StoresServerSessions for ServerSessionMemoryCache {
@@ -202,11 +223,11 @@ impl server::ResolvesServerCert for AlwaysResolvesChain {
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod sni_resolver {
     use alloc::string::{String, ToString};
-    use alloc::sync::Arc;
     use core::fmt::Debug;
 
     use pki_types::{DnsName, ServerName};
 
+    use crate::alias::Arc;
     use crate::error::Error;
     use crate::hash_map::HashMap;
     use crate::server::ClientHello;

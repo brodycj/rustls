@@ -2,7 +2,6 @@
 
 use alloc::boxed::Box;
 use alloc::string::ToString;
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 use alloc::{format, vec};
 use core::fmt::{self, Debug, Formatter};
@@ -12,15 +11,18 @@ use webpki::alg_id;
 
 use super::ring_like::rand::SystemRandom;
 use super::ring_like::signature::{self, EcdsaKeyPair, Ed25519KeyPair, KeyPair, RsaKeyPair};
+
+use crate::alias::Arc;
 use crate::crypto::signer::{public_key_to_spki, Signer, SigningKey};
 use crate::enums::{SignatureAlgorithm, SignatureScheme};
 use crate::error::Error;
+use crate::internal_paa_aaa_arc_from_contents;
 
 /// Parse `der` as any supported key encoding/type, returning
 /// the first which works.
 pub fn any_supported_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
     if let Ok(rsa) = RsaSigningKey::new(der) {
-        return Ok(Arc::new(rsa));
+        return Ok(internal_paa_aaa_arc_from_contents!(rsa));
     }
 
     if let Ok(ecdsa) = any_ecdsa_type(der) {
@@ -48,7 +50,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP256_SHA256,
         &signature::ECDSA_P256_SHA256_ASN1_SIGNING,
     ) {
-        return Ok(Arc::new(ecdsa_p256));
+        return Ok(internal_paa_aaa_arc_from_contents!(ecdsa_p256));
     }
 
     if let Ok(ecdsa_p384) = EcdsaSigningKey::new(
@@ -56,7 +58,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP384_SHA384,
         &signature::ECDSA_P384_SHA384_ASN1_SIGNING,
     ) {
-        return Ok(Arc::new(ecdsa_p384));
+        return Ok(internal_paa_aaa_arc_from_contents!(ecdsa_p384));
     }
 
     if let Ok(ecdsa_p521) = EcdsaSigningKey::new(
@@ -64,7 +66,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP521_SHA512,
         &signature::ECDSA_P521_SHA512_ASN1_SIGNING,
     ) {
-        return Ok(Arc::new(ecdsa_p521));
+        return Ok(internal_paa_aaa_arc_from_contents!(ecdsa_p521));
     }
 
     Err(Error::General(
@@ -75,7 +77,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
 /// Parse `der` as any EdDSA key type, returning the first which works.
 pub fn any_eddsa_type(der: &PrivatePkcs8KeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
     // TODO: Add support for Ed448
-    Ok(Arc::new(Ed25519SigningKey::new(
+    Ok(internal_paa_aaa_arc_from_contents!(Ed25519SigningKey::new(
         der,
         SignatureScheme::ED25519,
     )?))

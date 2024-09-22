@@ -1,4 +1,3 @@
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
@@ -8,6 +7,8 @@ use pki_types::{ServerName, UnixTime};
 
 use super::handy::NoClientSessionStorage;
 use super::hs;
+
+use crate::alias::Arc;
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
 use crate::common_state::{CommonState, Protocol, Side};
@@ -26,7 +27,7 @@ use crate::time_provider::TimeProvider;
 use crate::unbuffered::{EncryptError, TransmitTlsData};
 #[cfg(feature = "std")]
 use crate::WantsVerifier;
-use crate::{compress, sign, verify, versions, KeyLog, WantsVersions};
+use crate::{compress, internal_paa_aaa_arc_from_contents, sign, verify, versions, KeyLog, WantsVersions};
 #[cfg(doc)]
 use crate::{crypto, DistinguishedName};
 
@@ -213,7 +214,7 @@ pub struct ClientConfig {
     pub require_ems: bool,
 
     /// Provides the current system time
-    pub time_provider: Arc<dyn TimeProvider>,
+    pub time_provider: crate::alias::Arc<dyn TimeProvider>,
 
     /// Source of randomness and other crypto.
     pub(super) provider: Arc<CryptoProvider>,
@@ -289,9 +290,9 @@ impl ClientConfig {
         // Safety assumptions:
         // 1. that the provider has been installed (explicitly or implicitly)
         // 2. that the process-level default provider is usable with the supplied protocol versions.
-        Self::builder_with_provider(Arc::clone(
-            CryptoProvider::get_default_or_install_from_crate_features(),
-        ))
+        Self::builder_with_provider(
+            CryptoProvider::get_default_or_install_from_crate_features().clone(),
+        )
         .with_protocol_versions(versions)
         .unwrap()
     }
@@ -311,7 +312,7 @@ impl ClientConfig {
         ConfigBuilder {
             state: WantsVersions {
                 provider,
-                time_provider: Arc::new(DefaultTimeProvider),
+                time_provider: crate::internal_paa_aaa_arc_from_contents!(DefaultTimeProvider),
             },
             side: PhantomData,
         }
@@ -332,7 +333,7 @@ impl ClientConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
         provider: Arc<CryptoProvider>,
-        time_provider: Arc<dyn TimeProvider>,
+        time_provider: crate::alias::Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {
@@ -441,7 +442,7 @@ impl Resumption {
     #[cfg(feature = "std")]
     pub fn in_memory_sessions(num: usize) -> Self {
         Self {
-            store: Arc::new(super::handy::ClientSessionMemoryCache::new(num)),
+            store: internal_paa_aaa_arc_from_contents!(super::handy::ClientSessionMemoryCache::new(num)),
             tls12_resumption: Tls12Resumption::SessionIdOrTickets,
         }
     }
@@ -459,7 +460,7 @@ impl Resumption {
     /// Disable all use of session resumption.
     pub fn disabled() -> Self {
         Self {
-            store: Arc::new(NoClientSessionStorage),
+            store: internal_paa_aaa_arc_from_contents!(NoClientSessionStorage),
             tls12_resumption: Tls12Resumption::Disabled,
         }
     }
@@ -506,10 +507,10 @@ pub enum Tls12Resumption {
 
 /// Container for unsafe APIs
 pub(super) mod danger {
-    use alloc::sync::Arc;
-
     use super::verify::ServerCertVerifier;
     use super::ClientConfig;
+
+    use crate::alias::Arc;
 
     /// Accessor for dangerous configuration options.
     #[derive(Debug)]
@@ -606,7 +607,6 @@ impl EarlyData {
 
 #[cfg(feature = "std")]
 mod connection {
-    use alloc::sync::Arc;
     use alloc::vec::Vec;
     use core::fmt;
     use core::ops::{Deref, DerefMut};
@@ -615,6 +615,8 @@ mod connection {
     use pki_types::ServerName;
 
     use super::ClientConnectionData;
+
+    use crate::alias::Arc;
     use crate::client::EchStatus;
     use crate::common_state::Protocol;
     use crate::conn::{ConnectionCommon, ConnectionCore};

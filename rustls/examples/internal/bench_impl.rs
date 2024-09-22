@@ -5,7 +5,9 @@
 
 use std::io::{self, Read, Write};
 use std::ops::{Deref, DerefMut};
-use std::sync::Arc;
+
+use rustls::internal::alias::Arc;
+
 use std::time::{Duration, Instant};
 use std::{fs, mem};
 
@@ -600,11 +602,11 @@ fn make_server_config(
         .expect("bad certs/private key?");
 
     if resume == ResumptionParam::SessionId {
-        cfg.session_storage = ServerSessionMemoryCache::new(128);
+        cfg.session_storage = rustls::paa_aaa_aaa_from_arc!(ServerSessionMemoryCache::new(128));
     } else if resume == ResumptionParam::Tickets {
         cfg.ticketer = Ticketer::new().unwrap();
     } else {
-        cfg.session_storage = Arc::new(NoServerSessionStorage {});
+        cfg.session_storage = rustls::paa_arc_from_contents!(NoServerSessionStorage {});
     }
 
     cfg.max_fragment_size = max_fragment_size;

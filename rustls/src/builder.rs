@@ -1,9 +1,9 @@
 use alloc::format;
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 
+use crate::alias::Arc;
 use crate::client::EchMode;
 use crate::crypto::CryptoProvider;
 use crate::error::Error;
@@ -186,7 +186,7 @@ impl<Side: ConfigSide, State: fmt::Debug> fmt::Debug for ConfigBuilder<Side, Sta
 #[derive(Clone, Debug)]
 pub struct WantsVersions {
     pub(crate) provider: Arc<CryptoProvider>,
-    pub(crate) time_provider: Arc<dyn TimeProvider>,
+    pub(crate) time_provider: crate::alias::Arc<dyn TimeProvider>,
 }
 
 impl<S: ConfigSide> ConfigBuilder<S, WantsVersions> {
@@ -266,7 +266,7 @@ impl<S: ConfigSide> ConfigBuilder<S, WantsVersions> {
 pub struct WantsVerifier {
     pub(crate) provider: Arc<CryptoProvider>,
     pub(crate) versions: versions::EnabledVersions,
-    pub(crate) time_provider: Arc<dyn TimeProvider>,
+    pub(crate) time_provider: crate::alias::Arc<dyn TimeProvider>,
     pub(crate) client_ech_mode: Option<EchMode>,
 }
 

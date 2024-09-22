@@ -1,12 +1,12 @@
-#[cfg(feature = "std")]
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::fmt;
 
 use pki_types::CertificateRevocationListDer;
 use webpki::{CertRevocationList, OwnedCertRevocationList};
 
-use crate::error::{CertRevocationListError, CertificateError, Error, OtherError};
+#[cfg(feature = "std")]
+use crate::alias::Arc;
+use crate::{error::{CertRevocationListError, CertificateError, Error, OtherError}, internal_paa_aaa_arc_from_contents};
 
 mod anchors;
 mod client_verifier;
@@ -75,8 +75,9 @@ fn pki_error(error: webpki::Error) -> Error {
         }
 
         _ => CertificateError::Other(OtherError(
+            #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
-            Arc::new(error),
+            internal_paa_aaa_arc_from_contents!(error),
         ))
         .into(),
     }
@@ -99,8 +100,9 @@ fn crl_error(e: webpki::Error) -> CertRevocationListError {
         UnsupportedRevocationReason => CertRevocationListError::UnsupportedRevocationReason,
 
         _ => CertRevocationListError::Other(OtherError(
+            #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
-            Arc::new(e),
+            internal_paa_aaa_arc_from_contents!(e),
         )),
     }
 }

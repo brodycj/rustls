@@ -1,10 +1,11 @@
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, UnixTime};
 use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, UnknownStatusPolicy};
 
 use super::{pki_error, VerifierBuilderError};
+
+use crate::alias::Arc;
 #[cfg(doc)]
 use crate::crypto;
 use crate::crypto::{CryptoProvider, WebPkiSupportedAlgorithms};
@@ -18,7 +19,7 @@ use crate::webpki::parse_crls;
 use crate::webpki::verify::{verify_tls12_signature, verify_tls13_signature, ParsedCertificate};
 #[cfg(doc)]
 use crate::ConfigBuilder;
-use crate::{DistinguishedName, Error, RootCertStore, SignatureScheme};
+use crate::{internal_paa_aaa_arc_from_contents, DistinguishedName, Error, RootCertStore, SignatureScheme};
 
 /// A builder for configuring a `webpki` client certificate verifier.
 ///
@@ -174,7 +175,7 @@ impl ClientCertVerifierBuilder {
             return Err(VerifierBuilderError::NoRootAnchors);
         }
 
-        Ok(Arc::new(WebPkiClientVerifier::new(
+        Ok(internal_paa_aaa_arc_from_contents!(WebPkiClientVerifier::new(
             self.roots,
             self.root_hint_subjects,
             parse_crls(self.crls)?,
@@ -274,7 +275,7 @@ impl WebPkiClientVerifier {
     pub fn builder(roots: Arc<RootCertStore>) -> ClientCertVerifierBuilder {
         Self::builder_with_provider(
             roots,
-            Arc::clone(CryptoProvider::get_default_or_install_from_crate_features()),
+            CryptoProvider::get_default_or_install_from_crate_features().clone(),
         )
     }
 
@@ -301,7 +302,7 @@ impl WebPkiClientVerifier {
     /// This is in contrast to using `WebPkiClientVerifier::builder().allow_unauthenticated().build()`,
     /// which will produce a verifier that will offer client authentication, but not require it.
     pub fn no_client_auth() -> Arc<dyn ClientCertVerifier> {
-        Arc::new(NoClientAuth {})
+        internal_paa_aaa_arc_from_contents!(NoClientAuth {})
     }
 
     /// Construct a new `WebpkiClientVerifier`.
@@ -430,13 +431,16 @@ pub(crate) enum AnonymousClientPolicy {
 
 test_for_each_provider! {
     use super::WebPkiClientVerifier;
+
+    use crate::internal::alias::Arc;
+
     use crate::server::VerifierBuilderError;
     use crate::RootCertStore;
 
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use std::prelude::v1::*;
-    use std::sync::Arc;
+
     use std::{vec, format, println};
 
     fn load_crls(crls_der: &[&[u8]]) -> Vec<CertificateRevocationListDer<'static>> {

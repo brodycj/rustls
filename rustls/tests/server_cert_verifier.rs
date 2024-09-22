@@ -5,13 +5,15 @@
 use super::*;
 
 mod common;
-use std::sync::Arc;
 
 use common::{
     do_handshake, do_handshake_until_both_error, make_client_config_with_versions,
     make_pair_for_arc_configs, make_server_config, ErrorFromPeer, MockServerVerifier,
     ALL_KEY_TYPES,
 };
+
+use rustls::internal::alias::Arc;
+
 use rustls::{AlertDescription, Error, InvalidMessage};
 
 #[test]
@@ -25,7 +27,7 @@ fn client_can_override_certificate_verification() {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
             client_config
                 .dangerous()
-                .set_certificate_verifier(verifier.clone());
+                .set_certificate_verifier(rustls::paa_aaa_aaa_from_arc!(verifier.clone()));
 
             let (mut client, mut server) =
                 make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
@@ -47,7 +49,7 @@ fn client_can_override_certificate_verification_and_reject_certificate() {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
             client_config
                 .dangerous()
-                .set_certificate_verifier(verifier.clone());
+                .set_certificate_verifier(rustls::paa_aaa_aaa_from_arc!(verifier.clone()));
 
             let (mut client, mut server) =
                 make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
@@ -76,7 +78,7 @@ fn client_can_override_certificate_verification_and_reject_tls12_signatures() {
 
         client_config
             .dangerous()
-            .set_certificate_verifier(verifier);
+            .set_certificate_verifier(rustls::paa_aaa_aaa_from_arc!(verifier));
 
         let server_config = Arc::new(make_server_config(*kt));
 
@@ -105,7 +107,7 @@ fn client_can_override_certificate_verification_and_reject_tls13_signatures() {
 
         client_config
             .dangerous()
-            .set_certificate_verifier(verifier);
+            .set_certificate_verifier(rustls::paa_aaa_aaa_from_arc!(verifier));
 
         let server_config = Arc::new(make_server_config(*kt));
 
@@ -135,7 +137,7 @@ fn client_can_override_certificate_verification_and_offer_no_signature_schemes()
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
             client_config
                 .dangerous()
-                .set_certificate_verifier(verifier.clone());
+                .set_certificate_verifier(rustls::paa_aaa_aaa_from_arc!(verifier.clone()));
 
             let (mut client, mut server) =
                 make_pair_for_arc_configs(&Arc::new(client_config), &server_config);

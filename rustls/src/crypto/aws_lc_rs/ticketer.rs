@@ -1,5 +1,4 @@
 use alloc::boxed::Box;
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::fmt;
 use core::fmt::{Debug, Formatter};
@@ -13,6 +12,8 @@ use aws_lc_rs::{hmac, iv};
 
 use super::ring_like::rand::{SecureRandom, SystemRandom};
 use super::unspecified_err;
+
+use crate::alias::Arc;
 use crate::error::Error;
 use crate::log::debug;
 use crate::polyfill::try_split_at;
@@ -32,7 +33,9 @@ impl Ticketer {
     /// [RFC 5077 §4]: https://www.rfc-editor.org/rfc/rfc5077#section-4
     #[cfg(feature = "std")]
     pub fn new() -> Result<Arc<dyn ProducesTickets>, Error> {
-        Ok(Arc::new(crate::ticketer::TicketSwitcher::new(
+        use crate::internal_paa_aaa_arc_from_contents;
+
+        Ok(internal_paa_aaa_arc_from_contents!(crate::ticketer::TicketSwitcher::new(
             6 * 60 * 60,
             make_ticket_generator,
         )?))

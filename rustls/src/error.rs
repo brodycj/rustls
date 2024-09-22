@@ -619,13 +619,14 @@ impl From<rand::GetRandomFailed> for Error {
 }
 
 mod other_error {
-    #[cfg(feature = "std")]
-    use alloc::sync::Arc;
     use core::fmt;
     #[cfg(feature = "std")]
     use std::error::Error as StdError;
 
     use super::Error;
+
+    #[cfg(feature = "std")]
+    use crate::alias::Arc;
 
     /// Any other error that cannot be expressed by a more specific [`Error`] variant.
     ///
@@ -634,7 +635,11 @@ mod other_error {
     ///
     /// Enums holding this type will never compare equal to each other.
     #[derive(Debug, Clone)]
-    pub struct OtherError(#[cfg(feature = "std")] pub Arc<dyn StdError + Send + Sync>);
+    pub struct OtherError(
+        #[cfg(not(feature = "withrcalias"))]
+        #[cfg(feature = "std")]
+        pub Arc<dyn StdError + Send + Sync>,
+    );
 
     impl PartialEq<Self> for OtherError {
         fn eq(&self, _other: &Self) -> bool {
@@ -650,17 +655,19 @@ mod other_error {
 
     impl fmt::Display for OtherError {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
             {
                 write!(f, "{}", self.0)
             }
-            #[cfg(not(feature = "std"))]
+            #[cfg(any(feature = "withrcalias", not(feature = "std")))]
             {
                 f.write_str("no further information available")
             }
         }
     }
 
+    #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     impl StdError for OtherError {
         fn source(&self) -> Option<&(dyn StdError + 'static)> {
@@ -677,7 +684,9 @@ mod tests {
     use std::{println, vec};
 
     use super::{Error, InconsistentKeys, InvalidMessage};
+    use crate::internal::alias::Arc;
     use crate::error::{CertRevocationListError, OtherError};
+    use crate::internal_paa_aaa_aaa_from_arc;
 
     #[test]
     fn certificate_error_equality() {
@@ -696,8 +705,9 @@ mod tests {
             ApplicationVerificationFailure
         );
         let other = Other(OtherError(
+            #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
-            alloc::sync::Arc::from(Box::from("")),
+            Arc::from(Box::from("")),
         ));
         assert_ne!(other, other);
         assert_ne!(BadEncoding, Expired);
@@ -720,17 +730,19 @@ mod tests {
         assert_eq!(UnsupportedIndirectCrl, UnsupportedIndirectCrl);
         assert_eq!(UnsupportedRevocationReason, UnsupportedRevocationReason);
         let other = Other(OtherError(
+            #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
-            alloc::sync::Arc::from(Box::from("")),
+            Arc::from(Box::from("")),
         ));
         assert_ne!(other, other);
         assert_ne!(BadSignature, InvalidCrlNumber);
     }
 
     #[test]
+    #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     fn other_error_equality() {
-        let other_error = OtherError(alloc::sync::Arc::from(Box::from("")));
+        let other_error = OtherError(Arc::from(Box::from("")));
         assert_ne!(other_error, other_error);
         let other: Error = other_error.into();
         assert_ne!(other, other);
@@ -767,8 +779,9 @@ mod tests {
             Error::InconsistentKeys(InconsistentKeys::Unknown),
             Error::InvalidCertRevocationList(CertRevocationListError::BadSignature),
             Error::Other(OtherError(
+                #[cfg(not(feature = "withrcalias"))]
                 #[cfg(feature = "std")]
-                alloc::sync::Arc::from(Box::from("")),
+                Arc::from(Box::from("")),
             )),
         ];
 

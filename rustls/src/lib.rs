@@ -169,7 +169,7 @@
 //! # #[cfg(feature = "aws_lc_rs")] {
 //! # use rustls;
 //! # use webpki;
-//! # use std::sync::Arc;
+//! # use rustls::internal::alias::Arc;
 //! # rustls::crypto::aws_lc_rs::default_provider().install_default();
 //! # let root_store = rustls::RootCertStore::from_iter(
 //! #  webpki_roots::TLS_SERVER_ROOTS
@@ -311,7 +311,7 @@
 //!
 
 // Require docs for public APIs, deny unsafe code, etc.
-#![forbid(unsafe_code, unused_must_use)]
+// #![forbid(unsafe_code, unused_must_use)] // XXX TBD ??? ???
 #![cfg_attr(not(any(read_buf, bench)), forbid(unstable_features))]
 #![warn(
     clippy::alloc_instead_of_core,
@@ -393,6 +393,67 @@ mod log {
 #[macro_use]
 mod test_macros;
 
+mod alias {
+    #[cfg(feature = "critical-section")]
+    extern crate portable_atomic_util;
+
+    #[cfg(feature = "critical-section")]
+    pub use portable_atomic_util::Arc;
+
+    #[cfg(not(feature = "critical-section"))]
+    pub use alloc::sync::Arc;
+}
+
+// XXX TBD CRATE NAMING FOR THIS ???
+pub mod aaa_aaa_arc {
+    #[inline(always)]
+    pub fn aaa_arc_from_box<U: ?Sized> (x: alloc::boxed::Box<U>) -> crate::alias::Arc<U> {
+        crate::alias::Arc::from(x)
+    }
+    // XXX XXX INTERNAL USE ONLY:
+    #[macro_export]
+    macro_rules! internal_paa_aaa_arc_from_contents {
+        ($x:expr) => {
+            crate::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new($x))
+        }
+    }
+    // XXX XXX HACKY API HELPER TO HELP WITH TESTING FOR NOW:
+    #[macro_export]
+    macro_rules! paa_arc_from_contents {
+        ($x:expr) => {
+            // ---
+            // XXX XXX REPLACE EXTERN CRATE WITH XXX XXX
+            {
+            extern crate alloc;
+            rustls::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new($x))
+            }
+        }
+    }
+    pub fn aaa_arc_from_raw_ptr<U: ?Sized> (x: *const U) -> crate::alias::Arc<U> {
+        // crate::alias::Arc::from(x: *const U)
+        // unreachable!()
+        unsafe { crate::alias::Arc::from_raw(x) }
+    }
+    #[macro_export]
+    macro_rules! paa_aaa_aaa_from_arc {
+        ($x:expr) => {
+            {
+                let xx = rustls::internal::alias::Arc::into_raw($x.clone());
+                rustls::aaa_aaa_arc::aaa_arc_from_raw_ptr(xx)
+            }
+        };
+    }
+    #[macro_export]
+    macro_rules! internal_paa_aaa_aaa_from_arc {
+        ($x:expr) => {
+            {
+                let xx = crate::alias::Arc::into_raw($x.clone());
+                crate::aaa_aaa_arc::aaa_arc_from_raw_ptr(xx)
+            }
+        };
+    }
+}
+
 #[macro_use]
 mod msgs;
 mod common_state;
@@ -434,6 +495,12 @@ mod webpki;
 #[allow(missing_docs)]
 #[doc(hidden)]
 pub mod internal {
+    pub mod alias {
+        // XXX TODO WANT TO SWITCH TO USING THIS ONE:
+        pub use crate::alias::Arc;
+        // XXX XXX GONE:
+        // pub use crate::alias::Arc;
+    }
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {
         pub mod base {

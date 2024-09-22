@@ -1,4 +1,3 @@
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 
 // aws-lc-rs has a -- roughly -- ring-compatible API, so we just reuse all that
@@ -9,13 +8,14 @@ pub(crate) use aws_lc_rs as ring_like;
 use pki_types::PrivateKeyDer;
 use webpki::aws_lc_rs as webpki_algs;
 
+use crate::alias::Arc;
 use crate::crypto::{CryptoProvider, KeyProvider, SecureRandom};
 use crate::enums::SignatureScheme;
 use crate::rand::GetRandomFailed;
 use crate::sign::SigningKey;
 use crate::suites::SupportedCipherSuite;
 use crate::webpki::WebPkiSupportedAlgorithms;
-use crate::{Error, OtherError};
+use crate::{internal_paa_aaa_arc_from_contents, Error, OtherError};
 
 /// Hybrid public key encryption (HPKE).
 pub mod hpke;
@@ -255,11 +255,12 @@ pub(super) fn fips() -> bool {
 }
 
 pub(super) fn unspecified_err(_e: aws_lc_rs::error::Unspecified) -> Error {
+    #[cfg(not(feature = "withrcalias"))]
     #[cfg(feature = "std")]
     {
-        Error::Other(OtherError(Arc::new(_e)))
+        Error::Other(OtherError(internal_paa_aaa_arc_from_contents!(_e)))
     }
-    #[cfg(not(feature = "std"))]
+    #[cfg(any(feature = "withrcalias", not(feature = "std")))]
     {
         Error::Other(OtherError())
     }
