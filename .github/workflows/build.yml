@@ -163,6 +163,10 @@ jobs:
         run: cargo test --locked --no-default-features
         working-directory: rustls
 
+      - name: cargo test (debug; no default features; critical-section)
+        run: cargo test --locked --no-default-features --features critical-section,std
+        working-directory: rustls
+
       - name: cargo test (debug; no default features; tls12)
         run: cargo test --locked --no-default-features --features tls12,std
         working-directory: rustls
