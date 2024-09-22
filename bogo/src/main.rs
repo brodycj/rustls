@@ -405,14 +405,14 @@ struct DummyServerAuth {
 impl DummyServerAuth {
     fn new(trusted_cert_file: &str) -> Self {
         DummyServerAuth {
-            parent: WebPkiServerVerifier::builder_with_provider(
+            parent: rustls::paa_aaa_aaa_from_arc!(WebPkiServerVerifier::builder_with_provider(
                 load_root_certs(trusted_cert_file),
                 SelectedProvider::from_env()
                     .provider()
                     .into(),
             )
             .build()
-            .unwrap(),
+            .unwrap()),
         }
     }
 }
@@ -552,7 +552,7 @@ impl ServerCacheWithResumptionDelay {
     fn new(delay: u32) -> Arc<Self> {
         Arc::new(Self {
             delay,
-            storage: server::ServerSessionMemoryCache::new(32),
+            storage: rustls::paa_aaa_aaa_from_arc!(server::ServerSessionMemoryCache::new(32)),
         })
     }
 }
@@ -631,7 +631,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
         .with_single_cert_with_ocsp(cert.clone(), key, opts.server_ocsp_response.clone())
         .unwrap();
 
-    cfg.session_storage = ServerCacheWithResumptionDelay::new(opts.resumption_delay);
+    cfg.session_storage = rustls::paa_aaa_aaa_from_arc!(ServerCacheWithResumptionDelay::new(opts.resumption_delay));
     cfg.max_fragment_size = opts.max_fragment;
     cfg.send_tls13_tickets = 1;
     cfg.require_ems = opts.require_ems;
@@ -639,7 +639,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
 
     if opts.use_signing_scheme > 0 {
         let scheme = lookup_scheme(opts.use_signing_scheme);
-        cfg.cert_resolver = Arc::new(FixedSignatureSchemeServerCertResolver {
+        cfg.cert_resolver = rustls::paa_arc_from_contents!(FixedSignatureSchemeServerCertResolver {
             resolver: cfg.cert_resolver.clone(),
             scheme,
         });
@@ -648,7 +648,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
     if opts.tickets {
         cfg.ticketer = opts.selected_provider.ticketer();
     } else if opts.resumes == 0 {
-        cfg.session_storage = Arc::new(server::NoServerSessionStorage {});
+        cfg.session_storage = rustls::paa_arc_from_contents!(server::NoServerSessionStorage {});
     }
 
     if !opts.protocols.is_empty() {
@@ -794,7 +794,7 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
 
     let cfg = cfg
         .dangerous()
-        .with_custom_certificate_verifier(Arc::new(DummyServerAuth::new(&opts.trusted_cert_file)));
+        .with_custom_certificate_verifier(rustls::paa_arc_from_contents!(DummyServerAuth::new(&opts.trusted_cert_file)));
 
     let mut cfg = if !opts.cert_file.is_empty() && !opts.key_file.is_empty() {
         let cert = load_cert(&opts.cert_file);
@@ -807,13 +807,13 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
 
     if !opts.cert_file.is_empty() && opts.use_signing_scheme > 0 {
         let scheme = lookup_scheme(opts.use_signing_scheme);
-        cfg.client_auth_cert_resolver = Arc::new(FixedSignatureSchemeClientCertResolver {
+        cfg.client_auth_cert_resolver = rustls::paa_arc_from_contents!(FixedSignatureSchemeClientCertResolver {
             resolver: cfg.client_auth_cert_resolver.clone(),
             scheme,
         });
     }
 
-    cfg.resumption = Resumption::store(ClientCacheWithoutKxHints::new(opts.resumption_delay));
+    cfg.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(ClientCacheWithoutKxHints::new(opts.resumption_delay)));
     cfg.enable_sni = opts.use_sni;
     cfg.max_fragment_size = opts.max_fragment;
     cfg.require_ems = opts.require_ems;
