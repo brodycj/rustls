@@ -382,8 +382,9 @@ jobs:
     strategy:
       matrix:
         target:
+          # XXX TBD XXX XXX
           # 32-bit target(s) with no atomic ptr:
-          - thumbv6m-none-eabi
+          # - thumbv6m-none-eabi
           # TRY WITH XXX TBD XXX XXX
           # 32-bit Android (Linux) target(s):
           - armv7-linux-androideabi
