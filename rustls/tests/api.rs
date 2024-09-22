@@ -4011,12 +4011,6 @@ impl rustls::client::ClientSessionStore for ClientStorage {
     }
 }
 
-pub fn aaa_from_raw_ptr<U: ?Sized> (x: *const U) -> rustls::internal::alias::Arc<U> {
-    // crate::alias::Arc::from(x: *const U)
-    // unreachable!()
-    unsafe { rustls::internal::alias::Arc::from_raw(x) }
-}
-
 #[test]
 fn tls13_stateful_resumption() {
     let kt = KeyType::Rsa2048;
