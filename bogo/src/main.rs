@@ -509,7 +509,7 @@ impl client::ResolvesClientCert for FixedSignatureSchemeClientCertResolver {
         let mut certkey = self
             .resolver
             .resolve(root_hint_subjects, sigschemes)?;
-        Arc::make_mut(&mut certkey).key = Arc::new(FixedSignatureSchemeSigningKey {
+        Arc::make_mut(&mut certkey).key = rustls::paa_arc_from_contents!(FixedSignatureSchemeSigningKey {
             key: certkey.key.clone(),
             scheme: self.scheme,
         });
