@@ -16,13 +16,14 @@ use crate::alias::Arc;
 use crate::crypto::signer::{public_key_to_spki, Signer, SigningKey};
 use crate::enums::{SignatureAlgorithm, SignatureScheme};
 use crate::error::Error;
+use crate::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
 use crate::x509::{wrap_concat_in_sequence, wrap_in_octet_string};
 
 /// Parse `der` as any supported key encoding/type, returning
 /// the first which works.
 pub fn any_supported_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
     if let Ok(rsa) = RsaSigningKey::new(der) {
-        return Ok(Arc::new(rsa));
+        return Ok(internal_paa_aaa_arc_from_contents!(rsa));
     }
 
     if let Ok(ecdsa) = any_ecdsa_type(der) {
@@ -50,7 +51,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP256_SHA256,
         &signature::ECDSA_P256_SHA256_ASN1_SIGNING,
     ) {
-        return Ok(Arc::new(ecdsa_p256));
+        return Ok(internal_paa_aaa_arc_from_contents!(ecdsa_p256));
     }
 
     if let Ok(ecdsa_p384) = EcdsaSigningKey::new(
@@ -58,7 +59,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP384_SHA384,
         &signature::ECDSA_P384_SHA384_ASN1_SIGNING,
     ) {
-        return Ok(Arc::new(ecdsa_p384));
+        return Ok(internal_paa_aaa_arc_from_contents!(ecdsa_p384));
     }
 
     Err(Error::General(
@@ -69,7 +70,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
 /// Parse `der` as any EdDSA key type, returning the first which works.
 pub fn any_eddsa_type(der: &PrivatePkcs8KeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
     // TODO: Add support for Ed448
-    Ok(Arc::new(Ed25519SigningKey::new(
+    Ok(internal_paa_aaa_arc_from_contents!(Ed25519SigningKey::new(
         der,
         SignatureScheme::ED25519,
     )?))

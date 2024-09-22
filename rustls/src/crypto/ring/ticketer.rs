@@ -26,7 +26,10 @@ impl Ticketer {
     /// The encryption mechanism used is Chacha20Poly1305.
     #[cfg(feature = "std")]
     pub fn new() -> Result<Arc<dyn ProducesTickets>, Error> {
-        Ok(Arc::new(crate::ticketer::TicketSwitcher::new(
+        // XXX TODO MOVE TO XXX
+        use crate::internal_paa_aaa_arc_from_contents;
+
+        Ok(internal_paa_aaa_arc_from_contents!(crate::ticketer::TicketSwitcher::new(
             6 * 60 * 60,
             make_ticket_generator,
         )?))
@@ -40,6 +43,7 @@ impl Ticketer {
     pub fn new<M: crate::lock::MakeMutex>(
         time_provider: &'static dyn TimeProvider,
     ) -> Result<Arc<dyn ProducesTickets>, Error> {
+        // XXX TODO NEED WORKAROUND HERE - XXX TODO ENSURE THIS IS TESTED IN CI BUILD
         Ok(Arc::new(crate::ticketer::TicketSwitcher::new::<M>(
             6 * 60 * 60,
             make_ticket_generator,
