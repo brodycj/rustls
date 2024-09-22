@@ -22,12 +22,15 @@
 use std::collections::HashMap;
 use std::io::{self, BufReader, Read, Write};
 use std::path::{Path, PathBuf};
-use std::sync::Arc;
 use std::{fs, net};
 
 use clap::{Parser, Subcommand};
 use log::{debug, error};
 use mio::net::{TcpListener, TcpStream};
+
+// XXX XXX
+use rustls::internal::alias::Arc;
+
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
 use rustls::pki_types::{CertificateDer, CertificateRevocationListDer, PrivateKeyDer};
 use rustls::server::WebPkiClientVerifier;

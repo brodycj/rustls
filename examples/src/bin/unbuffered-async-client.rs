@@ -3,12 +3,15 @@
 //! using asynchronous I/O using either async-std or tokio.
 
 use std::error::Error;
-use std::sync::Arc;
 
 #[cfg(feature = "async-std")]
 use async_std::io::{ReadExt, WriteExt};
 #[cfg(feature = "async-std")]
 use async_std::net::TcpStream;
+
+// XXX TBD XXX XXX
+use rustls::internal::alias::Arc;
+
 use rustls::client::{ClientConnectionData, UnbufferedClientConnection};
 use rustls::unbuffered::{
     AppDataRecord, ConnectionState, EncodeError, EncryptError, InsufficientSizeError,
@@ -16,6 +19,7 @@ use rustls::unbuffered::{
 };
 use rustls::version::TLS13;
 use rustls::{ClientConfig, RootCertStore};
+
 #[cfg(not(feature = "async-std"))]
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 #[cfg(not(feature = "async-std"))]
