@@ -375,6 +375,32 @@ jobs:
         run: cargo add --dev --features bindgen aws-lc-sys --package rustls --verbose && cargo install bindgen-cli --verbose
       - run: cross test --package rustls --target ${{ matrix.target }}
 
+  cross-build-with-critical-section-feature:
+    # XXX TODO EXPLAIN MOVTIVATION - THIS IS TO TEST SUPPORT FOR NO ATOMIC PTR TARGET
+    name: cross-target build testing with critical-section feature
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          # 32-bit target(s) with no atomic ptr:
+          - thumbv6m-none-eabi
+          # TRY WITH XXX TBD XXX XXX
+          # 32-bit Android (Linux) target(s):
+          - armv7-linux-androideabi
+          # XXX TBD other targets to test this build on ???
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install cross (cross-rs) from GitHub
+        run: cargo install cross --git https://github.com/cross-rs/cross
+      # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
+      - run: cross build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
+
   semver:
     name: Check semver compatibility
     runs-on: ubuntu-latest
