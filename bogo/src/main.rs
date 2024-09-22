@@ -481,7 +481,8 @@ struct FixedSignatureSchemeServerCertResolver {
 impl server::ResolvesServerCert for FixedSignatureSchemeServerCertResolver {
     fn resolve(&self, client_hello: ClientHello) -> Option<Arc<sign::CertifiedKey>> {
         let mut certkey = self.resolver.resolve(client_hello)?;
-        Arc::make_mut(&mut certkey).key = Arc::new(FixedSignatureSchemeSigningKey {
+        // XXX TODO ADD IMPORT FOR MACRO BELOW:
+        Arc::make_mut(&mut certkey).key = rustls::paa_arc_from_contents!(FixedSignatureSchemeSigningKey {
             key: certkey.key.clone(),
             scheme: self.scheme,
         });
