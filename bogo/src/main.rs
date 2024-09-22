@@ -604,7 +604,7 @@ impl server::StoresServerSessions for ServerCacheWithResumptionDelay {
 fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
     let client_auth =
         if opts.verify_peer || opts.offer_no_client_cas || opts.require_any_client_cert {
-            Arc::new(DummyClientAuth::new(
+            rustls::paa_arc_from_contents!(DummyClientAuth::new(
                 &opts.trusted_cert_file,
                 opts.require_any_client_cert,
                 opts.root_hint_subjects.clone(),
