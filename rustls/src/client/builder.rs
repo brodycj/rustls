@@ -135,7 +135,7 @@ pub struct WantsClientCert {
     provider: Arc<CryptoProvider>,
     versions: versions::EnabledVersions,
     verifier: Arc<dyn verify::ServerCertVerifier>,
-    time_provider: crate::alias::Arc<dyn TimeProvider>,
+    time_provider: Arc<dyn TimeProvider>,
     client_ech_mode: Option<EchMode>,
 }
 

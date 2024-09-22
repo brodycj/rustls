@@ -214,7 +214,7 @@ pub struct ClientConfig {
     pub require_ems: bool,
 
     /// Provides the current system time
-    pub time_provider: crate::alias::Arc<dyn TimeProvider>,
+    pub time_provider: Arc<dyn TimeProvider>,
 
     /// Source of randomness and other crypto.
     pub(super) provider: Arc<CryptoProvider>,
@@ -333,7 +333,7 @@ impl ClientConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
         provider: Arc<CryptoProvider>,
-        time_provider: crate::alias::Arc<dyn TimeProvider>,
+        time_provider: Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {
