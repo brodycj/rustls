@@ -44,7 +44,7 @@ fn converse(
     incoming_tls: &mut [u8],
     outgoing_tls: &mut Vec<u8>,
 ) -> Result<(), Box<dyn Error>> {
-    let mut conn = UnbufferedClientConnection::new(Arc::clone(config), SERVER_NAME.try_into()?)?;
+    let mut conn = UnbufferedClientConnection::new(rustls::paa_aaa_aaa_from_arc!(config), SERVER_NAME.try_into()?)?;
     let mut sock = TcpStream::connect(format!("{SERVER_NAME}:{PORT}"))?;
 
     let mut incoming_used = 0;

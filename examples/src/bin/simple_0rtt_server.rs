@@ -16,7 +16,6 @@ use std::error::Error as StdError;
 use std::fs::File;
 use std::io::{BufReader, Read, Write};
 use std::net::TcpListener;
-use std::sync::Arc;
 use std::{env, io};
 
 fn main() -> Result<(), Box<dyn StdError>> {
@@ -47,7 +46,7 @@ fn main() -> Result<(), Box<dyn StdError>> {
 
         println!("Accepting connection");
 
-        let mut conn = rustls::ServerConnection::new(Arc::new(config.clone()))?;
+        let mut conn = rustls::ServerConnection::new(rustls::paa_arc_from_contents!(config.clone()))?;
 
         let mut buf = Vec::new();
         let mut did_early_data = false;

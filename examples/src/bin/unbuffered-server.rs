@@ -7,9 +7,12 @@ use std::fs::File;
 use std::io::{self, BufReader, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
-use std::sync::Arc;
 
 use pki_types::{CertificateDer, PrivateKeyDer};
+
+// XXX TBD XXX XXX
+use rustls::internal::alias::Arc;
+
 use rustls::server::UnbufferedServerConnection;
 use rustls::unbuffered::{
     AppDataRecord, ConnectionState, EncodeError, EncryptError, InsufficientSizeError,
