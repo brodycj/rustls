@@ -61,7 +61,7 @@ fn handle(
 
     dbg!(sock.peer_addr()?);
 
-    let mut conn = UnbufferedServerConnection::new(config.clone())?;
+    let mut conn = UnbufferedServerConnection::new(rustls::paa_aaa_aaa_from_arc!(config.clone()))?;
 
     let mut incoming_used = 0;
     let mut outgoing_used = 0;
