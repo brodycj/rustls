@@ -253,7 +253,7 @@ impl TestPki {
             .unwrap();
 
         // Allow using SSLKEYLOGFILE.
-        server_config.key_log = Arc::new(rustls::KeyLogFile::new());
+        server_config.key_log = rustls::paa_arc_from_contents!(rustls::KeyLogFile::new());
 
         Arc::new(server_config)
     }

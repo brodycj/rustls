@@ -631,10 +631,10 @@ fn make_config(args: &Args) -> Arc<rustls::ServerConfig> {
     .with_single_cert_with_ocsp(certs, privkey, ocsp)
     .expect("bad certificates/private key");
 
-    config.key_log = Arc::new(rustls::KeyLogFile::new());
+    config.key_log = rustls::paa_arc_from_contents!(rustls::KeyLogFile::new());
 
     if args.no_resumption {
-        config.session_storage = Arc::new(rustls::server::NoServerSessionStorage {});
+        config.session_storage = rustls::paa_arc_from_contents!(rustls::server::NoServerSessionStorage {});
     }
 
     if args.tickets {
