@@ -75,7 +75,6 @@ fn pki_error(error: webpki::Error) -> Error {
         }
 
         _ => CertificateError::Other(OtherError(
-            #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
             internal_paa_aaa_arc_from_contents!(error),
         ))
@@ -100,7 +99,6 @@ fn crl_error(e: webpki::Error) -> CertRevocationListError {
         UnsupportedRevocationReason => CertRevocationListError::UnsupportedRevocationReason,
 
         _ => CertRevocationListError::Other(OtherError(
-            #[cfg(not(feature = "withrcalias"))]
             #[cfg(feature = "std")]
             internal_paa_aaa_arc_from_contents!(e),
         )),

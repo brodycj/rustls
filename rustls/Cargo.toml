@@ -51,8 +51,6 @@ zlib = ["dep:zlib-rs"]
 critical-section = ["portable-atomic-util", "once_cell/critical-section"]
 # XXX TBD ??? ???:
 # portable-atomic-util = ["dep:portable-atomic-util"]
-# XXX TODO REMOVE THIS:
-withrcalias = []
 
 [dev-dependencies]
 base64 = "0.22"

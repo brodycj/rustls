@@ -1854,7 +1854,6 @@ fn client_flush_does_nothing() {
     assert!(matches!(client.writer().flush(), Ok(())));
 }
 
-#[cfg(not(feature = "withrcalias"))]
 #[allow(clippy::no_effect)]
 #[test]
 fn server_is_send_and_sync() {
@@ -1863,7 +1862,6 @@ fn server_is_send_and_sync() {
     &server as &dyn Sync;
 }
 
-#[cfg(not(feature = "withrcalias"))]
 #[allow(clippy::no_effect)]
 #[test]
 fn client_is_send_and_sync() {
@@ -5494,7 +5492,6 @@ fn test_client_sends_share_for_less_preferred_group() {
     client_2.process_new_packets().unwrap();
 }
 
-#[cfg(not(feature = "withrcalias"))]
 #[cfg(feature = "tls12")]
 #[test]
 fn test_tls13_client_resumption_does_not_reuse_tickets() {

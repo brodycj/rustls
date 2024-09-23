@@ -230,16 +230,7 @@ impl CryptoProvider {
     /// Returns the default `CryptoProvider` for this process.
     ///
     /// This will be `None` if no default has been set yet.
-    #[cfg(not(feature = "withrcalias"))]
     pub fn get_default() -> Option<&'static Arc<Self>> {
-        static_default::get_default()
-    }
-
-    /// Returns the default `CryptoProvider` for this process.
-    ///
-    /// This will be `None` if no default has been set yet.
-    #[cfg(feature = "withrcalias")]
-    pub fn get_default() -> Option<Arc<Self>> {
         static_default::get_default()
     }
 
@@ -612,10 +603,7 @@ pub fn default_fips_provider() -> CryptoProvider {
 }
 
 mod static_default {
-    #[cfg(any(
-        feature = "withrcalias",
-        not(any(feature = "critical-section", feature = "std"))
-    ))]
+    #[cfg(not(any(feature = "critical-section", feature = "std")))]
     use alloc::boxed::Box;
 
     #[cfg(not(any(feature = "critical-section", feature = "std")))]
@@ -626,32 +614,16 @@ mod static_default {
     use crate::alias::Arc;
     use crate::crypto::CryptoProvider;
 
-    #[cfg(not(feature = "withrcalias"))]
     pub(crate) type DefaultRef = &'static Arc<CryptoProvider>;
-    #[cfg(feature = "withrcalias")]
-    pub(crate) type DefaultRef = Arc<CryptoProvider>;
 
-    #[cfg(all(
-        any(feature = "critical-section", feature = "std"),
-        not(feature = "withrcalias")
-    ))]
+    #[cfg(any(feature = "critical-section", feature = "std"))]
     pub(crate) fn install_default(
         default_provider: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.set(default_provider)
     }
 
-    #[cfg(feature = "withrcalias")]
-    pub(crate) fn install_default(
-        default_provider: Arc<CryptoProvider>,
-    ) -> Result<(), Arc<CryptoProvider>> {
-        match PROCESS_DEFAULT_PROVIDER.set(Box::from(default_provider.as_ref().clone())) {
-            Ok(()) => Ok(()),
-            Err(previous) => Err(Arc::from(previous)),
-        }
-    }
-
-    #[cfg(not(any(feature = "critical-section", feature = "std", feature = "withrcalias")))]
+    #[cfg(not(any(feature = "critical-section", feature = "std")))]
     pub(crate) fn install_default(
         default_provider: Arc<CryptoProvider>,
     ) -> Result<(), Arc<CryptoProvider>> {
@@ -661,36 +633,14 @@ mod static_default {
         }
     }
 
-    #[cfg(not(feature = "withrcalias"))]
     pub(crate) fn get_default() -> Option<DefaultRef> {
         PROCESS_DEFAULT_PROVIDER.get()
     }
 
-    #[cfg(feature = "withrcalias")]
-    pub(crate) fn get_default() -> Option<DefaultRef> {
-        match PROCESS_DEFAULT_PROVIDER.get() {
-            Some(provider) => Some(Arc::from(provider.clone())),
-            None => None,
-        }
-    }
-
-    #[cfg(all(
-        any(feature = "critical-section", feature = "std"),
-        not(feature = "withrcalias")
-    ))]
+    #[cfg(any(feature = "critical-section", feature = "std"))]
     type DefaultProviderStore = OnceCell<Arc<CryptoProvider>>;
-    #[cfg(all(
-        feature = "withrcalias",
-        any(feature = "critical-section", feature = "std")
-    ))]
-    type DefaultProviderStore = OnceCell<Box<CryptoProvider>>;
-    #[cfg(not(any(feature = "critical-section", feature = "std", feature = "withrcalias")))]
+    #[cfg(not(any(feature = "critical-section", feature = "std")))]
     type DefaultProviderStore = OnceBox<Arc<CryptoProvider>>;
-    #[cfg(all(
-        feature = "withrcalias",
-        not(any(feature = "critical-section", feature = "std"))
-    ))]
-    type DefaultProviderStore = OnceBox<CryptoProvider>;
 
     static PROCESS_DEFAULT_PROVIDER: DefaultProviderStore = DefaultProviderStore::new();
 }
