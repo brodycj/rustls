@@ -1,10 +1,12 @@
 use std::fs::{self, File};
 use std::io::{BufReader, Read, Write};
 use std::net::{TcpListener, TcpStream};
-use std::sync::Arc;
 use std::{str, thread};
 
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+
+use rustls::arc_from;
+
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
 use rustls::version::{TLS12, TLS13};
 use rustls::{ClientConfig, RootCertStore, ServerConfig, SupportedProtocolVersion};
@@ -36,7 +38,7 @@ fn test_rustls_server_with_ffdhe_kx(
     let port = listener.local_addr().unwrap().port();
 
     let server_thread = std::thread::spawn(move || {
-        let config = Arc::new(server_config_with_ffdhe_kx(protocol_version));
+        let config = arc_from!(server_config_with_ffdhe_kx(protocol_version));
         for _ in 0..iters {
             let mut server = rustls::ServerConnection::new(config.clone()).unwrap();
             let (mut tcp_stream, _addr) = listener.accept().unwrap();
@@ -98,7 +100,7 @@ fn test_rustls_client_with_ffdhe_kx(iters: usize) {
         .set_certificate_chain_file(CERT_CHAIN_FILE)
         .unwrap();
     acceptor.check_private_key().unwrap();
-    let acceptor = Arc::new(acceptor.build());
+    let acceptor = arc_from!(acceptor.build());
 
     let listener = TcpListener::bind(("localhost", 0)).unwrap();
     let port = listener.local_addr().unwrap().port();
