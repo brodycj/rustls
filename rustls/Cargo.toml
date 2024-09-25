@@ -25,14 +25,17 @@ hashbrown = { version = "0.14", optional = true, default-features = false, featu
 log = { version = "0.4.8", optional = true }
 # XXX TBD ??? ??? ???:
 # remove once our MSRV is >= 1.70
-once_cell = { version = "1.16", default-features = false, features = ["alloc", "race"] }
+# XXX TODO REMOVE EXACT once_cell version pin
+once_cell = { version = "=1.19.0", default-features = false, features = ["alloc", "race"] }
 ring = { version = "0.17", optional = true }
 subtle = { version = "2.5.0", default-features = false }
 webpki = { package = "rustls-webpki", version = "0.102.8", features = ["alloc"], default-features = false }
 pki-types = { package = "rustls-pki-types", version = "1.7", features = ["alloc"] }
 zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
+# XXX TBD RECONSIDER ORDERING OF THESE - ??? ???
 portable-atomic-util = { version = "0.2.2", default-features = false, features = ["alloc"], optional = true }
+portable-atomic = { version = "1.8.0", default-features = false, optional = true }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]
@@ -47,9 +50,10 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
-# XXX TODO FRAGILE - XXX DEPENDENCY ON YANKED once_cell @ 1.20.0 version
-critical-section = ["portable-atomic-util", "once_cell/critical-section"]
+# XXX TBD XXX XXX - XXX TODO EXPLAIN XXX with "portable-atomic/critical-section" (as required by XXX XXX XXX)
+critical-section = ["portable-atomic-util", "once_cell/critical-section", "portable-atomic/critical-section"]
 # XXX TBD ??? ???:
+# portable-atomic = ["dep:portable-atomic"]
 # portable-atomic-util = ["dep:portable-atomic-util"]
 
 [dev-dependencies]
