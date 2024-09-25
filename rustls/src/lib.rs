@@ -429,7 +429,7 @@ pub mod aaa_aaa_arc {
         }
     }
     #[macro_export]
-    macro_rules! paa_aaa_aaa_from_arc {
+    macro_rules! arc_from_arc {
         ($x:expr) => {
             {
                 let xx = rustls::internal::alias::Arc::into_raw($x.clone());

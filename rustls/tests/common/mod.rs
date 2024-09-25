@@ -599,7 +599,7 @@ pub fn make_client_config_with_verifier(
 ) -> ClientConfig {
     client_config_builder_with_versions(versions)
         .dangerous()
-        .with_custom_certificate_verifier(rustls::paa_aaa_aaa_from_arc!(verifier_builder.build().unwrap()))
+        .with_custom_certificate_verifier(rustls::arc_from_arc!(verifier_builder.build().unwrap()))
         .with_no_client_auth()
 }
 

@@ -405,7 +405,7 @@ struct DummyServerAuth {
 impl DummyServerAuth {
     fn new(trusted_cert_file: &str) -> Self {
         DummyServerAuth {
-            parent: rustls::paa_aaa_aaa_from_arc!(WebPkiServerVerifier::builder_with_provider(
+            parent: rustls::arc_from_arc!(WebPkiServerVerifier::builder_with_provider(
                 load_root_certs(trusted_cert_file),
                 SelectedProvider::from_env()
                     .provider()
@@ -552,7 +552,7 @@ impl ServerCacheWithResumptionDelay {
     fn new(delay: u32) -> Arc<Self> {
         Arc::new(Self {
             delay,
-            storage: rustls::paa_aaa_aaa_from_arc!(server::ServerSessionMemoryCache::new(32)),
+            storage: rustls::arc_from_arc!(server::ServerSessionMemoryCache::new(32)),
         })
     }
 }
@@ -632,7 +632,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
         .with_single_cert_with_ocsp(cert.clone(), key, opts.server_ocsp_response.clone())
         .unwrap();
 
-    cfg.session_storage = rustls::paa_aaa_aaa_from_arc!(ServerCacheWithResumptionDelay::new(opts.resumption_delay));
+    cfg.session_storage = rustls::arc_from_arc!(ServerCacheWithResumptionDelay::new(opts.resumption_delay));
     cfg.max_fragment_size = opts.max_fragment;
     cfg.send_tls13_tickets = 1;
     cfg.require_ems = opts.require_ems;
@@ -814,7 +814,7 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
         });
     }
 
-    cfg.resumption = Resumption::store(rustls::paa_aaa_aaa_from_arc!(ClientCacheWithoutKxHints::new(opts.resumption_delay)));
+    cfg.resumption = Resumption::store(rustls::arc_from_arc!(ClientCacheWithoutKxHints::new(opts.resumption_delay)));
     cfg.enable_sni = opts.use_sni;
     cfg.max_fragment_size = opts.max_fragment;
     cfg.require_ems = opts.require_ems;
