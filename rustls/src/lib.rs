@@ -420,8 +420,9 @@ pub mod aaa_aaa_box_helper {
     }
 }
 
-// XXX TBD CRATE NAMING FOR THIS ???
-pub mod aaa_aaa_arc {
+// XXX TBD NAMING FOR THIS - ??? ???
+pub mod arc_util {
+    // XXX TBD RECONSIDER EXPORTING THESE MACROS FROM TOP-LEVEL
     #[macro_export]
     macro_rules! arc_from {
         ($x:expr) => {
@@ -439,9 +440,9 @@ pub mod aaa_aaa_arc {
     }
 }
 
-// XXX TBD INTERNAL CRATE NAMING FOR THIS - ??? ???
+// XXX TBD INTERNAL NAMING FOR THIS - ??? ???
 // XXX TODO ADD NOTE CONCERNING INTERNAL VS EXPORTED ARC HELPER MACROS
-mod aaa_arc_internal {
+mod arc_helpers {
     macro_rules! arc_from_contents {
         ($x:expr) => {
             crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))

@@ -5,7 +5,7 @@ use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, Unknown
 
 use super::{pki_error, VerifierBuilderError};
 
-use crate::aaa_arc_internal::arc_from_contents;
+use crate::arc_helpers::arc_from_contents;
 use crate::alias::Arc;
 #[cfg(doc)]
 use crate::crypto;

@@ -5,7 +5,7 @@ use pki_types::{CertificateDer, PrivateKeyDer};
 
 use super::client_conn::Resumption;
 
-use crate::aaa_arc_internal::{arc_from_clone, arc_from_contents};
+use crate::arc_helpers::{arc_from_clone, arc_from_contents};
 use crate::alias::Arc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::client::{handy, ClientConfig, EchMode, ResolvesClientCert};
