@@ -8,6 +8,7 @@ pub(crate) use aws_lc_rs as ring_like;
 use pki_types::PrivateKeyDer;
 use webpki::aws_lc_rs as webpki_algs;
 
+use crate::aaa_arc_internal::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
 use crate::alias::Arc;
 use crate::crypto::{CryptoProvider, KeyProvider, SecureRandom};
 use crate::enums::SignatureScheme;
@@ -15,7 +16,7 @@ use crate::rand::GetRandomFailed;
 use crate::sign::SigningKey;
 use crate::suites::SupportedCipherSuite;
 use crate::webpki::WebPkiSupportedAlgorithms;
-use crate::{internal_paa_aaa_arc_from_contents, Error, OtherError};
+use crate::{Error, OtherError};
 
 /// Hybrid public key encryption (HPKE).
 pub mod hpke;

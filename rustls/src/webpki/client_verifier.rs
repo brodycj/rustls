@@ -5,6 +5,7 @@ use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, Unknown
 
 use super::{pki_error, VerifierBuilderError};
 
+use crate::aaa_arc_internal::internal_paa_aaa_arc_from_contents;
 use crate::alias::Arc;
 #[cfg(doc)]
 use crate::crypto;
@@ -19,7 +20,7 @@ use crate::webpki::parse_crls;
 use crate::webpki::verify::{verify_tls12_signature, verify_tls13_signature, ParsedCertificate};
 #[cfg(doc)]
 use crate::ConfigBuilder;
-use crate::{internal_paa_aaa_arc_from_contents, DistinguishedName, Error, RootCertStore, SignatureScheme};
+use crate::{DistinguishedName, Error, RootCertStore, SignatureScheme};
 
 /// A builder for configuring a `webpki` client certificate verifier.
 ///

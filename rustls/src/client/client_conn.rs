@@ -8,6 +8,7 @@ use pki_types::{ServerName, UnixTime};
 use super::handy::NoClientSessionStorage;
 use super::hs;
 
+use crate::aaa_arc_internal::internal_paa_aaa_arc_from_contents;
 use crate::alias::Arc;
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
@@ -27,7 +28,7 @@ use crate::time_provider::TimeProvider;
 use crate::unbuffered::{EncryptError, TransmitTlsData};
 #[cfg(feature = "std")]
 use crate::WantsVerifier;
-use crate::{compress, internal_paa_aaa_arc_from_contents, sign, verify, versions, KeyLog, WantsVersions};
+use crate::{compress, sign, verify, versions, KeyLog, WantsVersions};
 #[cfg(doc)]
 use crate::{crypto, DistinguishedName};
 
@@ -312,7 +313,7 @@ impl ClientConfig {
         ConfigBuilder {
             state: WantsVersions {
                 provider,
-                time_provider: crate::internal_paa_aaa_arc_from_contents!(DefaultTimeProvider),
+                time_provider: internal_paa_aaa_arc_from_contents!(DefaultTimeProvider),
             },
             side: PhantomData,
         }

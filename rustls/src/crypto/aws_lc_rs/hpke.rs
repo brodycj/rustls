@@ -21,7 +21,8 @@ use crate::crypto::hpke::{
 use crate::crypto::tls13::{expand, HkdfExpander, HkdfPrkExtract, HkdfUsingHmac};
 use crate::msgs::enums::{HpkeAead, HpkeKdf, HpkeKem};
 use crate::msgs::handshake::HpkeSymmetricCipherSuite;
-use crate::{internal_paa_aaa_arc_from_contents, Error, OtherError};
+use crate::aaa_arc_internal::internal_paa_aaa_arc_from_contents;
+use crate::{Error, OtherError};
 
 /// Default [RFC 9180] Hybrid Public Key Encryption (HPKE) suites supported by aws-lc-rs cryptography.
 pub static ALL_SUPPORTED_SUITES: &[&dyn Hpke] = &[

@@ -441,13 +441,11 @@ pub mod aaa_aaa_arc {
 
 // XXX TBD INTERNAL CRATE NAMING FOR THIS - ??? ???
 mod aaa_arc_internal {
-    #[macro_export]
     macro_rules! internal_paa_aaa_arc_from_contents {
         ($x:expr) => {
             crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))
         }
     }
-    #[macro_export]
     macro_rules! internal_paa_aaa_aaa_from_arc {
         ($x:expr) => {
             {
@@ -456,6 +454,7 @@ mod aaa_arc_internal {
             }
         };
     }
+    pub(crate) use {internal_paa_aaa_arc_from_contents, internal_paa_aaa_aaa_from_arc};
 }
 
 #[macro_use]

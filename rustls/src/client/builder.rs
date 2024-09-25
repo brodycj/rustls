@@ -5,6 +5,7 @@ use pki_types::{CertificateDer, PrivateKeyDer};
 
 use super::client_conn::Resumption;
 
+use crate::aaa_arc_internal::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
 use crate::alias::Arc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::client::{handy, ClientConfig, EchMode, ResolvesClientCert};
@@ -15,7 +16,7 @@ use crate::msgs::handshake::CertificateChain;
 use crate::time_provider::TimeProvider;
 use crate::versions::TLS13;
 use crate::webpki::{self, WebPkiServerVerifier};
-use crate::{compress, internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents, verify, versions, WantsVersions};
+use crate::{compress, verify, versions, WantsVersions};
 
 impl ConfigBuilder<ClientConfig, WantsVersions> {
     /// Enable Encrypted Client Hello (ECH) in the given mode.

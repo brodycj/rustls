@@ -4,9 +4,10 @@ use core::fmt;
 use pki_types::CertificateRevocationListDer;
 use webpki::{CertRevocationList, OwnedCertRevocationList};
 
+use crate::aaa_arc_internal::internal_paa_aaa_arc_from_contents;
 #[cfg(feature = "std")]
 use crate::alias::Arc;
-use crate::{error::{CertRevocationListError, CertificateError, Error, OtherError}, internal_paa_aaa_arc_from_contents};
+use crate::error::{CertRevocationListError, CertificateError, Error, OtherError};
 
 mod anchors;
 mod client_verifier;

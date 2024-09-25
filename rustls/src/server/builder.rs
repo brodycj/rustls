@@ -3,11 +3,11 @@ use core::marker::PhantomData;
 
 use pki_types::{CertificateDer, PrivateKeyDer};
 
+use crate::aaa_arc_internal::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
 use crate::alias::Arc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::crypto::CryptoProvider;
 use crate::error::Error;
-use crate::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
 use crate::server::{handy, ResolvesServerCert, ServerConfig};
 use crate::sign::CertifiedKey;
 use crate::time_provider::TimeProvider;
@@ -140,7 +140,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             ticketer: internal_paa_aaa_arc_from_contents!(handy::NeverProducesTickets {}),
             alpn_protocols: Vec::new(),
             versions: self.state.versions,
-            key_log: crate::internal_paa_aaa_arc_from_contents!(NoKeyLog {}),
+            key_log: internal_paa_aaa_arc_from_contents!(NoKeyLog {}),
             enable_secret_extraction: false,
             max_early_data_size: 0,
             send_half_rtt_data: false,
