@@ -57,7 +57,7 @@ impl rustls::crypto::KeyProvider for Provider {
                 #[cfg(not(feature = "std"))]
                 let err = rustls::Error::General(alloc::format!("{}", err));
                 err
-            })?,
+            })?
         )))
     }
 }
