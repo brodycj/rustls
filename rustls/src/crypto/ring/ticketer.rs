@@ -9,8 +9,9 @@ use subtle::ConstantTimeEq;
 use super::ring_like::aead;
 use super::ring_like::rand::{SecureRandom, SystemRandom};
 
-use crate::arc_helpers::arc_from_contents;
 use crate::alias::Arc;
+use crate::arc_helpers::arc_from_contents;
+
 use crate::error::Error;
 use crate::log::debug;
 use crate::polyfill::try_split_at;

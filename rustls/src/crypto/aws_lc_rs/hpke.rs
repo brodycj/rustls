@@ -13,6 +13,8 @@ use zeroize::Zeroize;
 
 #[cfg(feature = "std")]
 use crate::alias::Arc;
+use crate::arc_helpers::arc_from_contents;
+
 use crate::crypto::aws_lc_rs::hmac::{HMAC_SHA256, HMAC_SHA384, HMAC_SHA512};
 use crate::crypto::aws_lc_rs::unspecified_err;
 use crate::crypto::hpke::{
@@ -21,7 +23,6 @@ use crate::crypto::hpke::{
 use crate::crypto::tls13::{expand, HkdfExpander, HkdfPrkExtract, HkdfUsingHmac};
 use crate::msgs::enums::{HpkeAead, HpkeKdf, HpkeKem};
 use crate::msgs::handshake::HpkeSymmetricCipherSuite;
-use crate::arc_helpers::arc_from_contents;
 use crate::{Error, OtherError};
 
 /// Default [RFC 9180] Hybrid Public Key Encryption (HPKE) suites supported by aws-lc-rs cryptography.

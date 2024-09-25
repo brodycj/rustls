@@ -8,8 +8,9 @@ use pki_types::{ServerName, UnixTime};
 use super::handy::NoClientSessionStorage;
 use super::hs;
 
-use crate::arc_helpers::arc_from_contents;
 use crate::alias::Arc;
+use crate::arc_helpers::arc_from_contents;
+
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
 use crate::common_state::{CommonState, Protocol, Side};

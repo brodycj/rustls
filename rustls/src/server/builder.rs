@@ -3,8 +3,9 @@ use core::marker::PhantomData;
 
 use pki_types::{CertificateDer, PrivateKeyDer};
 
-use crate::arc_helpers::{arc_from_clone, arc_from_contents};
 use crate::alias::Arc;
+use crate::arc_helpers::{arc_from_clone, arc_from_contents};
+
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::crypto::CryptoProvider;
 use crate::error::Error;

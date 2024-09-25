@@ -406,7 +406,7 @@ mod alias {
 
 // XXX TODO EXPORT FROM INTERNAL XXX
 pub mod aa_dangerous_helper {
-    pub fn aaa_arc_from_raw_ptr<U: ?Sized> (x: *const U) -> crate::alias::Arc<U> {
+    pub fn aaa_arc_from_raw_ptr<U: ?Sized>(x: *const U) -> crate::alias::Arc<U> {
         unsafe { crate::alias::Arc::from_raw(x) }
     }
 }
@@ -415,7 +415,7 @@ pub mod aa_dangerous_helper {
 pub mod aaa_aaa_box_helper {
     pub use alloc::boxed::Box;
     #[inline(always)]
-    pub fn aaa_arc_from_box<U: ?Sized> (x: alloc::boxed::Box<U>) -> crate::alias::Arc<U> {
+    pub fn aaa_arc_from_box<U: ?Sized>(x: alloc::boxed::Box<U>) -> crate::alias::Arc<U> {
         crate::alias::Arc::from(x)
     }
 }
@@ -427,16 +427,14 @@ pub mod arc_util {
     macro_rules! arc_from {
         ($x:expr) => {
             rustls::aaa_aaa_box_helper::aaa_arc_from_box(rustls::aaa_aaa_box_helper::Box::new($x))
-        }
+        };
     }
     #[macro_export]
     macro_rules! arc_from_arc {
-        ($x:expr) => {
-            {
-                let xx = rustls::internal::alias::Arc::into_raw($x.clone());
-                rustls::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
-            }
-        };
+        ($x:expr) => {{
+            let xx = rustls::internal::alias::Arc::into_raw($x.clone());
+            rustls::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
+        }};
     }
 }
 
@@ -446,17 +444,15 @@ mod arc_helpers {
     macro_rules! arc_from_contents {
         ($x:expr) => {
             crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))
-        }
-    }
-    macro_rules! arc_from_clone {
-        ($x:expr) => {
-            {
-                let xx = crate::alias::Arc::into_raw($x.clone());
-                crate::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
-            }
         };
     }
-    pub(crate) use {arc_from_contents, arc_from_clone};
+    macro_rules! arc_from_clone {
+        ($x:expr) => {{
+            let xx = crate::alias::Arc::into_raw($x.clone());
+            crate::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
+        }};
+    }
+    pub(crate) use {arc_from_clone, arc_from_contents};
 }
 
 #[macro_use]

@@ -678,7 +678,9 @@ mod tests {
     use std::{println, vec};
 
     use super::{Error, InconsistentKeys, InvalidMessage};
+
     use crate::internal::alias::Arc;
+
     use crate::error::{CertRevocationListError, OtherError};
 
     #[test]

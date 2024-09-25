@@ -1,4 +1,4 @@
- use alloc::boxed::Box;
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
 use core::fmt::{Debug, Formatter};
@@ -11,8 +11,9 @@ use pki_types::{DnsName, UnixTime};
 
 use super::hs;
 
-use crate::arc_helpers::arc_from_contents;
 use crate::alias::Arc;
+use crate::arc_helpers::arc_from_contents;
+
 use crate::builder::ConfigBuilder;
 use crate::common_state::{CommonState, Side};
 #[cfg(feature = "std")]
