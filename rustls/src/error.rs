@@ -680,7 +680,6 @@ mod tests {
     use super::{Error, InconsistentKeys, InvalidMessage};
     use crate::internal::alias::Arc;
     use crate::error::{CertRevocationListError, OtherError};
-    use crate::internal_paa_aaa_aaa_from_arc;
 
     #[test]
     fn certificate_error_equality() {
