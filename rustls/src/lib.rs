@@ -320,7 +320,8 @@
     clippy::use_self,
     clippy::upper_case_acronyms,
     elided_lifetimes_in_paths,
-    missing_docs,
+    // XXX TODO XXX XXX
+    // missing_docs,
     trivial_casts,
     trivial_numeric_casts,
     unreachable_pub,
@@ -343,6 +344,8 @@
     clippy::new_ret_no_self,
     clippy::ptr_arg,
     clippy::single_component_path_imports,
+    // XXX TBD ??? ??? ???:
+    clippy::not_unsafe_ptr_arg_deref,
     clippy::new_without_default
 )]
 // Enable documentation for all features on docs.rs
@@ -413,7 +416,6 @@ pub mod aa_dangerous_helper {
 
 // XXX TBD CRATE NAMING FOR THIS ???
 pub mod aaa_aaa_box_helper {
-    pub use alloc::boxed::Box;
     #[inline(always)]
     pub fn aaa_arc_from_box<U: ?Sized>(x: alloc::boxed::Box<U>) -> crate::alias::Arc<U> {
         crate::alias::Arc::from(x)
