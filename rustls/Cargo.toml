@@ -48,6 +48,7 @@ read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
 portable-atomic = ["dep:portable-atomic"]
+xy = ["portable-atomic/critical-section", "once_cell/critical-section"]
 
 [dev-dependencies]
 base64 = "0.22"
