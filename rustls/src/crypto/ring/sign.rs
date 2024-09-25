@@ -16,7 +16,7 @@ use crate::alias::Arc;
 use crate::crypto::signer::{public_key_to_spki, Signer, SigningKey};
 use crate::enums::{SignatureAlgorithm, SignatureScheme};
 use crate::error::Error;
-use crate::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
+use crate::aaa_arc_internal::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
 use crate::x509::{wrap_concat_in_sequence, wrap_in_octet_string};
 
 /// Parse `der` as any supported key encoding/type, returning

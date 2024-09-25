@@ -9,6 +9,7 @@ use subtle::ConstantTimeEq;
 use super::ring_like::aead;
 use super::ring_like::rand::{SecureRandom, SystemRandom};
 
+use crate::aaa_arc_internal::internal_paa_aaa_arc_from_contents;
 use crate::alias::Arc;
 use crate::error::Error;
 use crate::log::debug;
@@ -26,9 +27,6 @@ impl Ticketer {
     /// The encryption mechanism used is Chacha20Poly1305.
     #[cfg(feature = "std")]
     pub fn new() -> Result<Arc<dyn ProducesTickets>, Error> {
-        // XXX TODO MOVE TO XXX
-        use crate::internal_paa_aaa_arc_from_contents;
-
         Ok(internal_paa_aaa_arc_from_contents!(crate::ticketer::TicketSwitcher::new(
             6 * 60 * 60,
             make_ticket_generator,
