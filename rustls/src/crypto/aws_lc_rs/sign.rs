@@ -16,13 +16,13 @@ use crate::alias::Arc;
 use crate::crypto::signer::{public_key_to_spki, Signer, SigningKey};
 use crate::enums::{SignatureAlgorithm, SignatureScheme};
 use crate::error::Error;
-use crate::aaa_arc_internal::arc_from;
+use crate::aaa_arc_internal::arc_from_contents;
 
 /// Parse `der` as any supported key encoding/type, returning
 /// the first which works.
 pub fn any_supported_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
     if let Ok(rsa) = RsaSigningKey::new(der) {
-        return Ok(arc_from!(rsa));
+        return Ok(arc_from_contents!(rsa));
     }
 
     if let Ok(ecdsa) = any_ecdsa_type(der) {
@@ -50,7 +50,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP256_SHA256,
         &signature::ECDSA_P256_SHA256_ASN1_SIGNING,
     ) {
-        return Ok(arc_from!(ecdsa_p256));
+        return Ok(arc_from_contents!(ecdsa_p256));
     }
 
     if let Ok(ecdsa_p384) = EcdsaSigningKey::new(
@@ -58,7 +58,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP384_SHA384,
         &signature::ECDSA_P384_SHA384_ASN1_SIGNING,
     ) {
-        return Ok(arc_from!(ecdsa_p384));
+        return Ok(arc_from_contents!(ecdsa_p384));
     }
 
     if let Ok(ecdsa_p521) = EcdsaSigningKey::new(
@@ -66,7 +66,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP521_SHA512,
         &signature::ECDSA_P521_SHA512_ASN1_SIGNING,
     ) {
-        return Ok(arc_from!(ecdsa_p521));
+        return Ok(arc_from_contents!(ecdsa_p521));
     }
 
     Err(Error::General(
@@ -77,7 +77,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
 /// Parse `der` as any EdDSA key type, returning the first which works.
 pub fn any_eddsa_type(der: &PrivatePkcs8KeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
     // TODO: Add support for Ed448
-    Ok(arc_from!(Ed25519SigningKey::new(
+    Ok(arc_from_contents!(Ed25519SigningKey::new(
         der,
         SignatureScheme::ED25519,
     )?))

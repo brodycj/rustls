@@ -8,7 +8,7 @@ use pki_types::{ServerName, UnixTime};
 use super::handy::NoClientSessionStorage;
 use super::hs;
 
-use crate::aaa_arc_internal::arc_from;
+use crate::aaa_arc_internal::arc_from_contents;
 use crate::alias::Arc;
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
@@ -313,7 +313,7 @@ impl ClientConfig {
         ConfigBuilder {
             state: WantsVersions {
                 provider,
-                time_provider: arc_from!(DefaultTimeProvider),
+                time_provider: arc_from_contents!(DefaultTimeProvider),
             },
             side: PhantomData,
         }
@@ -443,7 +443,7 @@ impl Resumption {
     #[cfg(feature = "std")]
     pub fn in_memory_sessions(num: usize) -> Self {
         Self {
-            store: arc_from!(super::handy::ClientSessionMemoryCache::new(num)),
+            store: arc_from_contents!(super::handy::ClientSessionMemoryCache::new(num)),
             tls12_resumption: Tls12Resumption::SessionIdOrTickets,
         }
     }
@@ -461,7 +461,7 @@ impl Resumption {
     /// Disable all use of session resumption.
     pub fn disabled() -> Self {
         Self {
-            store: arc_from!(NoClientSessionStorage),
+            store: arc_from_contents!(NoClientSessionStorage),
             tls12_resumption: Tls12Resumption::Disabled,
         }
     }

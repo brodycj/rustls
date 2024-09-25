@@ -440,13 +440,14 @@ pub mod aaa_aaa_arc {
 }
 
 // XXX TBD INTERNAL CRATE NAMING FOR THIS - ??? ???
+// XXX TODO ADD NOTE CONCERNING INTERNAL VS EXPORTED ARC HELPER MACROS
 mod aaa_arc_internal {
-    macro_rules! arc_from {
+    macro_rules! arc_from_contents {
         ($x:expr) => {
             crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))
         }
     }
-    macro_rules! arc_from_arc {
+    macro_rules! arc_from_clone {
         ($x:expr) => {
             {
                 let xx = crate::alias::Arc::into_raw($x.clone());
@@ -454,7 +455,7 @@ mod aaa_arc_internal {
             }
         };
     }
-    pub(crate) use {arc_from, arc_from_arc};
+    pub(crate) use {arc_from_contents, arc_from_clone};
 }
 
 #[macro_use]
