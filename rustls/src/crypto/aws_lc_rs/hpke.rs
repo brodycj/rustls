@@ -21,7 +21,7 @@ use crate::crypto::hpke::{
 use crate::crypto::tls13::{expand, HkdfExpander, HkdfPrkExtract, HkdfUsingHmac};
 use crate::msgs::enums::{HpkeAead, HpkeKdf, HpkeKem};
 use crate::msgs::handshake::HpkeSymmetricCipherSuite;
-use crate::aaa_arc_internal::internal_paa_aaa_arc_from_contents;
+use crate::aaa_arc_internal::arc_from;
 use crate::{Error, OtherError};
 
 /// Default [RFC 9180] Hybrid Public Key Encryption (HPKE) suites supported by aws-lc-rs cryptography.
@@ -929,7 +929,7 @@ impl<const KDF_LEN: usize> Drop for KemSharedSecret<KDF_LEN> {
 fn key_rejected_err(_e: aws_lc_rs::error::KeyRejected) -> Error {
     #[cfg(feature = "std")]
     {
-        Error::Other(OtherError(internal_paa_aaa_arc_from_contents!(_e)))
+        Error::Other(OtherError(arc_from!(_e)))
     }
     #[cfg(not(feature = "std"))]
     {

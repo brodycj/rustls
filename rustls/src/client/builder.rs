@@ -5,7 +5,7 @@ use pki_types::{CertificateDer, PrivateKeyDer};
 
 use super::client_conn::Resumption;
 
-use crate::aaa_arc_internal::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
+use crate::aaa_arc_internal::{arc_from_arc, arc_from};
 use crate::alias::Arc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::client::{handy, ClientConfig, EchMode, ResolvesClientCert};
@@ -77,7 +77,7 @@ impl ConfigBuilder<ClientConfig, WantsVerifier> {
             state: WantsClientCert {
                 provider: self.state.provider,
                 versions: self.state.versions,
-                verifier: internal_paa_aaa_aaa_from_arc!(verifier),
+                verifier: arc_from_arc!(verifier),
                 time_provider: self.state.time_provider,
                 client_ech_mode: self.state.client_ech_mode,
             },
@@ -162,12 +162,12 @@ impl ConfigBuilder<ClientConfig, WantsClientCert> {
             .load_private_key(key_der)?;
         let resolver =
             handy::AlwaysResolvesClientCert::new(private_key, CertificateChain(cert_chain))?;
-        Ok(self.with_client_cert_resolver(internal_paa_aaa_arc_from_contents!(resolver)))
+        Ok(self.with_client_cert_resolver(arc_from!(resolver)))
     }
 
     /// Do not support client auth.
     pub fn with_no_client_auth(self) -> ClientConfig {
-        self.with_client_cert_resolver(internal_paa_aaa_arc_from_contents!(handy::FailResolveClientCert {}))
+        self.with_client_cert_resolver(arc_from!(handy::FailResolveClientCert {}))
     }
 
     /// Sets a custom [`ResolvesClientCert`].
@@ -184,7 +184,7 @@ impl ConfigBuilder<ClientConfig, WantsClientCert> {
             versions: self.state.versions,
             enable_sni: true,
             verifier: self.state.verifier,
-            key_log: internal_paa_aaa_arc_from_contents!(NoKeyLog {}),
+            key_log: arc_from!(NoKeyLog {}),
             enable_secret_extraction: false,
             enable_early_data: false,
             #[cfg(feature = "tls12")]

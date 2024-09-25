@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 
 use pki_types::{CertificateDer, PrivateKeyDer};
 
-use crate::aaa_arc_internal::{internal_paa_aaa_aaa_from_arc, internal_paa_aaa_arc_from_contents};
+use crate::aaa_arc_internal::{arc_from_arc, arc_from};
 use crate::alias::Arc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::crypto::CryptoProvider;
@@ -33,7 +33,7 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
 
     /// Disable client authentication.
     pub fn with_no_client_auth(self) -> ConfigBuilder<ServerConfig, WantsServerCert> {
-        self.with_client_cert_verifier(internal_paa_aaa_arc_from_contents!(NoClientAuth))
+        self.with_client_cert_verifier(arc_from!(NoClientAuth))
     }
 }
 
@@ -86,7 +86,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
         }
 
         let resolver = handy::AlwaysResolvesChain::new(certified_key);
-        Ok(self.with_cert_resolver(internal_paa_aaa_arc_from_contents!(resolver)))
+        Ok(self.with_cert_resolver(arc_from!(resolver)))
     }
 
     /// Sets a single certificate chain, matching private key and optional OCSP
@@ -122,7 +122,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
         }
 
         let resolver = handy::AlwaysResolvesChain::new_with_extras(certified_key, ocsp);
-        Ok(self.with_cert_resolver(internal_paa_aaa_arc_from_contents!(resolver)))
+        Ok(self.with_cert_resolver(arc_from!(resolver)))
     }
 
     /// Sets a custom [`ResolvesServerCert`].
@@ -134,13 +134,13 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             ignore_client_order: false,
             max_fragment_size: None,
             #[cfg(feature = "std")]
-            session_storage: internal_paa_aaa_aaa_from_arc!(handy::ServerSessionMemoryCache::new(256)),
+            session_storage: arc_from_arc!(handy::ServerSessionMemoryCache::new(256)),
             #[cfg(not(feature = "std"))]
-            session_storage: internal_paa_aaa_arc_from_contents!(handy::NoServerSessionStorage {}),
-            ticketer: internal_paa_aaa_arc_from_contents!(handy::NeverProducesTickets {}),
+            session_storage: arc_from!(handy::NoServerSessionStorage {}),
+            ticketer: arc_from!(handy::NeverProducesTickets {}),
             alpn_protocols: Vec::new(),
             versions: self.state.versions,
-            key_log: internal_paa_aaa_arc_from_contents!(NoKeyLog {}),
+            key_log: arc_from!(NoKeyLog {}),
             enable_secret_extraction: false,
             max_early_data_size: 0,
             send_half_rtt_data: false,
