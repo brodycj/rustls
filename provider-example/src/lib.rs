@@ -49,16 +49,16 @@ impl rustls::crypto::KeyProvider for Provider {
         key_der: PrivateKeyDer<'static>,
     ) -> Result<Arc<dyn rustls::sign::SigningKey>, rustls::Error> {
         // XXX TBD Arc::new vs arc_from! with added parens - ??? ??? ???
-        Ok(arc_from!((
-            sign::EcdsaSigningKeyP256::try_from(key_der).map_err(|err| {
+        Ok(arc_from!(
+            (sign::EcdsaSigningKeyP256::try_from(key_der).map_err(|err| {
                 // XXX TBD arc_from! vs Arc::new - ??? ??? ???
                 #[cfg(feature = "std")]
                 let err = rustls::OtherError(arc_from!(err));
                 #[cfg(not(feature = "std"))]
                 let err = rustls::Error::General(alloc::format!("{}", err));
                 err
-            })?,
-        )))
+            })?),
+        ))
     }
 }
 
