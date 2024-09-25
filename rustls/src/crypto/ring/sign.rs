@@ -13,7 +13,7 @@ use super::ring_like::rand::{SecureRandom, SystemRandom};
 use super::ring_like::signature::{self, EcdsaKeyPair, Ed25519KeyPair, KeyPair, RsaKeyPair};
 
 use crate::alias::Arc;
-use crate::arc_helpers::{arc_from_clone, arc_from_contents};
+use crate::arc_helpers::arc_from_contents;
 
 use crate::crypto::signer::{public_key_to_spki, Signer, SigningKey};
 use crate::enums::{SignatureAlgorithm, SignatureScheme};
