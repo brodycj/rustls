@@ -404,6 +404,13 @@ mod alias {
     pub use alloc::sync::Arc;
 }
 
+// XXX TODO EXPORT FROM INTERNAL XXX
+pub mod aa_dangerous_helper {
+    pub fn aaa_arc_from_raw_ptr<U: ?Sized> (x: *const U) -> crate::alias::Arc<U> {
+        unsafe { crate::alias::Arc::from_raw(x) }
+    }
+}
+
 // XXX TBD CRATE NAMING FOR THIS ???
 pub mod aaa_aaa_arc {
     #[inline(always)]
@@ -429,17 +436,12 @@ pub mod aaa_aaa_arc {
             }
         }
     }
-    pub fn aaa_arc_from_raw_ptr<U: ?Sized> (x: *const U) -> crate::alias::Arc<U> {
-        // crate::alias::Arc::from(x: *const U)
-        // unreachable!()
-        unsafe { crate::alias::Arc::from_raw(x) }
-    }
     #[macro_export]
     macro_rules! paa_aaa_aaa_from_arc {
         ($x:expr) => {
             {
                 let xx = rustls::internal::alias::Arc::into_raw($x.clone());
-                rustls::aaa_aaa_arc::aaa_arc_from_raw_ptr(xx)
+                rustls::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
             }
         };
     }
@@ -448,7 +450,7 @@ pub mod aaa_aaa_arc {
         ($x:expr) => {
             {
                 let xx = crate::alias::Arc::into_raw($x.clone());
-                crate::aaa_aaa_arc::aaa_arc_from_raw_ptr(xx)
+                crate::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
             }
         };
     }
