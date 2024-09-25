@@ -26,7 +26,6 @@ impl server::StoresServerSessions for NoServerSessionStorage {
 
 #[cfg(any(feature = "std", feature = "hashbrown"))]
 mod cache {
-    use alloc::boxed::Box;
     use alloc::vec::Vec;
     use core::fmt::{Debug, Formatter};
 

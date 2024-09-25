@@ -9,7 +9,7 @@ use pki_types::PrivateKeyDer;
 use webpki::aws_lc_rs as webpki_algs;
 
 use crate::alias::Arc;
-use crate::arc_helpers::{arc_from_clone, arc_from_contents};
+use crate::arc_helpers::arc_from_contents;
 
 use crate::crypto::{CryptoProvider, KeyProvider, SecureRandom};
 use crate::enums::SignatureScheme;
