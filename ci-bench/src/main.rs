@@ -5,7 +5,6 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::mem;
 use std::os::fd::{AsRawFd, FromRawFd};
 use std::path::{Path, PathBuf};
-use std::sync::Arc;
 use std::time::Instant;
 
 use anyhow::Context;
@@ -15,6 +14,12 @@ use fxhash::FxHashMap;
 use itertools::Itertools;
 use rayon::iter::Either;
 use rayon::prelude::*;
+
+// XXX XXX
+use rustls::internal::alias::Arc;
+
+use rustls::{arc_from, arc_from_arc};
+
 use rustls::client::Resumption;
 use rustls::crypto::{aws_lc_rs, ring, CryptoProvider, GetRandomFailed, SecureRandom};
 use rustls::server::{NoServerSessionStorage, ServerSessionMemoryCache, WebPkiClientVerifier};
@@ -526,7 +531,7 @@ impl ClientSideStepper<'_> {
             cfg.resumption = Resumption::disabled();
         }
 
-        Arc::new(cfg)
+        arc_from!(cfg)
     }
 }
 
@@ -596,14 +601,14 @@ impl ServerSideStepper<'_> {
             .expect("bad certs/private key?");
 
         if resume == ResumptionKind::SessionId {
-            cfg.session_storage = ServerSessionMemoryCache::new(128);
+            cfg.session_storage = arc_from_arc!(ServerSessionMemoryCache::new(128));
         } else if resume == ResumptionKind::Tickets {
             cfg.ticketer = (params.ticketer)();
         } else {
-            cfg.session_storage = Arc::new(NoServerSessionStorage {});
+            cfg.session_storage = arc_from!(NoServerSessionStorage {});
         }
 
-        Arc::new(cfg)
+        arc_from!(cfg)
     }
 }
 

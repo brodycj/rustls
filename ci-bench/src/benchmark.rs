@@ -1,7 +1,11 @@
-use std::sync::Arc;
+// XXX XXX
+// use std::sync::Arc;
 
 use fxhash::FxHashMap;
 use itertools::Itertools;
+
+// XXX XXX
+use rustls::internal::alias::Arc;
 
 use crate::callgrind::InstructionCounts;
 use crate::util::KeyType;
