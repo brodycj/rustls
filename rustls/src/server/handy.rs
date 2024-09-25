@@ -54,15 +54,15 @@ mod cache {
         }
 
         ///// XXX TODO XXX XXX
-        // /// Make a new ServerSessionMemoryCache.  `size` is the maximum
-        // /// number of stored sessions, and may be rounded-up for
-        // /// efficiency.
-        // #[cfg(not(feature = "std"))]
-        // pub fn new<M: crate::lock::MakeMutex>(size: usize) -> Arc<Self> {
-        //     Arc::new(Self {
-        //         cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
-        //     })
-        // }
+        /// Make a new ServerSessionMemoryCache.  `size` is the maximum
+        /// number of stored sessions, and may be rounded-up for
+        /// efficiency.
+        #[cfg(not(feature = "std"))]
+        pub fn new<M: crate::lock::MakeMutex>(size: usize) -> Arc<Self> {
+            Arc::new(Self {
+                cache: Mutex::new::<M>(limited_cache::LimitedCache::new(size)),
+            })
+        }
     }
 
     impl server::StoresServerSessions for ServerSessionMemoryCache {
