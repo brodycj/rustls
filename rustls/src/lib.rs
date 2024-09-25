@@ -408,6 +408,8 @@ mod alias {
 }
 
 // XXX TODO EXPORT FROM INTERNAL XXX
+// XXX TODO XXX XXX
+#[allow(missing_docs)]
 pub mod aa_dangerous_helper {
     pub fn aaa_arc_from_raw_ptr<U: ?Sized>(x: *const U) -> crate::alias::Arc<U> {
         unsafe { crate::alias::Arc::from_raw(x) }
@@ -415,6 +417,8 @@ pub mod aa_dangerous_helper {
 }
 
 // XXX TBD CRATE NAMING FOR THIS ???
+// XXX TODO XXX XXX
+#[allow(missing_docs)]
 pub mod aaa_aaa_box_helper {
     // XXX TBD RECONSIDER IMPORT HERE - ??? ??? ???
     pub use alloc::boxed::Box;
@@ -425,6 +429,8 @@ pub mod aaa_aaa_box_helper {
 }
 
 // XXX TBD NAMING FOR THIS - ??? ???
+// XXX TODO XXX XXX
+#[allow(missing_docs)]
 pub mod arc_util {
     // XXX TBD RECONSIDER EXPORTING THESE MACROS FROM TOP-LEVEL
     #[macro_export]
