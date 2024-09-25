@@ -23,7 +23,7 @@ use rustls::internal::msgs::handshake::{
     ServerName as ServerNameExtensionItem, SessionId,
 };
 use rustls::internal::msgs::message::{Message, MessagePayload, PlainMessage};
-use rustls::server::{ClientHello, ParsedCertificate, ResolvesServerCert, StoresServerSessions};
+use rustls::server::{ClientHello, ParsedCertificate, ResolvesServerCert};
 #[cfg(feature = "aws_lc_rs")]
 use rustls::{
     arc_from, arc_from_arc,
