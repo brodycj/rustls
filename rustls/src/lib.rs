@@ -429,7 +429,6 @@ pub mod aaa_aaa_arc {
             crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))
         }
     }
-    // XXX XXX HACKY API HELPER TO HELP WITH TESTING FOR NOW:
     #[macro_export]
     macro_rules! paa_arc_from_contents {
         ($x:expr) => {
