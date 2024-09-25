@@ -35,7 +35,7 @@ fn main() -> Result<(), Box<dyn StdError>> {
     let listener = TcpListener::bind(format!("[::]:{}", 4443)).unwrap();
     let (mut stream, _) = listener.accept()?;
 
-    let mut conn = rustls::ServerConnection::new(rustls::paa_arc_from_contents!(config))?;
+    let mut conn = rustls::ServerConnection::new(rustls::arc_from!(config))?;
     conn.complete_io(&mut stream)?;
 
     conn.writer()

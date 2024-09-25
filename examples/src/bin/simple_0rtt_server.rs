@@ -46,7 +46,7 @@ fn main() -> Result<(), Box<dyn StdError>> {
 
         println!("Accepting connection");
 
-        let mut conn = rustls::ServerConnection::new(rustls::paa_arc_from_contents!(config.clone()))?;
+        let mut conn = rustls::ServerConnection::new(rustls::arc_from!(config.clone()))?;
 
         let mut buf = Vec::new();
         let mut did_early_data = false;

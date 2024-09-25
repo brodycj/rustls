@@ -606,7 +606,7 @@ fn make_server_config(
     } else if resume == ResumptionParam::Tickets {
         cfg.ticketer = Ticketer::new().unwrap();
     } else {
-        cfg.session_storage = rustls::paa_arc_from_contents!(NoServerSessionStorage {});
+        cfg.session_storage = rustls::arc_from!(NoServerSessionStorage {});
     }
 
     cfg.max_fragment_size = max_fragment_size;

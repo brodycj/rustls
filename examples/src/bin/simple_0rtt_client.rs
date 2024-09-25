@@ -102,7 +102,7 @@ fn main() {
         .with_no_client_auth();
 
     // Allow using SSLKEYLOGFILE.
-    config.key_log = rustls::paa_arc_from_contents!(rustls::KeyLogFile::new());
+    config.key_log = rustls::arc_from!(rustls::KeyLogFile::new());
 
     // Enable early data.
     config.enable_early_data = true;

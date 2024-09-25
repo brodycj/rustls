@@ -44,7 +44,7 @@ fn server_config_with_verifier(
     client_cert_verifier: MockClientVerifier,
 ) -> ServerConfig {
     server_config_builder()
-        .with_client_cert_verifier(rustls::paa_arc_from_contents!(client_cert_verifier))
+        .with_client_cert_verifier(rustls::arc_from!(client_cert_verifier))
         .with_single_cert(kt.get_chain(), kt.get_key())
         .unwrap()
 }

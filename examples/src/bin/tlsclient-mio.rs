@@ -452,7 +452,7 @@ fn make_config(args: &Args) -> Arc<rustls::ClientConfig> {
         }
     };
 
-    config.key_log = rustls::paa_arc_from_contents!(rustls::KeyLogFile::new());
+    config.key_log = rustls::arc_from!(rustls::KeyLogFile::new());
 
     if args.flag_no_tickets {
         config.resumption = config
@@ -474,7 +474,7 @@ fn make_config(args: &Args) -> Arc<rustls::ClientConfig> {
     if args.flag_insecure {
         config
             .dangerous()
-            .set_certificate_verifier(rustls::paa_arc_from_contents!(danger::NoCertificateVerification::new(
+            .set_certificate_verifier(rustls::arc_from!(danger::NoCertificateVerification::new(
                 provider::default_provider(),
             )));
     }

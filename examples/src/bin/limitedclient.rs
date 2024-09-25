@@ -29,7 +29,7 @@ fn main() {
 
     let server_name = "www.rust-lang.org".try_into().unwrap();
     // XXX XXX USE IMPORT FOR CONFIG MACRO BELOW
-    let mut conn = rustls::ClientConnection::new(rustls::paa_arc_from_contents!(config), server_name).unwrap();
+    let mut conn = rustls::ClientConnection::new(rustls::arc_from!(config), server_name).unwrap();
     let mut sock = TcpStream::connect("www.rust-lang.org:443").unwrap();
     let mut tls = rustls::Stream::new(&mut conn, &mut sock);
     tls.write_all(

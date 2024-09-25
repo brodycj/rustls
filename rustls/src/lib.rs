@@ -423,7 +423,7 @@ pub mod aaa_aaa_box_helper {
 // XXX TBD CRATE NAMING FOR THIS ???
 pub mod aaa_aaa_arc {
     #[macro_export]
-    macro_rules! paa_arc_from_contents {
+    macro_rules! arc_from {
         ($x:expr) => {
             rustls::aaa_aaa_box_helper::aaa_arc_from_box(rustls::aaa_aaa_box_helper::Box::new($x))
         }

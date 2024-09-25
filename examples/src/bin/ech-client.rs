@@ -108,8 +108,8 @@ fn main() {
             .with_no_client_auth();
 
     // Allow using SSLKEYLOGFILE.
-    config.key_log = rustls::paa_arc_from_contents!(rustls::KeyLogFile::new());
-    let config = rustls::paa_arc_from_contents!(config);
+    config.key_log = rustls::arc_from!(rustls::KeyLogFile::new());
+    let config = rustls::arc_from!(config);
 
     // The "inner" SNI that we're really trying to reach.
     let server_name: ServerName<'static> = args
