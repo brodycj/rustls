@@ -51,24 +51,6 @@ mod cache {
             Arc::new(Self {
                 cache: Mutex::new(limited_cache::LimitedCache::new(size)),
             })
-            // crate::aaa_aaa_arc::aaa_arc_from_box(alloc::boxed::Box::new(Self {
-            //     // ---
-            //     cache: Mutex::new(limited_cache::LimitedCache::new(size)),
-            // }))
-            // Arc::from(
-            //     (|| {
-            //     // ---
-            //     let b = Box::new(
-            //         (|| {
-            //         Self {
-            //             // ---
-            //             cache: Mutex::new(limited_cache::LimitedCache::new(size)),
-            //         }
-            //         })()
-            //     );
-            //     b
-            //     })()
-            // )
         }
 
         ///// XXX TODO XXX XXX
