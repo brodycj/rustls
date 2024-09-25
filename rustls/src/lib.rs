@@ -422,13 +422,6 @@ pub mod aaa_aaa_box_helper {
 
 // XXX TBD CRATE NAMING FOR THIS ???
 pub mod aaa_aaa_arc {
-    // XXX XXX INTERNAL USE ONLY:
-    #[macro_export]
-    macro_rules! internal_paa_aaa_arc_from_contents {
-        ($x:expr) => {
-            crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))
-        }
-    }
     #[macro_export]
     macro_rules! paa_arc_from_contents {
         ($x:expr) => {
@@ -443,6 +436,16 @@ pub mod aaa_aaa_arc {
                 rustls::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
             }
         };
+    }
+}
+
+mod aaa_internal_aaa_aaa {
+    // ---
+    #[macro_export]
+    macro_rules! internal_paa_aaa_arc_from_contents {
+        ($x:expr) => {
+            crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))
+        }
     }
     #[macro_export]
     macro_rules! internal_paa_aaa_aaa_from_arc {
