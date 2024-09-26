@@ -1,10 +1,13 @@
-use alloc::sync::Arc;
 use std::prelude::v1::*;
 use std::{format, println, vec};
 
 use pki_types::{CertificateDer, DnsName};
 
 use super::handshake::{ServerDhParams, ServerKeyExchange, ServerKeyExchangeParams};
+
+// XXX TBD XXX ??? ???:
+use crate::internal::alias::Arc;
+
 use crate::enums::{
     CertificateCompressionAlgorithm, CipherSuite, HandshakeType, ProtocolVersion, SignatureScheme,
 };

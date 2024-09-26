@@ -1,6 +1,7 @@
 use pki_types::ServerName;
 
 use crate::alias::Arc;
+
 use crate::enums::SignatureScheme;
 use crate::error::Error;
 use crate::msgs::handshake::CertificateChain;
@@ -242,8 +243,11 @@ impl client::ResolvesClientCert for AlwaysResolvesClientCert {
 
 test_for_each_provider! {
     use std::prelude::v1::*;
-    use alloc::sync::Arc;
+
     use super::NoClientSessionStorage;
+
+    use crate::internal::alias::Arc;
+
     use crate::client::ClientSessionStore;
     use crate::msgs::enums::NamedGroup;
     use crate::msgs::handshake::CertificateChain;

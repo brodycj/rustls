@@ -1,9 +1,10 @@
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::cmp;
 
 use pki_types::{DnsName, UnixTime};
 use zeroize::Zeroizing;
+
+use crate::alias::Arc;
 
 use crate::enums::{CipherSuite, ProtocolVersion};
 use crate::error::InvalidMessage;
