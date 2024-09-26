@@ -797,7 +797,7 @@ mod client_hello {
             })?;
 
         let scheme = signer.scheme();
-        let sig = signer.sign(&message)?;
+        let sig = signer.sign(message.as_ref())?;
 
         let cv = DigitallySignedStruct::new(scheme, sig);
 
@@ -1161,7 +1161,7 @@ impl State<ServerConnectionData> for ExpectCertificateVerify {
 
             self.config
                 .verifier
-                .verify_tls13_signature(&msg, &certs[0], sig)
+                .verify_tls13_signature(msg.as_ref(), &certs[0], sig)
         };
 
         if let Err(e) = rc {

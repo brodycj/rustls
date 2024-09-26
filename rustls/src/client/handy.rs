@@ -242,6 +242,7 @@ impl client::ResolvesClientCert for AlwaysResolvesClientCert {
 
 test_for_each_provider! {
     use std::prelude::v1::*;
+    use alloc::sync::Arc;
     use super::NoClientSessionStorage;
     use crate::client::ClientSessionStore;
     use crate::msgs::enums::NamedGroup;
@@ -250,6 +251,7 @@ test_for_each_provider! {
     use crate::msgs::handshake::SessionId;
     use crate::msgs::persist::Tls13ClientSessionValue;
     use crate::suites::SupportedCipherSuite;
+    use crate::msgs::base::PayloadU16;
     use provider::cipher_suite;
 
     use pki_types::{ServerName, UnixTime};
@@ -277,7 +279,7 @@ test_for_each_provider! {
                 Tls12ClientSessionValue::new(
                     tls12_suite,
                     SessionId::empty(),
-                    Vec::new(),
+                    Arc::new(PayloadU16::empty()),
                     &[],
                     CertificateChain::default(),
                     now,
@@ -299,7 +301,7 @@ test_for_each_provider! {
             name.clone(),
             Tls13ClientSessionValue::new(
                 tls13_suite,
-                Vec::new(),
+                Arc::new(PayloadU16::empty()),
                 &[],
                 CertificateChain::default(),
                 now,
