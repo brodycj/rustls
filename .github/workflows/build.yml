@@ -374,6 +374,7 @@ jobs:
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
         run: cargo add --dev --features bindgen aws-lc-sys --package rustls --verbose && cargo install bindgen-cli --verbose
       - run: cross test --package rustls --target ${{ matrix.target }}
+      - run: cross test --features critical-section --package rustls --target ${{ matrix.target }}
 
   cross-build-with-critical-section-feature:
     # XXX TODO EXPLAIN MOVTIVATION - THIS IS TO TEST SUPPORT FOR NO ATOMIC PTR TARGET
