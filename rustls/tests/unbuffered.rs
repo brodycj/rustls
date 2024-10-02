@@ -2,6 +2,7 @@
 
 use std::num::NonZeroUsize;
 
+use rustls::arc_from;
 use rustls::internal::alias::Arc;
 
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
@@ -797,7 +798,7 @@ fn tls13_packed_handshake() {
         .with_safe_default_protocol_versions()
         .unwrap()
         .dangerous()
-        .with_custom_certificate_verifier(Arc::new(MockServerVerifier::rejects_certificate(
+        .with_custom_certificate_verifier(arc_from!(MockServerVerifier::rejects_certificate(
             CertificateError::UnknownIssuer.into(),
         )))
         .with_no_client_auth();
