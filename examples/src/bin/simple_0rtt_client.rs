@@ -1,6 +1,10 @@
 //! This is an example client that uses rustls for TLS, and sends early 0-RTT data.
 //!
-//! Usage: cargo r --bin simple_0rtt_client --package rustls-examples [domain name] [port] [path/to/ca.cert]
+//! Usage:
+//!
+//! ```
+//! cargo r --bin simple_0rtt_client --package rustls-examples [domain name] [port] [path/to/ca.cert]
+//! ```
 //!
 //! You may set the `SSLKEYLOGFILE` env var when using this example to write a
 //! log file with key material (insecure) for debugging purposes. See [`rustls::KeyLog`]
@@ -9,10 +13,10 @@
 //! Note that `unwrap()` is used to deal with networking errors; this is not something
 //! that is sensible outside of example code.
 
+use std::env;
 use std::io::{BufRead, BufReader, Write};
 use std::net::TcpStream;
 use std::str::FromStr;
-use std::{env, fs};
 
 // XXX TBD ??? ???
 // XXX TBD IMPORT THESE IN OTHER EXAMPLES - ???
@@ -20,7 +24,8 @@ use rustls::{arc_from, arc_from_arc};
 // XXX TBD IMPORT THIS FROM ??? ??? ????
 use rustls::internal::alias::Arc;
 
-use rustls::pki_types::ServerName;
+use rustls::pki_types::pem::PemObject;
+use rustls::pki_types::{CertificateDer, ServerName};
 use rustls::RootCertStore;
 
 fn start_connection(config: &Arc<rustls::ClientConfig>, domain_name: &str, port: u16) {
@@ -87,10 +92,10 @@ fn main() {
 
     let mut root_store = RootCertStore::empty();
     if let Some(cafile) = args.next() {
-        let certfile = fs::File::open(cafile).expect("Cannot open CA file");
-        let mut reader = BufReader::new(certfile);
         root_store.add_parsable_certificates(
-            rustls_pemfile::certs(&mut reader).map(|result| result.unwrap()),
+            CertificateDer::pem_file_iter(cafile)
+                .expect("Cannot open CA file")
+                .map(|result| result.unwrap()),
         );
     } else {
         root_store.extend(

@@ -1,7 +1,6 @@
-use std::fs::{self, File};
-use std::io::{BufReader, Read, Write};
+use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
-use std::{str, thread};
+use std::{fs, str, thread};
 
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
@@ -10,7 +9,7 @@ use rustls::arc_from;
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
 use rustls::version::{TLS12, TLS13};
 use rustls::{ClientConfig, RootCertStore, ServerConfig, SupportedProtocolVersion};
-use rustls_pemfile::Item;
+use rustls_pki_types::pem::PemObject;
 use rustls_pki_types::{CertificateDer, PrivateKeyDer};
 
 use crate::ffdhe::{self, FfdheKxGroup};
@@ -187,24 +186,14 @@ fn root_ca() -> RootCertStore {
 }
 
 fn load_certs() -> Vec<CertificateDer<'static>> {
-    let mut reader = BufReader::new(File::open(CERT_CHAIN_FILE).unwrap());
-    rustls_pemfile::certs(&mut reader)
+    CertificateDer::pem_file_iter(CERT_CHAIN_FILE)
+        .unwrap()
         .map(|c| c.unwrap())
         .collect()
 }
 
 fn load_private_key() -> PrivateKeyDer<'static> {
-    let mut reader = BufReader::new(File::open(PRIV_KEY_FILE).unwrap());
-
-    match rustls_pemfile::read_one(&mut reader)
-        .unwrap()
-        .unwrap()
-    {
-        Item::Pkcs1Key(key) => key.into(),
-        Item::Pkcs8Key(key) => key.into(),
-        Item::Sec1Key(key) => key.into(),
-        _ => panic!("no key in key file {PRIV_KEY_FILE}"),
-    }
+    PrivateKeyDer::from_pem_file(PRIV_KEY_FILE).unwrap()
 }
 
 fn ffdhe_provider() -> CryptoProvider {
