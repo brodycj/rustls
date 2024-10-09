@@ -32,6 +32,7 @@ pki-types = { package = "rustls-pki-types", version = "1.9", features = ["alloc"
 zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
 portable-atomic = { version = "1.9.0", default-features = false, optional = true }
+portable-atomic-util = { version = "0.2.2", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]
@@ -47,6 +48,7 @@ read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
 portable-atomic = ["dep:portable-atomic"]
+portable-atomic-util = ["dep:portable-atomic-util"]
 
 [dev-dependencies]
 base64 = "0.22"
