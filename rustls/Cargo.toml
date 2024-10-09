@@ -47,6 +47,9 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
+# XXX TBD XXX XXX
+critical-section = ["portable-atomic-util", "once_cell/critical-section", "portable-atomic/critical-section"]
+# XXX TBD ??? ???
 portable-atomic = ["dep:portable-atomic"]
 portable-atomic-util = ["dep:portable-atomic-util"]
 
