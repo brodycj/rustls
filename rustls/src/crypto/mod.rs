@@ -224,7 +224,7 @@ impl CryptoProvider {
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
     pub fn install_default(self) -> Result<(), Arc<Self>> {
-        static_default::install_default(Arc::new(self))
+        static_default::install_default(self)
     }
 
     /// Returns the default `CryptoProvider` for this process.
@@ -239,7 +239,7 @@ impl CryptoProvider {
     /// - gets the pre-installed default, or
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
-    pub(crate) fn get_default_or_install_from_crate_features() -> static_default::DefaultRef {
+    pub(crate) fn get_default_or_install_from_crate_features() -> &'static Arc<Self> {
         static_default::get_default().unwrap_or_else(|| {
             // Ignore error result in case of losing a race here, just accept the outcome.
             let _ = Self::from_crate_features()
@@ -612,37 +612,33 @@ mod static_default {
     use once_cell::sync::OnceCell;
 
     use crate::alias::Arc;
-    use crate::crypto::CryptoProvider;
 
-    pub(crate) type DefaultRef = &'static Arc<CryptoProvider>;
+    use super::CryptoProvider;
 
     #[cfg(any(feature = "critical-section", feature = "std"))]
     pub(crate) fn install_default(
-        default_provider: Arc<CryptoProvider>,
+        default_provider: CryptoProvider,
     ) -> Result<(), Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.set(default_provider)
+        PROCESS_DEFAULT_PROVIDER.set(Arc::new(default_provider))
     }
 
     #[cfg(not(any(feature = "critical-section", feature = "std")))]
     pub(crate) fn install_default(
-        default_provider: Arc<CryptoProvider>,
+        default_provider: CryptoProvider,
     ) -> Result<(), Arc<CryptoProvider>> {
-        match PROCESS_DEFAULT_PROVIDER.set(Box::new(default_provider)) {
-            Ok(()) => Ok(()),
-            Err(previous) => Err(*previous),
-        }
+        PROCESS_DEFAULT_PROVIDER
+            .set(Box::new(Arc::new(default_provider)))
+            .map_err(|e| *e)
     }
 
-    pub(crate) fn get_default() -> Option<DefaultRef> {
+    pub(crate) fn get_default() -> Option<&'static Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.get()
     }
 
     #[cfg(any(feature = "critical-section", feature = "std"))]
-    type DefaultProviderStore = OnceCell<Arc<CryptoProvider>>;
+    static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
     #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    type DefaultProviderStore = OnceBox<Arc<CryptoProvider>>;
-
-    static PROCESS_DEFAULT_PROVIDER: DefaultProviderStore = DefaultProviderStore::new();
+    static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 }
 
 #[cfg(test)]
