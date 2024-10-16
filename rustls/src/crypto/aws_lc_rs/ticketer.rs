@@ -17,6 +17,7 @@ use crate::alias::Arc;
 use crate::arc_helpers::arc_from_contents;
 
 use crate::error::Error;
+#[cfg(debug_assertions)]
 use crate::log::debug;
 use crate::polyfill::try_split_at;
 use crate::rand::GetRandomFailed;
