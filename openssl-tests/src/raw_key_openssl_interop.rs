@@ -92,7 +92,7 @@ mod client {
         fn new(trusted_spki: Vec<SubjectPublicKeyInfoDer<'static>>) -> Self {
             SimpleRpkServerCertVerifier {
                 trusted_spki,
-                supported_algs: Arc::new(provider::default_provider())
+                supported_algs: arc_from!(provider::default_provider())
                     .clone()
                     .signature_verification_algorithms,
             }
@@ -157,12 +157,13 @@ mod client {
 
 mod server {
     use std::io::{self, ErrorKind, Read, Write};
-    use std::{net::TcpListener, sync::Arc};
+    use std::net::TcpListener;
 
     use rustls::client::danger::HandshakeSignatureValid;
     use rustls::crypto::aws_lc_rs as provider;
     use rustls::crypto::verify_tls13_signature_with_raw_key;
     use rustls::crypto::WebPkiSupportedAlgorithms;
+    use rustls::internal::alias::Arc;
     use rustls::server::danger::{ClientCertVerified, ClientCertVerifier};
     use rustls::server::AlwaysResolvesServerRawPublicKeys;
     use rustls::sign::CertifiedKey;
