@@ -159,6 +159,7 @@ mod server {
     use std::io::{self, ErrorKind, Read, Write};
     use std::net::TcpListener;
 
+    use rustls::arc_from_arc;
     use rustls::client::danger::HandshakeSignatureValid;
     use rustls::crypto::aws_lc_rs as provider;
     use rustls::crypto::verify_tls13_signature_with_raw_key;
@@ -205,8 +206,8 @@ mod server {
         let server_cert_resolver = Arc::new(AlwaysResolvesServerRawPublicKeys::new(certified_key));
 
         ServerConfig::builder_with_protocol_versions(&[&TLS13])
-            .with_client_cert_verifier(client_cert_verifier)
-            .with_cert_resolver(server_cert_resolver)
+            .with_client_cert_verifier(arc_from_arc!(client_cert_verifier))
+            .with_cert_resolver(arc_from_arc!(server_cert_resolver))
     }
 
     /// Run the server at the specified port and accept a connection from the client.
