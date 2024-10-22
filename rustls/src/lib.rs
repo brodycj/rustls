@@ -522,7 +522,8 @@ pub mod internal {
         }
         pub mod enums {
             pub use crate::msgs::enums::{
-                AlertLevel, Compression, EchVersion, HpkeAead, HpkeKdf, HpkeKem, NamedGroup,
+                AlertLevel, CertificateType, Compression, EchVersion, HpkeAead, HpkeKdf, HpkeKem,
+                NamedGroup,
             };
         }
         pub mod fragmenter {
@@ -532,8 +533,8 @@ pub mod internal {
             pub use crate::msgs::handshake::{
                 CertificateChain, ClientExtension, ClientHelloPayload, DistinguishedName,
                 EchConfigContents, EchConfigPayload, HandshakeMessagePayload, HandshakePayload,
-                HpkeKeyConfig, HpkeSymmetricCipherSuite, KeyShareEntry, Random, ServerName,
-                SessionId,
+                HpkeKeyConfig, HpkeSymmetricCipherSuite, KeyShareEntry, Random, ServerExtension,
+                ServerName, SessionId,
             };
         }
         pub mod message {
@@ -545,6 +546,8 @@ pub mod internal {
             pub use crate::msgs::persist::ServerSessionValue;
         }
     }
+
+    pub use crate::tls13::key_schedule::{derive_traffic_iv, derive_traffic_key};
 
     pub mod fuzzing {
         pub use crate::msgs::deframer::fuzz_deframer;
@@ -575,8 +578,8 @@ pub mod internal {
 /// [`unbuffered-client`] and [`unbuffered-server`] are examples that fully exercise the API in
 /// std, non-async context.
 ///
-/// [`unbuffered-client`]: https://github.com/rustls/rustls/blob/main/examples/src/bin/unbuffererd-client.rs
-/// [`unbuffered-server`]: https://github.com/rustls/rustls/blob/main/examples/src/bin/unbuffererd-server.rs
+/// [`unbuffered-client`]: https://github.com/rustls/rustls/blob/main/examples/src/bin/unbuffered-client.rs
+/// [`unbuffered-server`]: https://github.com/rustls/rustls/blob/main/examples/src/bin/unbuffered-server.rs
 pub mod unbuffered {
     pub use crate::conn::unbuffered::{
         AppDataRecord, ConnectionState, EncodeError, EncodeTlsData, EncryptError,
@@ -640,6 +643,7 @@ pub mod client {
     #[cfg(feature = "std")]
     pub use client_conn::{ClientConnection, WriteEarlyData};
     pub use ech::{EchConfig, EchGreaseConfig, EchMode, EchStatus};
+    pub use handy::AlwaysResolvesClientRawPublicKeys;
     #[cfg(any(feature = "std", feature = "hashbrown"))]
     pub use handy::ClientSessionMemoryCache;
 
@@ -673,11 +677,11 @@ pub mod server {
     mod tls13;
 
     pub use builder::WantsServerCert;
-    pub use handy::NoServerSessionStorage;
     #[cfg(any(feature = "std", feature = "hashbrown"))]
     pub use handy::ResolvesServerCertUsingSni;
     #[cfg(any(feature = "std", feature = "hashbrown"))]
     pub use handy::ServerSessionMemoryCache;
+    pub use handy::{AlwaysResolvesServerRawPublicKeys, NoServerSessionStorage};
     pub use server_conn::{
         Accepted, ClientHello, ProducesTickets, ResolvesServerCert, ServerConfig,
         ServerConnectionData, StoresServerSessions, UnbufferedServerConnection,

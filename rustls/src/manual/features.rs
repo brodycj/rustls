@@ -26,8 +26,11 @@ APIs ([`CryptoProvider`] for example).
 * Extended master secret support ([RFC7627](https://tools.ietf.org/html/rfc7627))
 * Exporters ([RFC5705](https://tools.ietf.org/html/rfc5705))
 * OCSP stapling by servers
+* [RFC7250](https://tools.ietf.org/html/rfc7250) raw public keys for TLS1.3
 * [RFC8879](https://tools.ietf.org/html/rfc8879) certificate compression by clients
   and servers `*`
+* Client-side Encrypted client hello (ECH)
+   ([draft-ietf-tls-esni](https://datatracker.ietf.org/doc/draft-ietf-tls-esni/)).
 
 ## Non-features
 

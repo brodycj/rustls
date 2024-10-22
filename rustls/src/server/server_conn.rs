@@ -26,6 +26,7 @@ use crate::enums::{CipherSuite, ProtocolVersion, SignatureScheme};
 use crate::error::Error;
 use crate::log::trace;
 use crate::msgs::base::Payload;
+use crate::msgs::enums::CertificateType;
 use crate::msgs::handshake::{ClientHelloPayload, ProtocolName, ServerExtension};
 use crate::msgs::message::Message;
 #[cfg(feature = "std")]
@@ -122,6 +123,11 @@ pub trait ResolvesServerCert: Debug + Send + Sync {
     ///
     /// Return `None` to abort the handshake.
     fn resolve(&self, client_hello: ClientHello<'_>) -> Option<Arc<sign::CertifiedKey>>;
+
+    /// Return true when the server only supports raw public keys.
+    fn only_raw_public_keys(&self) -> bool {
+        false
+    }
 }
 
 /// A struct representing the received Client Hello
@@ -129,6 +135,8 @@ pub struct ClientHello<'a> {
     server_name: &'a Option<DnsName<'a>>,
     signature_schemes: &'a [SignatureScheme],
     alpn: Option<&'a Vec<ProtocolName>>,
+    server_cert_types: Option<&'a [CertificateType]>,
+    client_cert_types: Option<&'a [CertificateType]>,
     cipher_suites: &'a [CipherSuite],
 }
 
@@ -138,17 +146,23 @@ impl<'a> ClientHello<'a> {
         server_name: &'a Option<DnsName<'_>>,
         signature_schemes: &'a [SignatureScheme],
         alpn: Option<&'a Vec<ProtocolName>>,
+        server_cert_types: Option<&'a [CertificateType]>,
+        client_cert_types: Option<&'a [CertificateType]>,
         cipher_suites: &'a [CipherSuite],
     ) -> Self {
         trace!("sni {:?}", server_name);
         trace!("sig schemes {:?}", signature_schemes);
         trace!("alpn protocols {:?}", alpn);
+        trace!("server cert types {:?}", server_cert_types);
+        trace!("client cert types {:?}", client_cert_types);
         trace!("cipher suites {:?}", cipher_suites);
 
         ClientHello {
             server_name,
             signature_schemes,
             alpn,
+            server_cert_types,
+            client_cert_types,
             cipher_suites,
         }
     }
@@ -197,6 +211,20 @@ impl<'a> ClientHello<'a> {
     /// Get cipher suites.
     pub fn cipher_suites(&self) -> &[CipherSuite] {
         self.cipher_suites
+    }
+
+    /// Get the server certificate types offered in the ClientHello.
+    ///
+    /// Returns `None` if the client did not include a certificate type extension.
+    pub fn server_cert_types(&self) -> Option<&'a [CertificateType]> {
+        self.server_cert_types
+    }
+
+    /// Get the client certificate types offered in the ClientHello.
+    ///
+    /// Returns `None` if the client did not include a certificate type extension.
+    pub fn client_cert_types(&self) -> Option<&'a [CertificateType]> {
+        self.client_cert_types
     }
 }
 
@@ -544,7 +572,7 @@ mod connection {
         }
     }
 
-    impl<'a> io::Read for ReadEarlyData<'a> {
+    impl io::Read for ReadEarlyData<'_> {
         fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
             self.early_data.read(buf)
         }
@@ -646,6 +674,15 @@ mod connection {
             }
         }
 
+        /// Return true if the connection was made with a `ServerConfig` that is FIPS compatible.
+        ///
+        /// This is different from [`crate::crypto::CryptoProvider::fips()`]:
+        /// it is concerned only with cryptography, whereas this _also_ covers TLS-level
+        /// configuration that NIST recommends, as well as ECH HPKE suites if applicable.
+        pub fn fips(&self) -> bool {
+            self.inner.core.common_state.fips
+        }
+
         /// Extract secrets, so they can be used when configuring kTLS, for example.
         /// Should be used with care as it exposes secret key material.
         pub fn dangerous_extract_secrets(self) -> Result<ExtractedSecrets, Error> {
@@ -721,7 +758,7 @@ mod connection {
     ///     let conn = accepted
     ///         .into_connection(config)
     ///         .unwrap();
-
+    ///
     ///     // Proceed with handling the ServerConnection.
     /// }
     /// # }
@@ -911,6 +948,8 @@ impl Accepted {
             &self.connection.core.data.sni,
             &self.sig_schemes,
             payload.alpn_extension(),
+            payload.server_certificate_extension(),
+            payload.client_certificate_extension(),
             &payload.cipher_suites,
         )
     }
@@ -1094,6 +1133,7 @@ impl ConnectionCore<ServerConnectionData> {
         let mut common = CommonState::new(Side::Server);
         common.set_max_fragment_size(config.max_fragment_size)?;
         common.enable_secret_extraction = config.enable_secret_extraction;
+        common.fips = config.fips();
         Ok(Self::new(
             Box::new(hs::ExpectClientHello::new(config, extra_exts)),
             ServerConnectionData::default(),

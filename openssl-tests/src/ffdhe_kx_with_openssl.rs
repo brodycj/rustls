@@ -7,10 +7,10 @@ use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use rustls::arc_from;
 
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
+use rustls::pki_types::pem::PemObject;
+use rustls::pki_types::{CertificateDer, PrivateKeyDer};
 use rustls::version::{TLS12, TLS13};
 use rustls::{ClientConfig, RootCertStore, ServerConfig, SupportedProtocolVersion};
-use rustls_pki_types::pem::PemObject;
-use rustls_pki_types::{CertificateDer, PrivateKeyDer};
 
 use crate::ffdhe::{self, FfdheKxGroup};
 use crate::utils::verify_openssl3_available;

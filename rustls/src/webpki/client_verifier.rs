@@ -432,19 +432,18 @@ pub(crate) enum AnonymousClientPolicy {
 }
 
 test_for_each_provider! {
-    use super::WebPkiClientVerifier;
-
+    // XXX XXX TODO MOVE THIS:
     use crate::internal::alias::Arc;
 
-    use crate::server::VerifierBuilderError;
-    use crate::RootCertStore;
+    use std::prelude::v1::*;
+    use std::{format, println, vec};
 
     use pki_types::pem::PemObject;
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
-    use std::prelude::v1::*;
-
-    use std::{vec, format, println};
+    use super::WebPkiClientVerifier;
+    use crate::server::VerifierBuilderError;
+    use crate::RootCertStore;
 
     fn load_crls(crls_der: &[&[u8]]) -> Vec<CertificateRevocationListDer<'static>> {
         crls_der

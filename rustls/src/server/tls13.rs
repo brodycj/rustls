@@ -29,7 +29,9 @@ use crate::msgs::message::{Message, MessagePayload};
 use crate::msgs::persist;
 use crate::server::ServerConfig;
 use crate::suites::PartiallyExtractedSecrets;
-use crate::tls13::key_schedule::{KeyScheduleTraffic, KeyScheduleTrafficWithClientFinishedPending};
+use crate::tls13::key_schedule::{
+    KeyScheduleTraffic, KeyScheduleTrafficWithClientFinishedPending, ResumptionSecret,
+};
 use crate::tls13::{
     construct_client_verify_message, construct_server_verify_message, Tls13CipherSuite,
 };
@@ -1261,9 +1263,8 @@ impl State<ServerConnectionData> for ExpectEarlyData {
 
 // --- Process client's Finished ---
 fn get_server_session_value(
-    transcript: &HandshakeHash,
     suite: &'static Tls13CipherSuite,
-    key_schedule: &KeyScheduleTraffic,
+    secret: &ResumptionSecret<'_>,
     cx: &ServerContext<'_>,
     nonce: &[u8],
     time_now: UnixTime,
@@ -1271,9 +1272,7 @@ fn get_server_session_value(
 ) -> persist::ServerSessionValue {
     let version = ProtocolVersion::TLSv1_3;
 
-    let handshake_hash = transcript.current_hash();
-    let secret =
-        key_schedule.resumption_master_secret_and_derive_ticket_psk(&handshake_hash, nonce);
+    let secret = secret.derive_ticket_psk(nonce);
 
     persist::ServerSessionValue::new(
         cx.data.sni.as_ref(),
@@ -1298,10 +1297,10 @@ struct ExpectFinished {
 
 impl ExpectFinished {
     fn emit_ticket(
-        transcript: &HandshakeHash,
+        flight: &mut HandshakeFlightTls13<'_>,
         suite: &'static Tls13CipherSuite,
-        cx: &mut ServerContext<'_>,
-        key_schedule: &KeyScheduleTraffic,
+        cx: &ServerContext<'_>,
+        secret: &ResumptionSecret<'_>,
         config: &ServerConfig,
     ) -> Result<(), Error> {
         let secure_random = config.provider.secure_random;
@@ -1311,8 +1310,7 @@ impl ExpectFinished {
         let now = config.current_time()?;
 
         let plain =
-            get_server_session_value(transcript, suite, key_schedule, cx, &nonce, now, age_add)
-                .get_encoding();
+            get_server_session_value(suite, secret, cx, &nonce, now, age_add).get_encoding();
 
         let stateless = config.ticketer.enabled();
         let (ticket, lifetime) = if stateless {
@@ -1350,16 +1348,13 @@ impl ExpectFinished {
             }
         }
 
-        let m = Message {
-            version: ProtocolVersion::TLSv1_3,
-            payload: MessagePayload::handshake(HandshakeMessagePayload {
-                typ: HandshakeType::NewSessionTicket,
-                payload: HandshakePayload::NewSessionTicketTls13(payload),
-            }),
+        let t = HandshakeMessagePayload {
+            typ: HandshakeType::NewSessionTicket,
+            payload: HandshakePayload::NewSessionTicketTls13(payload),
         };
+        trace!("sending new ticket {:?} (stateless: {})", t, stateless);
+        flight.add(t);
 
-        trace!("sending new ticket {:?} (stateless: {})", m, stateless);
-        cx.common.send_msg(m, true);
         Ok(())
     }
 }
@@ -1397,15 +1392,14 @@ impl State<ServerConnectionData> for ExpectFinished {
 
         cx.common.check_aligned_handshake()?;
 
+        let handshake_hash = self.transcript.current_hash();
+        let resumption = ResumptionSecret::new(&key_schedule_traffic, &handshake_hash);
+
+        let mut flight = HandshakeFlightTls13::new(&mut self.transcript);
         for _ in 0..self.send_tickets {
-            Self::emit_ticket(
-                &self.transcript,
-                self.suite,
-                cx,
-                &key_schedule_traffic,
-                &self.config,
-            )?;
+            Self::emit_ticket(&mut flight, self.suite, cx, &resumption, &self.config)?;
         }
+        flight.finish(cx.common);
 
         // Application data may now flow, even if we have client auth enabled.
         cx.common

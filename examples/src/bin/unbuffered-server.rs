@@ -7,12 +7,11 @@ use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
 
-use pki_types::pem::PemObject;
-use pki_types::{CertificateDer, PrivateKeyDer};
-
 // XXX TBD XXX XXX
 use rustls::internal::alias::Arc;
 
+use rustls::pki_types::pem::PemObject;
+use rustls::pki_types::{CertificateDer, PrivateKeyDer};
 use rustls::server::UnbufferedServerConnection;
 use rustls::unbuffered::{
     AppDataRecord, ConnectionState, EncodeError, EncryptError, InsufficientSizeError,
