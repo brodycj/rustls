@@ -103,7 +103,7 @@ mod test_raw_keys {
             let client_config = make_client_config_with_raw_key_support(*kt);
             let mut server_config = make_server_config_with_raw_key_support(*kt);
 
-            server_config.cert_resolver = Arc::new(ServerCheckCertResolve {
+            server_config.cert_resolver = arc_from!(ServerCheckCertResolve {
                 expected_client_cert_types: Some(vec![CertificateType::RawPublicKey]),
                 expected_server_cert_types: Some(vec![CertificateType::RawPublicKey]),
                 ..Default::default()
@@ -277,8 +277,8 @@ mod test_raw_keys {
         client_cert_type: Option<&CertificateType>,
         expected_error: Error,
     ) {
-        let keylog_to_vec = Arc::new(KeyLogToVec::new("server"));
-        server_config.key_log = keylog_to_vec.clone();
+        let keylog_to_vec = arc_from!(KeyLogToVec::new("server"));
+        server_config.key_log = arc_from_arc!(keylog_to_vec);
 
         let (mut client, mut server) = make_pair_for_configs(client_config, server_config);
 
