@@ -12,6 +12,7 @@ use pki_types::{DnsName, UnixTime};
 use super::hs;
 
 use crate::alias::Arc;
+#[cfg(feature = "std")]
 use crate::arc_helpers::arc_from_contents;
 
 use crate::builder::ConfigBuilder;

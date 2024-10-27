@@ -4,6 +4,7 @@ use core::fmt;
 use pki_types::CertificateRevocationListDer;
 use webpki::{CertRevocationList, OwnedCertRevocationList};
 
+#[cfg(feature = "std")]
 use crate::arc_helpers::arc_from_contents;
 
 use crate::error::{CertRevocationListError, CertificateError, Error, OtherError};

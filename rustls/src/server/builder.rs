@@ -4,7 +4,9 @@ use core::marker::PhantomData;
 use pki_types::{CertificateDer, PrivateKeyDer};
 
 use crate::alias::Arc;
-use crate::arc_helpers::{arc_from_clone, arc_from_contents};
+#[cfg(feature = "std")]
+use crate::arc_helpers::arc_from_clone;
+use crate::arc_helpers::arc_from_contents;
 
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::error::Error;
