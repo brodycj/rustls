@@ -453,10 +453,9 @@ impl ServerConfig {
         provider: Arc<CryptoProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
-            state: WantsVersions {
-                provider,
-                time_provider: arc_from_contents!(DefaultTimeProvider),
-            },
+            state: WantsVersions {},
+            provider,
+            time_provider: arc_from_contents!(DefaultTimeProvider),
             side: PhantomData,
         }
     }
@@ -480,10 +479,9 @@ impl ServerConfig {
         time_provider: Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
-            state: WantsVersions {
-                provider,
-                time_provider,
-            },
+            state: WantsVersions {},
+            provider,
+            time_provider,
             side: PhantomData,
         }
     }
