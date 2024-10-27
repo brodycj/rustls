@@ -681,6 +681,7 @@ mod tests {
 
     use super::{Error, InconsistentKeys, InvalidMessage};
 
+    #[cfg(feature = "std")]
     use crate::internal::alias::Arc;
 
     use crate::error::{CertRevocationListError, OtherError};
