@@ -34,7 +34,7 @@ zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
 # XXX TBD MOVE THESE [??? ???]
 portable-atomic = { version = "1.9.0", default-features = false, optional = true }
-portable-atomic-util = { version = "0.2.2", default-features = false, features = ["alloc"], optional = true }
+portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]
