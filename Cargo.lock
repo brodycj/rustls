@@ -449,7 +449,7 @@ version = "0.1.0"
 dependencies = [
  "base64",
  "env_logger",
- "rustls 0.23.15",
+ "rustls 0.23.16",
  "rustls-post-quantum",
 ]
 
@@ -2123,7 +2123,7 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.23.15"
+version = "0.23.16"
 dependencies = [
  "aws-lc-rs",
  "base64",
@@ -2166,7 +2166,7 @@ dependencies = [
  "fxhash",
  "itertools 0.13.0",
  "rayon",
- "rustls 0.23.15",
+ "rustls 0.23.16",
  "tikv-jemallocator",
 ]
 
@@ -2177,7 +2177,7 @@ dependencies = [
  "hickory-resolver",
  "regex",
  "ring",
- "rustls 0.23.15",
+ "rustls 0.23.16",
 ]
 
 [[package]]
@@ -2191,7 +2191,7 @@ dependencies = [
  "log",
  "mio 0.8.11",
  "rcgen",
- "rustls 0.23.15",
+ "rustls 0.23.16",
  "serde",
  "serde_derive",
  "tokio",
@@ -2207,7 +2207,7 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "openssl",
- "rustls 0.23.15",
+ "rustls 0.23.16",
  "rustls-pki-types",
 ]
 
@@ -2231,7 +2231,7 @@ name = "rustls-post-quantum"
 version = "0.2.0"
 dependencies = [
  "aws-lc-rs",
- "rustls 0.23.15",
+ "rustls 0.23.16",
 ]
 
 [[package]]
@@ -2251,7 +2251,7 @@ dependencies = [
  "rand_core",
  "rcgen",
  "rsa",
- "rustls 0.23.15",
+ "rustls 0.23.16",
  "rustls-webpki",
  "sha2",
  "signature",
@@ -2264,7 +2264,7 @@ name = "rustls-provider-test"
 version = "0.1.0"
 dependencies = [
  "hex",
- "rustls 0.23.15",
+ "rustls 0.23.16",
  "rustls-provider-example",
  "serde",
  "serde_json",
