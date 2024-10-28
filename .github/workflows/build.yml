@@ -413,8 +413,6 @@ jobs:
   semver:
     name: Check semver compatibility
     runs-on: ubuntu-latest
-    # XXX XXX XXX
-    if: ${{ false }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
