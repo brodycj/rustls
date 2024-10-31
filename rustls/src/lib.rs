@@ -397,13 +397,13 @@ mod log {
 mod test_macros;
 
 mod alias {
-    #[cfg(feature = "critical-section")]
+    #[cfg(feature = "portable-atomic-arc")]
     extern crate portable_atomic_util;
 
-    #[cfg(feature = "critical-section")]
+    #[cfg(feature = "portable-atomic-arc")]
     pub use portable_atomic_util::Arc;
 
-    #[cfg(not(feature = "critical-section"))]
+    #[cfg(not(feature = "portable-atomic-arc"))]
     pub use alloc::sync::Arc;
 }
 

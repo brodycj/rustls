@@ -606,26 +606,26 @@ pub fn default_fips_provider() -> CryptoProvider {
 }
 
 mod static_default {
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    #[cfg(not(any(feature = "portable-atomic", feature = "std")))]
     use alloc::boxed::Box;
 
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    #[cfg(not(any(feature = "portable-atomic", feature = "std")))]
     use once_cell::race::OnceBox;
-    #[cfg(any(feature = "critical-section", feature = "std"))]
+    #[cfg(any(feature = "portable-atomic", feature = "std"))]
     use once_cell::sync::OnceCell;
 
     use crate::alias::Arc;
 
     use super::CryptoProvider;
 
-    #[cfg(any(feature = "critical-section", feature = "std"))]
+    #[cfg(any(feature = "portable-atomic", feature = "std"))]
     pub(crate) fn install_default(
         default_provider: CryptoProvider,
     ) -> Result<(), Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.set(Arc::new(default_provider))
     }
 
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    #[cfg(not(any(feature = "portable-atomic", feature = "std")))]
     pub(crate) fn install_default(
         default_provider: CryptoProvider,
     ) -> Result<(), Arc<CryptoProvider>> {
@@ -638,9 +638,9 @@ mod static_default {
         PROCESS_DEFAULT_PROVIDER.get()
     }
 
-    #[cfg(any(feature = "critical-section", feature = "std"))]
+    #[cfg(any(feature = "portable-atomic", feature = "std"))]
     static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    #[cfg(not(any(feature = "portable-atomic", feature = "std")))]
     static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 }
 
