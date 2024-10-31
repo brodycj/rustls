@@ -241,13 +241,15 @@ impl CryptoProvider {
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
     pub(crate) fn get_default_or_install_from_crate_features() -> &'static Arc<Self> {
-        static_default::get_default().unwrap_or_else(|| {
-            // Ignore error result in case of losing a race here, just accept the outcome.
-            let _ = Self::from_crate_features()
-                .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point")
-                .install_default();
-            static_default::get_default().unwrap()
-        })
+        if let Some(provider) = Self::get_default() {
+            return provider;
+        }
+
+        let provider = Self::from_crate_features()
+            .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point");
+        // Ignore the error resulting from us losing a race, and accept the outcome.
+        let _ = provider.install_default();
+        Self::get_default().unwrap()
     }
 
     /// Returns a provider named unambiguously by rustls crate features.
