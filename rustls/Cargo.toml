@@ -49,11 +49,10 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
+# XXX TBD XXX XXX - XXX TBD EXPLAIN XXX XXX XXX
+portable-atomic-arc = ["portable-atomic", "portable-atomic-util"]
 # XXX TBD XXX XXX - XXX TODO EXPLAIN XXX with "portable-atomic/critical-section" (as required by XXX XXX XXX)
-critical-section = ["portable-atomic-util", "once_cell/critical-section", "portable-atomic/critical-section"]
-# XXX TBD ??? ???:
-# portable-atomic = ["dep:portable-atomic"]
-# portable-atomic-util = ["dep:portable-atomic-util"]
+critical-section = ["portable-atomic-arc", "once_cell/critical-section", "portable-atomic/critical-section"]
 
 [dev-dependencies]
 base64 = "0.22"
