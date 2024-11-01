@@ -511,8 +511,6 @@ jobs:
       - run: ./admin/clippy
 
   check-external-types:
-    # XXX TBD SKIP THIS JOB FOR NOW:
-    if: ${{ false }}
     name: Validate external types appearing in public API
     runs-on: ubuntu-latest
     steps:
