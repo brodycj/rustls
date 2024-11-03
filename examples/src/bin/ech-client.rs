@@ -24,12 +24,6 @@ use std::fs;
 use std::io::{stdout, BufReader, Read, Write};
 use std::net::{TcpStream, ToSocketAddrs};
 
-// XXX TBD ??? ??? ???
-#[cfg(feature = "critical-section")]
-use portable_atomic_util::Arc;
-#[cfg(not(feature = "critical-section"))]
-use std::sync::Arc;
-
 use clap::Parser;
 use hickory_resolver::config::{ResolverConfig, ResolverOpts};
 use hickory_resolver::proto::rr::rdata::svcb::{SvcParamKey, SvcParamValue};
@@ -108,7 +102,7 @@ fn main() {
 
     // Allow using SSLKEYLOGFILE.
     config.key_log = cfg_arc_from!(rustls::KeyLogFile::new());
-    let config = Arc::new(config);
+    let config = cfg_arc_from!(config);
 
     // The "inner" SNI that we're really trying to reach.
     let server_name: ServerName<'static> = args

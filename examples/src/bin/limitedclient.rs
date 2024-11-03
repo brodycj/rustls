@@ -5,12 +5,8 @@
 use std::io::{stdout, Read, Write};
 use std::net::TcpStream;
 
-// XXX TBD ??? ??? ???
-#[cfg(feature = "critical-section")]
-use portable_atomic_util::Arc;
-#[cfg(not(feature = "critical-section"))]
-use std::sync::Arc;
-
+use rustls::cfg_arc_from;
+use rustls::ClientConnection;
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
 
 fn main() {
@@ -34,7 +30,7 @@ fn main() {
     .with_no_client_auth();
 
     let server_name = "www.rust-lang.org".try_into().unwrap();
-    let mut conn = rustls::ClientConnection::new(Arc::new(config), server_name).unwrap();
+    let mut conn = ClientConnection::new(cfg_arc_from!(config), server_name).unwrap();
     let mut sock = TcpStream::connect("www.rust-lang.org:443").unwrap();
     let mut tls = rustls::Stream::new(&mut conn, &mut sock);
     tls.write_all(

@@ -9,11 +9,12 @@ use portable_atomic_util::Arc;
 #[cfg(not(feature = "critical-section"))]
 use std::sync::Arc;
 
-// XXX TBD ??? ??? ???
 #[cfg(feature = "async-std")]
 use async_std::io::{ReadExt, WriteExt};
 #[cfg(feature = "async-std")]
 use async_std::net::TcpStream;
+
+use rustls::cfg_arc_from;
 use rustls::client::{ClientConnectionData, UnbufferedClientConnection};
 use rustls::unbuffered::{
     AppDataRecord, ConnectionState, EncodeError, EncryptError, InsufficientSizeError,
@@ -37,7 +38,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .with_root_certificates(root_store)
         .with_no_client_auth();
 
-    let config = Arc::new(config);
+    let config = cfg_arc_from!(config);
 
     let mut incoming_tls = vec![0; INCOMING_TLS_BUFSIZE];
     let mut outgoing_tls = vec![0; OUTGOING_TLS_INITIAL_BUFSIZE];

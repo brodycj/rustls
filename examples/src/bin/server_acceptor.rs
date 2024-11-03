@@ -11,7 +11,6 @@ use std::path::PathBuf;
 use std::time::Duration;
 use std::{fs, thread};
 
-// XXX TBD ??? ??? ???
 #[cfg(feature = "critical-section")]
 use portable_atomic_util::Arc;
 #[cfg(not(feature = "critical-section"))]

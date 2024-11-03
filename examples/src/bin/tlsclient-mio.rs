@@ -23,7 +23,6 @@ use std::io::{self, Read, Write};
 use std::net::ToSocketAddrs;
 use std::{process, str};
 
-// XXX TBD ??? ??? ???
 #[cfg(feature = "critical-section")]
 use portable_atomic_util::Arc;
 #[cfg(not(feature = "critical-section"))]
@@ -480,7 +479,7 @@ fn make_config(args: &Args) -> Arc<rustls::ClientConfig> {
             )));
     }
 
-    Arc::new(config)
+    cfg_arc_from!(config)
 }
 
 /// Parse some arguments, then make a TLS client connection

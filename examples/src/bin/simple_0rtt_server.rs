@@ -17,12 +17,7 @@ use std::io::{Read, Write};
 use std::net::TcpListener;
 use std::{env, io};
 
-// XXX TBD ??? ??? ???
-#[cfg(feature = "critical-section")]
-use portable_atomic_util::Arc;
-#[cfg(not(feature = "critical-section"))]
-use std::sync::Arc;
-
+use rustls::cfg_arc_from;
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
 
@@ -55,7 +50,7 @@ fn main() -> Result<(), Box<dyn StdError>> {
 
         println!("Accepting connection");
 
-        let mut conn = rustls::ServerConnection::new(Arc::new(config.clone()))?;
+        let mut conn = rustls::ServerConnection::new(cfg_arc_from!(config.clone()))?;
 
         let mut buf = Vec::new();
         let mut did_early_data = false;

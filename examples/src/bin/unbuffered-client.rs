@@ -5,12 +5,12 @@ use std::error::Error;
 use std::io::{Read, Write};
 use std::net::TcpStream;
 
-// XXX TBD ??? ??? ???
 #[cfg(feature = "critical-section")]
 use portable_atomic_util::Arc;
 #[cfg(not(feature = "critical-section"))]
 use std::sync::Arc;
 
+use rustls::cfg_arc_from;
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
 use rustls::unbuffered::{
     AppDataRecord, ConnectionState, EncodeError, EncryptError, InsufficientSizeError,
@@ -29,7 +29,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .with_no_client_auth();
     config.enable_early_data = SEND_EARLY_DATA;
 
-    let config = Arc::new(config);
+    let config = cfg_arc_from!(config);
 
     let mut incoming_tls = vec![0; INCOMING_TLS_BUFSIZE];
     let mut outgoing_tls = vec![0; OUTGOING_TLS_INITIAL_BUFSIZE];

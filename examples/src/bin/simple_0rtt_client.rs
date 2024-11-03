@@ -18,7 +18,6 @@ use std::io::{BufRead, BufReader, Write};
 use std::net::TcpStream;
 use std::str::FromStr;
 
-// XXX TBD ??? ??? ???
 #[cfg(feature = "critical-section")]
 use portable_atomic_util::Arc;
 #[cfg(not(feature = "critical-section"))]
