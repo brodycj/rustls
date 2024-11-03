@@ -440,7 +440,7 @@ pub mod cfg_arc_util {
         };
     }
     #[macro_export]
-    macro_rules! arc_from_arc {
+    macro_rules! from_cfg_arc {
         ($x:expr) => {{
             let xx = rustls::internal::alias::Arc::into_raw($x.clone());
             rustls::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)

@@ -18,7 +18,7 @@ use rayon::prelude::*;
 // XXX XXX
 use rustls::internal::alias::Arc;
 
-use rustls::{arc_from, arc_from_arc};
+use rustls::{arc_from, from_cfg_arc};
 
 use rustls::client::Resumption;
 use rustls::crypto::{aws_lc_rs, ring, CryptoProvider, GetRandomFailed, SecureRandom};
@@ -603,7 +603,7 @@ impl ServerSideStepper<'_> {
             .expect("bad certs/private key?");
 
         if resume == ResumptionKind::SessionId {
-            cfg.session_storage = arc_from_arc!(ServerSessionMemoryCache::new(128));
+            cfg.session_storage = from_cfg_arc!(ServerSessionMemoryCache::new(128));
         } else if resume == ResumptionKind::Tickets {
             cfg.ticketer = (params.ticketer)();
         } else {

@@ -24,7 +24,7 @@ use rustls::internal::msgs::handshake::{
 };
 use rustls::internal::msgs::message::{Message, MessagePayload, PlainMessage};
 use rustls::server::{ClientHello, ParsedCertificate, ResolvesServerCert};
-use rustls::{arc_from, arc_from_arc};
+use rustls::{arc_from, from_cfg_arc};
 #[cfg(feature = "aws_lc_rs")]
 use rustls::{
     client::{EchConfig, EchGreaseConfig, EchMode},
@@ -278,7 +278,7 @@ mod test_raw_keys {
         expected_error: Error,
     ) {
         let keylog_to_vec = arc_from!(KeyLogToVec::new("server"));
-        server_config.key_log = arc_from_arc!(keylog_to_vec);
+        server_config.key_log = from_cfg_arc!(keylog_to_vec);
 
         let (mut client, mut server) = make_pair_for_configs(client_config, server_config);
 
@@ -3900,11 +3900,11 @@ fn key_log_for_tls12() {
 
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS12]);
-    client_config.key_log = arc_from_arc!(client_key_log.clone());
+    client_config.key_log = from_cfg_arc!(client_key_log.clone());
     let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
-    server_config.key_log = arc_from_arc!(server_key_log.clone());
+    server_config.key_log = from_cfg_arc!(server_key_log.clone());
     let server_config = Arc::new(server_config);
 
     // full handshake
@@ -3936,11 +3936,11 @@ fn key_log_for_tls13() {
 
     let kt = KeyType::Rsa2048;
     let mut client_config = make_client_config_with_versions(kt, &[&rustls::version::TLS13]);
-    client_config.key_log = arc_from_arc!(client_key_log.clone());
+    client_config.key_log = from_cfg_arc!(client_key_log.clone());
     let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(kt);
-    server_config.key_log = arc_from_arc!(server_key_log.clone());
+    server_config.key_log = from_cfg_arc!(server_key_log.clone());
     let server_config = Arc::new(server_config);
 
     // full handshake
@@ -4236,7 +4236,7 @@ struct ServerStorage {
 impl ServerStorage {
     fn new() -> Self {
         Self {
-            storage: arc_from_arc!(rustls::server::ServerSessionMemoryCache::new(1024)),
+            storage: from_cfg_arc!(rustls::server::ServerSessionMemoryCache::new(1024)),
             put_count: AtomicUsize::new(0),
             get_count: AtomicUsize::new(0),
             take_count: AtomicUsize::new(0),
@@ -4436,7 +4436,7 @@ fn tls13_stateful_resumption() {
 
     let mut server_config = make_server_config(kt);
     let storage = Arc::new(ServerStorage::new());
-    server_config.session_storage = arc_from_arc!(storage.clone());
+    server_config.session_storage = from_cfg_arc!(storage.clone());
     let server_config = Arc::new(server_config);
 
     // full handshake
@@ -4498,7 +4498,7 @@ fn tls13_stateless_resumption() {
     let mut server_config = make_server_config(kt);
     server_config.ticketer = provider::Ticketer::new().unwrap();
     let storage = Arc::new(ServerStorage::new());
-    server_config.session_storage = arc_from_arc!(storage.clone());
+    server_config.session_storage = from_cfg_arc!(storage.clone());
     let server_config = Arc::new(server_config);
 
     // full handshake
@@ -5589,7 +5589,7 @@ fn test_client_sends_helloretryrequest() {
     );
 
     let storage = Arc::new(ClientStorage::new());
-    client_config.resumption = Resumption::store(arc_from_arc!(storage.clone()));
+    client_config.resumption = Resumption::store(from_cfg_arc!(storage.clone()));
 
     // but server only accepts x25519, so a HRR is required
     let server_config =
@@ -5779,13 +5779,13 @@ fn test_client_attempts_to_use_unsupported_kx_group() {
     //   into kx group cache.
     let mut client_config_1 =
         make_client_config_with_kx_groups(KeyType::Rsa2048, vec![provider::kx_group::SECP256R1]);
-    client_config_1.resumption = Resumption::store(arc_from_arc!(shared_storage.clone()));
+    client_config_1.resumption = Resumption::store(from_cfg_arc!(shared_storage.clone()));
 
     // second, client only supports secp-384 and so kx group cache
     //   contains an unusable value.
     let mut client_config_2 =
         make_client_config_with_kx_groups(KeyType::Rsa2048, vec![provider::kx_group::SECP384R1]);
-    client_config_2.resumption = Resumption::store(arc_from_arc!(shared_storage.clone()));
+    client_config_2.resumption = Resumption::store(from_cfg_arc!(shared_storage.clone()));
 
     let server_config = make_server_config(KeyType::Rsa2048);
 
@@ -5832,7 +5832,7 @@ fn test_client_sends_share_for_less_preferred_group() {
     //   into kx group cache.
     let mut client_config_1 =
         make_client_config_with_kx_groups(KeyType::Rsa2048, vec![provider::kx_group::SECP384R1]);
-    client_config_1.resumption = Resumption::store(arc_from_arc!(shared_storage.clone()));
+    client_config_1.resumption = Resumption::store(from_cfg_arc!(shared_storage.clone()));
 
     // second, client supports (x25519, secp384r1) and so kx group cache
     //   contains a supported but less-preferred group.
@@ -5840,7 +5840,7 @@ fn test_client_sends_share_for_less_preferred_group() {
         KeyType::Rsa2048,
         vec![provider::kx_group::X25519, provider::kx_group::SECP384R1],
     );
-    client_config_2.resumption = Resumption::store(arc_from_arc!(shared_storage.clone()));
+    client_config_2.resumption = Resumption::store(from_cfg_arc!(shared_storage.clone()));
 
     let server_config =
         make_server_config_with_kx_groups(KeyType::Rsa2048, provider::ALL_KX_GROUPS.to_vec());
@@ -5912,7 +5912,7 @@ fn test_tls13_client_resumption_does_not_reuse_tickets() {
     let shared_storage = Arc::new(ClientStorage::new());
 
     let mut client_config = make_client_config(KeyType::Rsa2048);
-    client_config.resumption = Resumption::store(arc_from_arc!(shared_storage.clone()));
+    client_config.resumption = Resumption::store(from_cfg_arc!(shared_storage.clone()));
     let client_config = Arc::new(client_config);
 
     let mut server_config = make_server_config(KeyType::Rsa2048);
@@ -6336,7 +6336,7 @@ fn remove_ems_request(msg: &mut Message) -> Altered {
 fn test_client_tls12_no_resume_after_server_downgrade() {
     let mut client_config = common::make_client_config(KeyType::Ed25519);
     let client_storage = Arc::new(ClientStorage::new());
-    client_config.resumption = Resumption::store(arc_from_arc!(client_storage.clone()));
+    client_config.resumption = Resumption::store(from_cfg_arc!(client_storage.clone()));
     let client_config = Arc::new(client_config);
 
     let server_config_1 = Arc::new(common::finish_server_config(
@@ -7063,7 +7063,7 @@ fn test_client_removes_tls12_session_if_server_sends_undecryptable_first_message
     let mut client_config =
         make_client_config_with_versions(KeyType::Rsa2048, &[&rustls::version::TLS12]);
     let storage = Arc::new(ClientStorage::new());
-    client_config.resumption = Resumption::store(arc_from_arc!(storage.clone()));
+    client_config.resumption = Resumption::store(from_cfg_arc!(storage.clone()));
     let client_config = Arc::new(client_config);
     let server_config = Arc::new(make_server_config(KeyType::Rsa2048));
 

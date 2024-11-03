@@ -12,7 +12,7 @@ use base64::prelude::{Engine, BASE64_STANDARD};
 
 // XXX TBD RECONSIDER IMPORT ORDER HERE
 use rustls::internal::alias::Arc;
-use rustls::{arc_from, arc_from_arc};
+use rustls::{arc_from, from_cfg_arc};
 
 use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
 use rustls::client::{
@@ -401,7 +401,7 @@ struct DummyServerAuth {
 impl DummyServerAuth {
     fn new(trusted_cert_file: &str) -> Self {
         DummyServerAuth {
-            parent: arc_from_arc!(WebPkiServerVerifier::builder_with_provider(
+            parent: from_cfg_arc!(WebPkiServerVerifier::builder_with_provider(
                 load_root_certs(trusted_cert_file),
                 SelectedProvider::from_env()
                     .provider()
@@ -548,7 +548,7 @@ impl ServerCacheWithResumptionDelay {
     fn new(delay: u32) -> Arc<Self> {
         Arc::new(Self {
             delay,
-            storage: arc_from_arc!(server::ServerSessionMemoryCache::new(32)),
+            storage: from_cfg_arc!(server::ServerSessionMemoryCache::new(32)),
         })
     }
 }
@@ -631,7 +631,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
         .with_single_cert_with_ocsp(cert.clone(), key, opts.server_ocsp_response.clone())
         .unwrap();
 
-    cfg.session_storage = arc_from_arc!(ServerCacheWithResumptionDelay::new(opts.resumption_delay));
+    cfg.session_storage = from_cfg_arc!(ServerCacheWithResumptionDelay::new(opts.resumption_delay));
     cfg.max_fragment_size = opts.max_fragment;
     cfg.send_tls13_tickets = 1;
     cfg.require_ems = opts.require_ems;
@@ -817,7 +817,7 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
     }
 
     // XXX TBD RECONSIDER FORMATTING HERE ???
-    cfg.resumption = Resumption::store(arc_from_arc!(ClientCacheWithoutKxHints::new(
+    cfg.resumption = Resumption::store(from_cfg_arc!(ClientCacheWithoutKxHints::new(
         opts.resumption_delay
     )));
     cfg.enable_sni = opts.use_sni;
