@@ -34,7 +34,7 @@ use clap::{Parser, Subcommand};
 use log::{debug, error};
 use mio::net::{TcpListener, TcpStream};
 
-use rustls::arc_from;
+use rustls::cfg_arc_from;
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, CertificateRevocationListDer, PrivateKeyDer};
@@ -614,10 +614,10 @@ fn make_config(args: &Args) -> Arc<rustls::ServerConfig> {
     .with_single_cert_with_ocsp(certs, privkey, ocsp)
     .expect("bad certificates/private key");
 
-    config.key_log = arc_from!(rustls::KeyLogFile::new());
+    config.key_log = cfg_arc_from!(rustls::KeyLogFile::new());
 
     if args.no_resumption {
-        config.session_storage = arc_from!(rustls::server::NoServerSessionStorage {});
+        config.session_storage = cfg_arc_from!(rustls::server::NoServerSessionStorage {});
     }
 
     if args.tickets {

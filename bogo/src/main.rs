@@ -12,7 +12,7 @@ use base64::prelude::{Engine, BASE64_STANDARD};
 
 // XXX TBD RECONSIDER IMPORT ORDER HERE
 use rustls::internal::alias::Arc;
-use rustls::{arc_from, from_cfg_arc};
+use rustls::{cfg_arc_from, from_cfg_arc};
 
 use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
 use rustls::client::{
@@ -479,7 +479,7 @@ impl server::ResolvesServerCert for FixedSignatureSchemeServerCertResolver {
     fn resolve(&self, client_hello: ClientHello) -> Option<Arc<sign::CertifiedKey>> {
         let mut certkey = self.resolver.resolve(client_hello)?;
         // XXX TODO ADD IMPORT FOR MACRO BELOW:
-        Arc::make_mut(&mut certkey).key = arc_from!(FixedSignatureSchemeSigningKey {
+        Arc::make_mut(&mut certkey).key = cfg_arc_from!(FixedSignatureSchemeSigningKey {
             key: certkey.key.clone(),
             scheme: self.scheme,
         });
@@ -505,7 +505,7 @@ impl client::ResolvesClientCert for FixedSignatureSchemeClientCertResolver {
         let mut certkey = self
             .resolver
             .resolve(root_hint_subjects, sigschemes)?;
-        Arc::make_mut(&mut certkey).key = arc_from!(FixedSignatureSchemeSigningKey {
+        Arc::make_mut(&mut certkey).key = cfg_arc_from!(FixedSignatureSchemeSigningKey {
             key: certkey.key.clone(),
             scheme: self.scheme,
         });
@@ -601,7 +601,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
     // XXX TBD ARC TYPE XXX - ??? ??? ???
     let client_auth: Arc<dyn ClientCertVerifier> =
         if opts.verify_peer || opts.offer_no_client_cas || opts.require_any_client_cert {
-            arc_from!(DummyClientAuth::new(
+            cfg_arc_from!(DummyClientAuth::new(
                 &opts.trusted_cert_file,
                 opts.require_any_client_cert,
                 opts.root_hint_subjects.clone(),
@@ -639,7 +639,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
 
     if opts.use_signing_scheme > 0 {
         let scheme = lookup_scheme(opts.use_signing_scheme);
-        cfg.cert_resolver = arc_from!(FixedSignatureSchemeServerCertResolver {
+        cfg.cert_resolver = cfg_arc_from!(FixedSignatureSchemeServerCertResolver {
             resolver: cfg.cert_resolver.clone(),
             scheme,
         });
@@ -648,7 +648,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
     if opts.tickets {
         cfg.ticketer = opts.selected_provider.ticketer();
     } else if opts.resumes == 0 {
-        cfg.session_storage = arc_from!(server::NoServerSessionStorage {});
+        cfg.session_storage = cfg_arc_from!(server::NoServerSessionStorage {});
     }
 
     if !opts.protocols.is_empty() {
@@ -794,7 +794,7 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
 
     let cfg = cfg
         .dangerous()
-        .with_custom_certificate_verifier(arc_from!(DummyServerAuth::new(&opts.trusted_cert_file)));
+        .with_custom_certificate_verifier(cfg_arc_from!(DummyServerAuth::new(&opts.trusted_cert_file)));
 
     let mut cfg = if !opts.cert_file.is_empty() && !opts.key_file.is_empty() {
         let cert = CertificateDer::pem_file_iter(&opts.cert_file)
@@ -810,7 +810,7 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
 
     if !opts.cert_file.is_empty() && opts.use_signing_scheme > 0 {
         let scheme = lookup_scheme(opts.use_signing_scheme);
-        cfg.client_auth_cert_resolver = arc_from!(FixedSignatureSchemeClientCertResolver {
+        cfg.client_auth_cert_resolver = cfg_arc_from!(FixedSignatureSchemeClientCertResolver {
             resolver: cfg.client_auth_cert_resolver.clone(),
             scheme,
         });

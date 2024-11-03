@@ -7,7 +7,7 @@ use hpke_rs_crypto::types::{AeadAlgorithm, KdfAlgorithm, KemAlgorithm};
 use hpke_rs_crypto::HpkeCrypto;
 use hpke_rs_rust_crypto::HpkeRustCrypto;
 
-use rustls::arc_from;
+use rustls::cfg_arc_from;
 
 use rustls::crypto::hpke::{
     EncapsulatedSecret, Hpke, HpkeOpener, HpkePrivateKey, HpkePublicKey, HpkeSealer, HpkeSuite,
@@ -217,7 +217,7 @@ impl HpkeOpener for HpkeRsReceiver {
 
 #[cfg(feature = "std")]
 fn other_err(err: impl StdError + Send + Sync + 'static) -> Error {
-    Error::Other(OtherError(arc_from!(err)))
+    Error::Other(OtherError(cfg_arc_from!(err)))
 }
 
 #[cfg(not(feature = "std"))]

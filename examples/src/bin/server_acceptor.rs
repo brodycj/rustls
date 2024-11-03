@@ -20,7 +20,7 @@ use std::sync::Arc;
 use clap::Parser;
 use rcgen::KeyPair;
 
-use rustls::arc_from;
+use rustls::cfg_arc_from;
 use rustls::pki_types::{CertificateRevocationListDer, PrivatePkcs8KeyDer};
 use rustls::server::{Acceptor, ClientHello, ServerConfig, WebPkiClientVerifier};
 use rustls::RootCertStore;
@@ -43,7 +43,7 @@ fn main() {
     // * An issuing CA certificate.
     // * A server certificate issued by the CA.
     // * A client certificate issued by the CA.
-    let test_pki = arc_from!(TestPki::new());
+    let test_pki = cfg_arc_from!(TestPki::new());
 
     // Write out the parts of the test PKI a client will need to connect:
     // * The CA certificate for validating the server certificate.
@@ -225,9 +225,9 @@ impl TestPki {
             .unwrap();
 
         // Allow using SSLKEYLOGFILE.
-        server_config.key_log = arc_from!(rustls::KeyLogFile::new());
+        server_config.key_log = cfg_arc_from!(rustls::KeyLogFile::new());
 
-        arc_from!(server_config)
+        cfg_arc_from!(server_config)
     }
 
     /// Issue a certificate revocation list (CRL) for the revoked `serials` provided (may be empty).

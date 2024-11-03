@@ -434,7 +434,7 @@ pub mod aaa_aaa_box_helper {
 pub mod cfg_arc_util {
     // XXX TBD RECONSIDER EXPORTING THESE MACROS FROM TOP-LEVEL
     #[macro_export]
-    macro_rules! arc_from {
+    macro_rules! cfg_arc_from {
         ($x:expr) => {
             rustls::aaa_aaa_box_helper::aaa_arc_from_box(rustls::aaa_aaa_box_helper::Box::new($x))
         };

@@ -24,7 +24,7 @@ use rustls::server::{
     AlwaysResolvesServerRawPublicKeys, ClientCertVerifierBuilder, WebPkiClientVerifier,
 };
 use rustls::sign::CertifiedKey;
-use rustls::{arc_from, from_cfg_arc};
+use rustls::{cfg_arc_from, from_cfg_arc};
 use rustls::{
     ClientConfig, ClientConnection, Connection, ConnectionCommon, ContentType,
     DigitallySignedStruct, DistinguishedName, Error, InconsistentKeys, NamedGroup, ProtocolVersion,
@@ -580,7 +580,7 @@ pub fn make_server_config_with_raw_key_support(kt: KeyType) -> ServerConfig {
     client_verifier.expect_raw_public_keys = true;
     // We don't support tls1.2 for Raw Public Keys, hence the version is hard-coded.
     server_config_builder_with_versions(&[&rustls::version::TLS13])
-        .with_client_cert_verifier(arc_from!(client_verifier))
+        .with_client_cert_verifier(cfg_arc_from!(client_verifier))
         .with_cert_resolver(from_cfg_arc!(server_cert_resolver))
 }
 

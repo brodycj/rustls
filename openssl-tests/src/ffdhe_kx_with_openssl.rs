@@ -4,7 +4,7 @@ use std::{fs, str, thread};
 
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
-use rustls::arc_from;
+use rustls::cfg_arc_from;
 
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
 use rustls::pki_types::pem::PemObject;
@@ -37,7 +37,7 @@ fn test_rustls_server_with_ffdhe_kx(
     let port = listener.local_addr().unwrap().port();
 
     let server_thread = std::thread::spawn(move || {
-        let config = arc_from!(server_config_with_ffdhe_kx(protocol_version));
+        let config = cfg_arc_from!(server_config_with_ffdhe_kx(protocol_version));
         for _ in 0..iters {
             let mut server = rustls::ServerConnection::new(config.clone()).unwrap();
             let (mut tcp_stream, _addr) = listener.accept().unwrap();
@@ -99,7 +99,7 @@ fn test_rustls_client_with_ffdhe_kx(iters: usize) {
         .set_certificate_chain_file(CERT_CHAIN_FILE)
         .unwrap();
     acceptor.check_private_key().unwrap();
-    let acceptor = arc_from!(acceptor.build());
+    let acceptor = cfg_arc_from!(acceptor.build());
 
     let listener = TcpListener::bind(("localhost", 0)).unwrap();
     let port = listener.local_addr().unwrap().port();

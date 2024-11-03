@@ -37,7 +37,7 @@ use hickory_resolver::proto::rr::{RData, RecordType};
 use hickory_resolver::Resolver;
 use log::trace;
 
-use rustls::arc_from;
+use rustls::cfg_arc_from;
 use rustls::client::{EchConfig, EchGreaseConfig, EchStatus};
 use rustls::crypto::aws_lc_rs;
 use rustls::crypto::aws_lc_rs::hpke::ALL_SUPPORTED_SUITES;
@@ -107,7 +107,7 @@ fn main() {
             .with_no_client_auth();
 
     // Allow using SSLKEYLOGFILE.
-    config.key_log = arc_from!(rustls::KeyLogFile::new());
+    config.key_log = cfg_arc_from!(rustls::KeyLogFile::new());
     let config = Arc::new(config);
 
     // The "inner" SNI that we're really trying to reach.

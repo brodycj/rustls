@@ -18,7 +18,7 @@ use rayon::prelude::*;
 // XXX XXX
 use rustls::internal::alias::Arc;
 
-use rustls::{arc_from, from_cfg_arc};
+use rustls::{cfg_arc_from, from_cfg_arc};
 
 use rustls::client::Resumption;
 use rustls::crypto::{aws_lc_rs, ring, CryptoProvider, GetRandomFailed, SecureRandom};
@@ -533,7 +533,7 @@ impl ClientSideStepper<'_> {
             cfg.resumption = Resumption::disabled();
         }
 
-        arc_from!(cfg)
+        cfg_arc_from!(cfg)
     }
 }
 
@@ -607,10 +607,10 @@ impl ServerSideStepper<'_> {
         } else if resume == ResumptionKind::Tickets {
             cfg.ticketer = (params.ticketer)();
         } else {
-            cfg.session_storage = arc_from!(NoServerSessionStorage {});
+            cfg.session_storage = cfg_arc_from!(NoServerSessionStorage {});
         }
 
-        arc_from!(cfg)
+        cfg_arc_from!(cfg)
     }
 }
 
