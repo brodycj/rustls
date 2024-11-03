@@ -431,6 +431,7 @@ pub mod aaa_aaa_box_helper {
 // XXX TODO XXX XXX
 #[allow(missing_docs)]
 pub mod cfg_arc_util {
+    #[cfg(feature = "portable-atomic-arc")]
     // XXX TBD RECONSIDER EXPORTING THESE MACROS FROM TOP-LEVEL
     #[macro_export]
     macro_rules! cfg_arc_from {
@@ -438,6 +439,14 @@ pub mod cfg_arc_util {
             rustls::aaa_aaa_box_helper::aaa_arc_from_box(rustls::aaa_aaa_box_helper::Box::new($x))
         };
     }
+    #[cfg(not(feature = "portable-atomic-arc"))]
+    #[macro_export]
+    macro_rules! cfg_arc_from {
+        ($x:expr) => {
+            rustls::internal::alias::Arc::new($x)
+        };
+    }
+
     #[macro_export]
     macro_rules! from_cfg_arc {
         ($x:expr) => {{
