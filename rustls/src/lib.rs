@@ -321,7 +321,7 @@
     clippy::upper_case_acronyms,
     elided_lifetimes_in_paths,
     // XXX TODO XXX XXX
-    // missing_docs,
+    missing_docs,
     trivial_casts,
     trivial_numeric_casts,
     unreachable_pub,
