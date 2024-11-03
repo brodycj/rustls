@@ -431,7 +431,7 @@ pub mod aaa_aaa_box_helper {
 // XXX TBD NAMING FOR THIS - ??? ???
 // XXX TODO XXX XXX
 #[allow(missing_docs)]
-pub mod arc_util {
+pub mod cfg_arc_util {
     // XXX TBD RECONSIDER EXPORTING THESE MACROS FROM TOP-LEVEL
     #[macro_export]
     macro_rules! arc_from {
