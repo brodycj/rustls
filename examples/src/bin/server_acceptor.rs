@@ -8,15 +8,12 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::ops::Add;
 use std::path::PathBuf;
+use std::sync::Arc;
 use std::time::Duration;
 use std::{fs, thread};
 
 use clap::Parser;
 use rcgen::KeyPair;
-
-// XXX XXX
-use rustls::internal::alias::Arc;
-
 use rustls::pki_types::{CertificateRevocationListDer, PrivatePkcs8KeyDer};
 use rustls::server::{Acceptor, ClientHello, ServerConfig, WebPkiClientVerifier};
 use rustls::RootCertStore;
@@ -221,7 +218,7 @@ impl TestPki {
             .unwrap();
 
         // Allow using SSLKEYLOGFILE.
-        server_config.key_log = rustls::arc_from!(rustls::KeyLogFile::new());
+        server_config.key_log = Arc::new(rustls::KeyLogFile::new());
 
         Arc::new(server_config)
     }

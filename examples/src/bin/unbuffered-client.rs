@@ -4,11 +4,7 @@
 use std::error::Error;
 use std::io::{Read, Write};
 use std::net::TcpStream;
-
-// XXX TBD ??? ???
-use rustls::arc_from_arc;
-// XXX TBD IMPORT THIS FROM ??? ??? ????
-use rustls::internal::alias::Arc;
+use std::sync::Arc;
 
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
 use rustls::unbuffered::{
@@ -48,7 +44,7 @@ fn converse(
     incoming_tls: &mut [u8],
     outgoing_tls: &mut Vec<u8>,
 ) -> Result<(), Box<dyn Error>> {
-    let mut conn = UnbufferedClientConnection::new(arc_from_arc!(config), SERVER_NAME.try_into()?)?;
+    let mut conn = UnbufferedClientConnection::new(Arc::clone(config), SERVER_NAME.try_into()?)?;
     let mut sock = TcpStream::connect(format!("{SERVER_NAME}:{PORT}"))?;
 
     let mut incoming_used = 0;

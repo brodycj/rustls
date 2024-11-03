@@ -15,6 +15,7 @@
 use std::error::Error as StdError;
 use std::io::{Read, Write};
 use std::net::TcpListener;
+use std::sync::Arc;
 use std::{env, io};
 
 use rustls::pki_types::pem::PemObject;
@@ -49,7 +50,7 @@ fn main() -> Result<(), Box<dyn StdError>> {
 
         println!("Accepting connection");
 
-        let mut conn = rustls::ServerConnection::new(rustls::arc_from!(config.clone()))?;
+        let mut conn = rustls::ServerConnection::new(Arc::new(config.clone()))?;
 
         let mut buf = Vec::new();
         let mut did_early_data = false;

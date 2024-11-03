@@ -23,6 +23,7 @@
 use std::fs;
 use std::io::{stdout, BufReader, Read, Write};
 use std::net::{TcpStream, ToSocketAddrs};
+use std::sync::Arc;
 
 use clap::Parser;
 use hickory_resolver::config::{ResolverConfig, ResolverOpts};
@@ -30,7 +31,6 @@ use hickory_resolver::proto::rr::rdata::svcb::{SvcParamKey, SvcParamValue};
 use hickory_resolver::proto::rr::{RData, RecordType};
 use hickory_resolver::Resolver;
 use log::trace;
-
 use rustls::client::{EchConfig, EchGreaseConfig, EchStatus};
 use rustls::crypto::aws_lc_rs;
 use rustls::crypto::aws_lc_rs::hpke::ALL_SUPPORTED_SUITES;
@@ -100,8 +100,8 @@ fn main() {
             .with_no_client_auth();
 
     // Allow using SSLKEYLOGFILE.
-    config.key_log = rustls::arc_from!(rustls::KeyLogFile::new());
-    let config = rustls::arc_from!(config);
+    config.key_log = Arc::new(rustls::KeyLogFile::new());
+    let config = Arc::new(config);
 
     // The "inner" SNI that we're really trying to reach.
     let server_name: ServerName<'static> = args

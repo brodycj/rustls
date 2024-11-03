@@ -21,14 +21,11 @@
 
 use std::io::{self, Read, Write};
 use std::net::ToSocketAddrs;
+use std::sync::Arc;
 use std::{process, str};
 
 use clap::Parser;
 use mio::net::TcpStream;
-
-// XXX XXX
-use rustls::internal::alias::Arc;
-
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer, ServerName};
@@ -449,7 +446,7 @@ fn make_config(args: &Args) -> Arc<rustls::ClientConfig> {
         }
     };
 
-    config.key_log = rustls::arc_from!(rustls::KeyLogFile::new());
+    config.key_log = Arc::new(rustls::KeyLogFile::new());
 
     if args.no_tickets {
         config.resumption = config
@@ -471,7 +468,7 @@ fn make_config(args: &Args) -> Arc<rustls::ClientConfig> {
     if args.insecure {
         config
             .dangerous()
-            .set_certificate_verifier(rustls::arc_from!(danger::NoCertificateVerification::new(
+            .set_certificate_verifier(Arc::new(danger::NoCertificateVerification::new(
                 provider::default_provider(),
             )));
     }

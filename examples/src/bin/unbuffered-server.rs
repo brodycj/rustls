@@ -6,9 +6,7 @@ use std::error::Error;
 use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
-
-// XXX TBD XXX XXX
-use rustls::internal::alias::Arc;
+use std::sync::Arc;
 
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
@@ -62,7 +60,7 @@ fn handle(
 
     dbg!(sock.peer_addr()?);
 
-    let mut conn = UnbufferedServerConnection::new(rustls::arc_from_arc!(config.clone()))?;
+    let mut conn = UnbufferedServerConnection::new(config.clone())?;
 
     let mut incoming_used = 0;
     let mut outgoing_used = 0;

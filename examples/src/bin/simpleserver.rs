@@ -11,6 +11,7 @@ use std::env;
 use std::error::Error as StdError;
 use std::io::{Read, Write};
 use std::net::TcpListener;
+use std::sync::Arc;
 
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
@@ -37,7 +38,7 @@ fn main() -> Result<(), Box<dyn StdError>> {
     let listener = TcpListener::bind(format!("[::]:{}", 4443)).unwrap();
     let (mut stream, _) = listener.accept()?;
 
-    let mut conn = rustls::ServerConnection::new(rustls::arc_from!(config))?;
+    let mut conn = rustls::ServerConnection::new(Arc::new(config))?;
     conn.complete_io(&mut stream)?;
 
     conn.writer()

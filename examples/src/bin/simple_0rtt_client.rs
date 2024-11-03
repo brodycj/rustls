@@ -17,12 +17,7 @@ use std::env;
 use std::io::{BufRead, BufReader, Write};
 use std::net::TcpStream;
 use std::str::FromStr;
-
-// XXX TBD ??? ???
-// XXX TBD IMPORT THESE IN OTHER EXAMPLES - ???
-use rustls::{arc_from, arc_from_arc};
-// XXX TBD IMPORT THIS FROM ??? ??? ????
-use rustls::internal::alias::Arc;
+use std::sync::Arc;
 
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, ServerName};
@@ -32,7 +27,7 @@ fn start_connection(config: &Arc<rustls::ClientConfig>, domain_name: &str, port:
     let server_name = ServerName::try_from(domain_name)
         .expect("invalid DNS name")
         .to_owned();
-    let mut conn = rustls::ClientConnection::new(arc_from_arc!(config), server_name).unwrap();
+    let mut conn = rustls::ClientConnection::new(Arc::clone(config), server_name).unwrap();
     let mut sock = TcpStream::connect(format!("{}:{}", domain_name, port)).unwrap();
     sock.set_nodelay(true).unwrap();
     let request = format!(
@@ -110,7 +105,7 @@ fn main() {
         .with_no_client_auth();
 
     // Allow using SSLKEYLOGFILE.
-    config.key_log = arc_from!(rustls::KeyLogFile::new());
+    config.key_log = Arc::new(rustls::KeyLogFile::new());
 
     // Enable early data.
     config.enable_early_data = true;
