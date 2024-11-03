@@ -17,8 +17,14 @@ use std::env;
 use std::io::{BufRead, BufReader, Write};
 use std::net::TcpStream;
 use std::str::FromStr;
+
+// XXX TBD ??? ??? ???
+#[cfg(feature = "portable-atomic-arc")]
+use portable_atomic_util::Arc;
+#[cfg(not(feature = "portable-atomic-arc"))]
 use std::sync::Arc;
 
+use rustls::arc_from;
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, ServerName};
 use rustls::RootCertStore;
@@ -105,11 +111,11 @@ fn main() {
         .with_no_client_auth();
 
     // Allow using SSLKEYLOGFILE.
-    config.key_log = Arc::new(rustls::KeyLogFile::new());
+    config.key_log = arc_from!(rustls::KeyLogFile::new());
 
     // Enable early data.
     config.enable_early_data = true;
-    let config = Arc::new(config);
+    let config = arc_from!(config);
 
     // Do two connections. The first will be a normal request, the
     // second will use early data if the server supports it.

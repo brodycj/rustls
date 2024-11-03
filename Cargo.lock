@@ -2190,6 +2190,8 @@ dependencies = [
  "hickory-resolver",
  "log",
  "mio 0.8.11",
+ "portable-atomic",
+ "portable-atomic-util",
  "rcgen",
  "rustls 0.23.16",
  "serde",

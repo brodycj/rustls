@@ -6,6 +6,11 @@ use std::error::Error;
 use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
+
+// XXX TBD ??? ??? ???
+#[cfg(feature = "portable-atomic-arc")]
+use portable_atomic_util::Arc;
+#[cfg(not(feature = "portable-atomic-arc"))]
 use std::sync::Arc;
 
 use rustls::pki_types::pem::PemObject;
