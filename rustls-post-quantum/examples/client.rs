@@ -27,7 +27,8 @@ fn main() {
     let server_name = "pq.cloudflareresearch.com"
         .try_into()
         .unwrap();
-    let mut conn = rustls::ClientConnection::new(rustls::cfg_arc_from!(config), server_name).unwrap();
+    let mut conn =
+        rustls::ClientConnection::new(rustls::cfg_arc_from!(config), server_name).unwrap();
     let mut sock = TcpStream::connect("pq.cloudflareresearch.com:443").unwrap();
     let mut tls = rustls::Stream::new(&mut conn, &mut sock);
     tls.write_all(
