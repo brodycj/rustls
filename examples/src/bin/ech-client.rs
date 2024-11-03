@@ -25,9 +25,9 @@ use std::io::{stdout, BufReader, Read, Write};
 use std::net::{TcpStream, ToSocketAddrs};
 
 // XXX TBD ??? ??? ???
-#[cfg(feature = "portable-atomic-arc")]
+#[cfg(feature = "critical-section")]
 use portable_atomic_util::Arc;
-#[cfg(not(feature = "portable-atomic-arc"))]
+#[cfg(not(feature = "critical-section"))]
 use std::sync::Arc;
 
 use clap::Parser;

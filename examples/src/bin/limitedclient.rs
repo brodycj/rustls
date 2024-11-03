@@ -6,9 +6,9 @@ use std::io::{stdout, Read, Write};
 use std::net::TcpStream;
 
 // XXX TBD ??? ??? ???
-#[cfg(feature = "portable-atomic-arc")]
+#[cfg(feature = "critical-section")]
 use portable_atomic_util::Arc;
-#[cfg(not(feature = "portable-atomic-arc"))]
+#[cfg(not(feature = "critical-section"))]
 use std::sync::Arc;
 
 use rustls::crypto::{aws_lc_rs as provider, CryptoProvider};

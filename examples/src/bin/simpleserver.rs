@@ -13,9 +13,9 @@ use std::io::{Read, Write};
 use std::net::TcpListener;
 
 // XXX TBD ??? ??? ???
-#[cfg(feature = "portable-atomic-arc")]
+#[cfg(feature = "critical-section")]
 use portable_atomic_util::Arc;
-#[cfg(not(feature = "portable-atomic-arc"))]
+#[cfg(not(feature = "critical-section"))]
 use std::sync::Arc;
 
 use rustls::pki_types::pem::PemObject;
