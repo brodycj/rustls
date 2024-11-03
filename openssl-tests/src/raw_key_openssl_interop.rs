@@ -50,9 +50,9 @@ mod client {
 
         ClientConfig::builder_with_protocol_versions(&[&TLS13])
             .dangerous()
-            .with_custom_certificate_verifier(cfg_arc_from!(SimpleRpkServerCertVerifier::new(vec![
-                server_raw_key,
-            ])))
+            .with_custom_certificate_verifier(cfg_arc_from!(SimpleRpkServerCertVerifier::new(
+                vec![server_raw_key,]
+            )))
             .with_client_cert_resolver(cfg_arc_from!(AlwaysResolvesClientRawPublicKeys::new(
                 certified_key,
             )))

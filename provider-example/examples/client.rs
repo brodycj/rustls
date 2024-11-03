@@ -18,7 +18,8 @@ fn main() {
             .with_no_client_auth();
 
     let server_name = "www.rust-lang.org".try_into().unwrap();
-    let mut conn = rustls::ClientConnection::new(rustls::cfg_arc_from!(config), server_name).unwrap();
+    let mut conn =
+        rustls::ClientConnection::new(rustls::cfg_arc_from!(config), server_name).unwrap();
     let mut sock = TcpStream::connect("www.rust-lang.org:443").unwrap();
     let mut tls = rustls::Stream::new(&mut conn, &mut sock);
     tls.write_all(

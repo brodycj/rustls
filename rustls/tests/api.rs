@@ -3454,8 +3454,10 @@ fn sni_resolver_rejects_bad_certs() {
 #[test]
 fn test_keys_match() {
     // Consistent: Both of these should have the same SPKI values
-    let expect_consistent =
-        sign::CertifiedKey::new(KeyType::Rsa2048.get_chain(), cfg_arc_from!(SigningKeySomeSpki));
+    let expect_consistent = sign::CertifiedKey::new(
+        KeyType::Rsa2048.get_chain(),
+        cfg_arc_from!(SigningKeySomeSpki),
+    );
     assert!(matches!(expect_consistent.keys_match(), Ok(())));
 
     // Inconsistent: These should not have the same SPKI values
@@ -3469,8 +3471,10 @@ fn test_keys_match() {
     ));
 
     // Unknown: This signing key returns None for its SPKI, so we can't tell if the certified key is consistent
-    let expect_unknown =
-        sign::CertifiedKey::new(KeyType::Rsa2048.get_chain(), cfg_arc_from!(SigningKeyNoneSpki));
+    let expect_unknown = sign::CertifiedKey::new(
+        KeyType::Rsa2048.get_chain(),
+        cfg_arc_from!(SigningKeyNoneSpki),
+    );
     assert!(matches!(
         expect_unknown.keys_match(),
         Err(Error::InconsistentKeys(InconsistentKeys::Unknown))
@@ -7413,9 +7417,9 @@ fn test_pinned_ocsp_response_given_to_custom_server_cert_verifier() {
 
         let client_config = client_config_builder_with_versions(&[version])
             .dangerous()
-            .with_custom_certificate_verifier(cfg_arc_from!(MockServerVerifier::expects_ocsp_response(
-                ocsp_response,
-            )))
+            .with_custom_certificate_verifier(cfg_arc_from!(
+                MockServerVerifier::expects_ocsp_response(ocsp_response,)
+            ))
             .with_no_client_auth();
 
         let (mut client, mut server) = make_pair_for_configs(client_config, server_config);
@@ -7639,7 +7643,8 @@ fn test_cert_decompression_by_server_would_result_in_excessively_large_cert() {
         .load_private_key(KeyType::Rsa2048.get_client_key())
         .unwrap();
     let big_cert_and_key = sign::CertifiedKey::new(vec![big_cert], key);
-    client_config.client_auth_cert_resolver = cfg_arc_from!(AlwaysResolves(big_cert_and_key.into()));
+    client_config.client_auth_cert_resolver =
+        cfg_arc_from!(AlwaysResolves(big_cert_and_key.into()));
 
     let (mut client, mut server) = make_pair_for_configs(client_config, server_config);
     assert_eq!(

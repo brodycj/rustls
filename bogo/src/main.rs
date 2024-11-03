@@ -794,7 +794,9 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
 
     let cfg = cfg
         .dangerous()
-        .with_custom_certificate_verifier(cfg_arc_from!(DummyServerAuth::new(&opts.trusted_cert_file)));
+        .with_custom_certificate_verifier(cfg_arc_from!(DummyServerAuth::new(
+            &opts.trusted_cert_file
+        )));
 
     let mut cfg = if !opts.cert_file.is_empty() && !opts.key_file.is_empty() {
         let cert = CertificateDer::pem_file_iter(&opts.cert_file)
