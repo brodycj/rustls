@@ -533,10 +533,7 @@ mod webpki;
 #[doc(hidden)]
 pub mod internal {
     pub mod alias {
-        // XXX TODO WANT TO SWITCH TO USING THIS ONE:
         pub use crate::alias::Arc;
-        // XXX XXX GONE:
-        // pub use crate::alias::Arc;
     }
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {
