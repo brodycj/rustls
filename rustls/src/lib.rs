@@ -417,6 +417,7 @@ pub mod aa_dangerous_helper {
 
 // XXX TBD CRATE NAMING FOR THIS ???
 // XXX TODO XXX XXX
+#[cfg(feature = "portable-atomic-arc")]
 #[allow(missing_docs)]
 pub mod aaa_aaa_box_helper {
     // XXX TBD RECONSIDER IMPORT HERE - ??? ??? ???
@@ -459,11 +460,19 @@ pub mod cfg_arc_util {
 // XXX TBD INTERNAL NAMING FOR THIS - ??? ???
 // XXX TODO ADD NOTE CONCERNING INTERNAL VS EXPORTED ARC HELPER MACROS
 mod arc_helpers {
+    #[cfg(feature = "portable-atomic-arc")]
     macro_rules! arc_from_contents {
         ($x:expr) => {
             crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))
         };
     }
+    #[cfg(not(feature = "portable-atomic-arc"))]
+    macro_rules! arc_from_contents {
+        ($x:expr) => {
+            crate::alias::Arc::new($x)
+        };
+    }
+
     macro_rules! arc_from_clone {
         ($x:expr) => {{
             let xx = crate::alias::Arc::into_raw($x.clone());
