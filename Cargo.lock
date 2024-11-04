@@ -1850,7 +1850,7 @@ dependencies = [
 [[package]]
 name = "portable-atomic"
 version = "1.9.0"
-source = "git+https://github.com/brodycj/portable-atomic?branch=cuwip001#c24dc8fa62487849655ade000a58c084a3c9781b"
+source = "git+https://github.com/brodycj/portable-atomic?branch=cuwip001#ed4f973227c4061ce1ddac62f5bc9c8073bef777"
 
 [[package]]
 name = "portable-atomic-util"
@@ -1864,7 +1864,7 @@ dependencies = [
 [[package]]
 name = "portable-atomic-util"
 version = "0.2.3"
-source = "git+https://github.com/brodycj/portable-atomic?branch=cuwip001#c24dc8fa62487849655ade000a58c084a3c9781b"
+source = "git+https://github.com/brodycj/portable-atomic?branch=cuwip001#ed4f973227c4061ce1ddac62f5bc9c8073bef777"
 dependencies = [
  "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=cuwip001)",
 ]
