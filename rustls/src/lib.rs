@@ -310,8 +310,9 @@
 //! - `zlib`: uses the `zlib-rs` crate for RFC8879 certificate compression support.
 //!
 
+// XXX TODO XXX XXX XXX
 // Require docs for public APIs, deny unsafe code, etc.
-// #![forbid(unsafe_code, unused_must_use)] // XXX TBD ??? ???
+// #![forbid(unsafe_code, unused_must_use)]
 #![cfg_attr(not(any(read_buf, bench)), forbid(unstable_features))]
 #![warn(
     clippy::alloc_instead_of_core,
