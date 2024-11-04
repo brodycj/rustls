@@ -54,8 +54,6 @@ zlib = ["dep:zlib-rs"]
 portable-atomic-arc = ["portable-atomic", "portable-atomic-util"]
 # XXX TBD XXX XXX - XXX TODO EXPLAIN XXX with "portable-atomic/critical-section" (as required by XXX XXX XXX)
 critical-section = ["portable-atomic-arc", "once_cell/critical-section", "portable-atomic/critical-section"]
-# XXX XXX GONE:
-# portable-atomic-util = ["dep:portable-atomic-util"]
 
 [dev-dependencies]
 base64 = "0.22"
