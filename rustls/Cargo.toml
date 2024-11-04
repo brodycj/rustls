@@ -34,8 +34,7 @@ zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
 # XXX TBD MOVE THESE [??? ???]
 portable-atomic = { version = "1.9.0", default-features = false, optional = true }
-# XXX TODO XXX XXX XXX
-portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc", "coerce-unsized"], optional = true, path = "../../portable-atomic/portable-atomic-util" }
+portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]
@@ -54,8 +53,6 @@ zlib = ["dep:zlib-rs"]
 portable-atomic-arc = ["portable-atomic", "portable-atomic-util"]
 # XXX TBD XXX XXX - XXX TODO EXPLAIN XXX with "portable-atomic/critical-section" (as required by XXX XXX XXX)
 critical-section = ["portable-atomic-arc", "once_cell/critical-section", "portable-atomic/critical-section"]
-# XXX XXX GONE:
-# portable-atomic-util = ["dep:portable-atomic-util"]
 
 [dev-dependencies]
 base64 = "0.22"
