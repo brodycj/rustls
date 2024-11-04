@@ -310,9 +310,8 @@
 //! - `zlib`: uses the `zlib-rs` crate for RFC8879 certificate compression support.
 //!
 
-// XXX TODO XXX XXX XXX
 // Require docs for public APIs, deny unsafe code, etc.
-// #![forbid(unsafe_code, unused_must_use)]
+#![forbid(unsafe_code, unused_must_use)]
 #![cfg_attr(not(any(read_buf, bench)), forbid(unstable_features))]
 #![warn(
     clippy::alloc_instead_of_core,
@@ -344,8 +343,6 @@
     clippy::new_ret_no_self,
     clippy::ptr_arg,
     clippy::single_component_path_imports,
-    // XXX TBD ??? ??? ???:
-    clippy::not_unsafe_ptr_arg_deref,
     clippy::new_without_default
 )]
 // Enable documentation for all features on docs.rs
@@ -407,41 +404,9 @@ mod alias {
     pub use alloc::sync::Arc;
 }
 
-// XXX TODO EXPORT FROM INTERNAL XXX
-// XXX TODO XXX XXX
-#[allow(missing_docs)]
-pub mod aa_dangerous_helper {
-    pub fn aaa_arc_from_raw_ptr<U: ?Sized>(x: *const U) -> crate::alias::Arc<U> {
-        unsafe { crate::alias::Arc::from_raw(x) }
-    }
-}
-
-// XXX TBD CRATE NAMING FOR THIS ???
-// XXX TODO XXX XXX
-#[cfg(feature = "portable-atomic-arc")]
-#[allow(missing_docs)]
-pub mod aaa_aaa_box_helper {
-    // XXX TBD RECONSIDER IMPORT HERE - ??? ??? ???
-    pub use alloc::boxed::Box;
-    #[inline(always)]
-    pub fn aaa_arc_from_box<U: ?Sized>(x: Box<U>) -> crate::alias::Arc<U> {
-        crate::alias::Arc::from(x)
-    }
-}
-
-// XXX TBD NAMING FOR THIS - ??? ???
-// XXX TODO XXX XXX
+// XXX TODO REMOVE FROM THIS WIP BRANCH:
 #[allow(missing_docs)]
 pub mod cfg_arc_util {
-    #[cfg(feature = "portable-atomic-arc")]
-    // XXX TBD RECONSIDER EXPORTING THESE MACROS FROM TOP-LEVEL
-    #[macro_export]
-    macro_rules! cfg_arc_from {
-        ($x:expr) => {
-            rustls::aaa_aaa_box_helper::aaa_arc_from_box(rustls::aaa_aaa_box_helper::Box::new($x))
-        };
-    }
-    #[cfg(not(feature = "portable-atomic-arc"))]
     #[macro_export]
     macro_rules! cfg_arc_from {
         ($x:expr) => {
@@ -451,38 +416,20 @@ pub mod cfg_arc_util {
 
     #[macro_export]
     macro_rules! from_cfg_arc {
-        ($x:expr) => {{
-            let xx = rustls::internal::alias::Arc::into_raw($x.clone());
-            rustls::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
-        }};
+        ($x:expr) => {
+            $x.clone()
+        };
     }
 }
 
-// XXX TBD INTERNAL NAMING FOR THIS - ??? ???
-// XXX TODO ADD NOTE CONCERNING INTERNAL VS EXPORTED ARC HELPER MACROS
+// XXX TODO REMOVE FROM THIS WIP BRANCH:
 mod arc_helpers {
-    #[cfg(feature = "portable-atomic-arc")]
-    macro_rules! arc_from_contents {
-        ($x:expr) => {
-            crate::aaa_aaa_box_helper::aaa_arc_from_box(alloc::boxed::Box::new($x))
-        };
-    }
-    #[cfg(not(feature = "portable-atomic-arc"))]
     macro_rules! arc_from_contents {
         ($x:expr) => {
             crate::alias::Arc::new($x)
         };
     }
 
-    // XXX TBD RENAME TO SOMETHING LIKE: arc_from_arc
-    #[cfg(feature = "portable-atomic-arc")]
-    macro_rules! arc_from_clone {
-        ($x:expr) => {{
-            let xx = crate::alias::Arc::into_raw($x.clone());
-            crate::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
-        }};
-    }
-    #[cfg(not(feature = "portable-atomic-arc"))]
     macro_rules! arc_from_clone {
         ($x:expr) => {
             ($x)
