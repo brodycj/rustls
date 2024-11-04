@@ -1630,7 +1630,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 dependencies = [
  "critical-section",
- "portable-atomic",
+ "portable-atomic 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1848,12 +1848,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "portable-atomic"
+version = "1.9.0"
+source = "git+https://github.com/brodycj/portable-atomic?branch=cuwip001#ef8c3174ae4abc043582ba9c0900e4b8ac9a61be"
+
+[[package]]
 name = "portable-atomic-util"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90a7d5beecc52a491b54d6dd05c7a45ba1801666a5baad9fdbfc6fef8d2d206c"
 dependencies = [
- "portable-atomic",
+ "portable-atomic 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "portable-atomic-util"
+version = "0.2.3"
+source = "git+https://github.com/brodycj/portable-atomic?branch=cuwip001#ef8c3174ae4abc043582ba9c0900e4b8ac9a61be"
+dependencies = [
+ "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=cuwip001)",
 ]
 
 [[package]]
@@ -2137,8 +2150,8 @@ dependencies = [
  "log",
  "num-bigint",
  "once_cell",
- "portable-atomic",
- "portable-atomic-util",
+ "portable-atomic 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "portable-atomic-util 0.2.3 (git+https://github.com/brodycj/portable-atomic?branch=cuwip001)",
  "rcgen",
  "ring",
  "rustls-pki-types",
@@ -2190,7 +2203,7 @@ dependencies = [
  "hickory-resolver",
  "log",
  "mio 0.8.11",
- "portable-atomic-util",
+ "portable-atomic-util 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "rcgen",
  "rustls 0.23.16",
  "serde",
