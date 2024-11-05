@@ -134,8 +134,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@stable
+      # XXX TBD rust-toolchain - ??? ??? ???
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
         with:
           target: x86_64-unknown-none
 
@@ -196,8 +197,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@stable
+      # XXX TBD rust-toolchain - ??? ??? ???
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
 
       - name: Install golang toolchain
         uses: actions/setup-go@v5
@@ -311,8 +313,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      # XXX TBD rust-toolchain - ??? ??? ???
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
         with:
           components: llvm-tools
 
@@ -380,8 +383,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      # XXX TBD rust-toolchain - ??? ??? ???
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
       - name: Install bindgen feature & CLI for aws-lc-sys (as needed for many cross targets)
@@ -409,8 +413,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      # XXX TBD rust-toolchain - ??? ??? ???
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
       # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
@@ -483,8 +488,9 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y valgrind
 
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      # XXX TBD rust-toolchain - ??? ??? ???
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
         with:
           components: clippy
       # - we want to be free of any warnings, so deny them
@@ -540,8 +546,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@stable
+      # XXX TBD rust-toolchain - ??? ??? ???
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
   
       - name: Install pixi
         run: | 
