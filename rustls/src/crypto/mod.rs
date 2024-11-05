@@ -606,48 +606,42 @@ pub fn default_fips_provider() -> CryptoProvider {
 }
 
 mod static_default {
-    // XXX TBD XXX XXX XXX FOR NOW
-    // #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    // use alloc::boxed::Box;
+    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    use alloc::boxed::Box;
 
-    // XXX TBD XXX XXX XXX FOR NOW
-    // #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    // use once_cell::race::OnceBox;
-    // #[cfg(any(feature = "critical-section", feature = "std"))]
+    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    use once_cell::race::OnceBox;
+    #[cfg(any(feature = "critical-section", feature = "std"))]
     use once_cell::sync::OnceCell;
 
     use crate::alias::Arc;
 
     use super::CryptoProvider;
 
-    // XXX TBD XXX XXX XXX FOR NOW
-    // #[cfg(any(feature = "critical-section", feature = "std"))]
+    #[cfg(any(feature = "critical-section", feature = "std"))]
     pub(crate) fn install_default(
         default_provider: CryptoProvider,
     ) -> Result<(), Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.set(Arc::new(default_provider))
     }
 
-    // XXX TBD XXX XXX XXX FOR NOW
-    // #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    // pub(crate) fn install_default(
-    //     default_provider: CryptoProvider,
-    // ) -> Result<(), Arc<CryptoProvider>> {
-    //     PROCESS_DEFAULT_PROVIDER
-    //         .set(Box::new(Arc::new(default_provider)))
-    //         .map_err(|e| *e)
-    // }
+    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    pub(crate) fn install_default(
+        default_provider: CryptoProvider,
+    ) -> Result<(), Arc<CryptoProvider>> {
+        PROCESS_DEFAULT_PROVIDER
+            .set(Box::new(Arc::new(default_provider)))
+            .map_err(|e| *e)
+    }
 
     pub(crate) fn get_default() -> Option<&'static Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.get()
     }
 
-    // XXX TBD XXX XXX XXX FOR NOW
-    // #[cfg(any(feature = "critical-section", feature = "std"))]
+    #[cfg(any(feature = "critical-section", feature = "std"))]
     static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
-    // XXX TBD XXX XXX XXX FOR NOW
-    // #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    // static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
+    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 }
 
 #[cfg(test)]
