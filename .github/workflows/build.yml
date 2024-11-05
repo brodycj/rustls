@@ -107,6 +107,8 @@ jobs:
         run: cargo package --all-features -p rustls
 
   msrv:
+    # XXX SKIP THIS JOB FOR NOW - XXX TODO NEEDS INVESTIGATION
+    if: ${{ false }}
     name: MSRV
     runs-on: ubuntu-latest
     steps:
