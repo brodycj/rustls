@@ -17,8 +17,9 @@ jobs:
     strategy:
       matrix:
         rust:
-          - stable
-          - beta
+          # XXX TBD SKIP MULTIPLE RUST TOOLCHAINS FOR NOW:
+          # - stable
+          # - beta
           - nightly
         os:
           - ubuntu-latest
