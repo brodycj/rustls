@@ -286,7 +286,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install rust toolchain
+      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
+      - name: Install rust toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
 
       - name: cargo doc (rustls; all features)
@@ -337,7 +338,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install rust toolchain
+      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
+      - name: Install rust toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
 
       - name: Install cargo-minimal-versions
@@ -503,7 +505,8 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y valgrind
 
-      - name: Install rust toolchain
+      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
+      - name: Install rust toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
         with:
           components: clippy
