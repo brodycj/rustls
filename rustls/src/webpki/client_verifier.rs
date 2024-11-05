@@ -6,7 +6,6 @@ use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, Unknown
 use super::{pki_error, VerifierBuilderError};
 
 use crate::alias::Arc;
-use crate::arc_helpers::arc_from_contents;
 
 #[cfg(doc)]
 use crate::crypto;
@@ -177,7 +176,7 @@ impl ClientCertVerifierBuilder {
             return Err(VerifierBuilderError::NoRootAnchors);
         }
 
-        Ok(arc_from_contents!(WebPkiClientVerifier::new(
+        Ok(Arc::new(WebPkiClientVerifier::new(
             self.roots,
             self.root_hint_subjects,
             parse_crls(self.crls)?,
@@ -304,7 +303,7 @@ impl WebPkiClientVerifier {
     /// This is in contrast to using `WebPkiClientVerifier::builder().allow_unauthenticated().build()`,
     /// which will produce a verifier that will offer client authentication, but not require it.
     pub fn no_client_auth() -> Arc<dyn ClientCertVerifier> {
-        arc_from_contents!(NoClientAuth {})
+        Arc::new(NoClientAuth {})
     }
 
     /// Construct a new `WebpkiClientVerifier`.

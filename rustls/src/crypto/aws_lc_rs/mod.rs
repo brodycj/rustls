@@ -9,7 +9,6 @@ use pki_types::PrivateKeyDer;
 use webpki::aws_lc_rs as webpki_algs;
 
 use crate::alias::Arc;
-use crate::arc_helpers::arc_from_contents;
 
 use crate::crypto::{CryptoProvider, KeyProvider, SecureRandom};
 use crate::enums::SignatureScheme;
@@ -259,7 +258,7 @@ pub(super) fn fips() -> bool {
 pub(super) fn unspecified_err(_e: aws_lc_rs::error::Unspecified) -> Error {
     #[cfg(feature = "std")]
     {
-        Error::Other(OtherError(arc_from_contents!(_e)))
+        Error::Other(OtherError(Arc::new(_e)))
     }
     #[cfg(not(feature = "std"))]
     {

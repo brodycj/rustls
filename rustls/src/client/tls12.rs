@@ -11,7 +11,6 @@ use super::client_conn::ClientConnectionData;
 use super::hs::ClientContext;
 
 use crate::alias::Arc;
-use crate::arc_helpers::arc_from_contents;
 
 use crate::check::{inappropriate_handshake_message, inappropriate_message};
 use crate::client::common::{ClientAuthDetails, ServerCertDetails};
@@ -1177,7 +1176,7 @@ impl ExpectFinished {
         // original ticket again.
         let (mut ticket, lifetime) = match self.ticket.take() {
             Some(nst) => (nst.ticket, nst.lifetime_hint),
-            None => (arc_from_contents!(PayloadU16::empty()), 0),
+            None => (Arc::new(PayloadU16::empty()), 0),
         };
 
         if ticket.0.is_empty() {

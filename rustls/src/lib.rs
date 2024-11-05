@@ -422,17 +422,6 @@ pub mod cfg_arc_util {
     }
 }
 
-// XXX TODO REMOVE FROM THIS WIP BRANCH:
-mod arc_helpers {
-    macro_rules! arc_from_contents {
-        ($x:expr) => {
-            crate::alias::Arc::new($x)
-        };
-    }
-
-    pub(crate) use arc_from_contents;
-}
-
 #[macro_use]
 mod msgs;
 mod common_state;

@@ -12,9 +12,6 @@ use pki_types::{DnsName, UnixTime};
 use super::hs;
 
 use crate::alias::Arc;
-#[cfg(feature = "std")]
-use crate::arc_helpers::arc_from_contents;
-
 use crate::builder::ConfigBuilder;
 use crate::common_state::{CommonState, Side};
 #[cfg(feature = "std")]
@@ -456,7 +453,7 @@ impl ServerConfig {
         ConfigBuilder {
             state: WantsVersions {},
             provider,
-            time_provider: arc_from_contents!(DefaultTimeProvider),
+            time_provider: Arc::new(DefaultTimeProvider),
             side: PhantomData,
         }
     }

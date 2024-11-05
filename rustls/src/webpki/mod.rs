@@ -5,7 +5,7 @@ use pki_types::CertificateRevocationListDer;
 use webpki::{CertRevocationList, OwnedCertRevocationList};
 
 #[cfg(feature = "std")]
-use crate::arc_helpers::arc_from_contents;
+use crate::alias::Arc;
 
 use crate::error::{CertRevocationListError, CertificateError, Error, OtherError};
 
@@ -80,7 +80,7 @@ fn pki_error(error: webpki::Error) -> Error {
 
         _ => CertificateError::Other(OtherError(
             #[cfg(feature = "std")]
-            arc_from_contents!(error),
+            Arc::new(error),
         ))
         .into(),
     }
@@ -104,7 +104,7 @@ fn crl_error(e: webpki::Error) -> CertRevocationListError {
 
         _ => CertRevocationListError::Other(OtherError(
             #[cfg(feature = "std")]
-            arc_from_contents!(e),
+            Arc::new(e),
         )),
     }
 }

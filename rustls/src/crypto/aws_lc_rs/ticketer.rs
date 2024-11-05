@@ -14,7 +14,6 @@ use super::ring_like::rand::{SecureRandom, SystemRandom};
 use super::unspecified_err;
 
 use crate::alias::Arc;
-use crate::arc_helpers::arc_from_contents;
 
 use crate::error::Error;
 #[cfg(debug_assertions)]
@@ -36,7 +35,7 @@ impl Ticketer {
     /// [RFC 5077 §4]: https://www.rfc-editor.org/rfc/rfc5077#section-4
     #[cfg(feature = "std")]
     pub fn new() -> Result<Arc<dyn ProducesTickets>, Error> {
-        Ok(arc_from_contents!(crate::ticketer::TicketSwitcher::new(
+        Ok(Arc::new(crate::ticketer::TicketSwitcher::new(
             6 * 60 * 60,
             make_ticket_generator,
         )?))
