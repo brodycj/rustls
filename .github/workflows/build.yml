@@ -482,7 +482,8 @@ jobs:
         continue-on-error: true
 
   clippy:
-    name: Clippy
+    # XXX TBD IMPROVE THIS JOB LABEL - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
+    name: Clippy (strict / deny warnings)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
