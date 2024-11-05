@@ -34,7 +34,7 @@ zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
 # XXX TBD MOVE THESE [??? ???]
 # XXX TBD XXX features XXX XXX - XXX XXX XXX
-portable-atomic = { version = "1.9.0", default-features = false, features = ["critical-section"], optional = true }
+portable-atomic = { version = "1.9.0", default-features = false, features = ["critical-section"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "coerce-unsized-wip-2024-11-001" }
 portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "coerce-unsized-wip-2024-11-001" }
 
 [features]

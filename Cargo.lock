@@ -1843,14 +1843,14 @@ name = "portable-atomic"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cc9c68a3f6da06753e9335d63e27f6b9754dd1920d941135b7ea8224f141adb2"
-dependencies = [
- "critical-section",
-]
 
 [[package]]
 name = "portable-atomic"
 version = "1.9.0"
 source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001#df758e8ac5793386b66a9d152e33e76bc0abdd5b"
+dependencies = [
+ "critical-section",
+]
 
 [[package]]
 name = "portable-atomic-util"
@@ -2141,7 +2141,7 @@ dependencies = [
  "log",
  "num-bigint",
  "once_cell",
- "portable-atomic 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001)",
  "portable-atomic-util",
  "rcgen",
  "ring",
