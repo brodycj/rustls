@@ -278,7 +278,7 @@ mod test_raw_keys {
         expected_error: Error,
     ) {
         let keylog_to_vec = cfg_arc_from!(KeyLogToVec::new("server"));
-        server_config.key_log = from_cfg_arc!(keylog_to_vec);
+        server_config.key_log = from_cfg_arc!(keylog_to_vec.clone());
 
         let (mut client, mut server) = make_pair_for_configs(client_config, server_config);
 

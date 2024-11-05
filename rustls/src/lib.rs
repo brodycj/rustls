@@ -451,8 +451,9 @@ pub mod cfg_arc_util {
 
     #[macro_export]
     macro_rules! from_cfg_arc {
+        // XXX TBD MAY WANT NOTE THAT THIS MACRO WOULD BE A MOVE OPERATION, MAY NEED TO USE clone() IF THE ARC VALUE STILL NEEDS TO BE USED AGAIN
         ($x:expr) => {{
-            let xx = rustls::internal::alias::Arc::into_raw($x.clone());
+            let xx = rustls::internal::alias::Arc::into_raw($x);
             rustls::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
         }};
     }
