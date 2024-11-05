@@ -24,7 +24,6 @@ use rustls::server::{
     AlwaysResolvesServerRawPublicKeys, ClientCertVerifierBuilder, WebPkiClientVerifier,
 };
 use rustls::sign::CertifiedKey;
-use rustls::{cfg_arc_from, from_cfg_arc};
 use rustls::{
     ClientConfig, ClientConnection, Connection, ConnectionCommon, ContentType,
     DigitallySignedStruct, DistinguishedName, Error, InconsistentKeys, NamedGroup, ProtocolVersion,
@@ -580,8 +579,8 @@ pub fn make_server_config_with_raw_key_support(kt: KeyType) -> ServerConfig {
     client_verifier.expect_raw_public_keys = true;
     // We don't support tls1.2 for Raw Public Keys, hence the version is hard-coded.
     server_config_builder_with_versions(&[&rustls::version::TLS13])
-        .with_client_cert_verifier(cfg_arc_from!(client_verifier))
-        .with_cert_resolver(from_cfg_arc!(server_cert_resolver))
+        .with_client_cert_verifier(Arc::new(client_verifier))
+        .with_cert_resolver(server_cert_resolver)
 }
 
 pub fn make_client_config_with_raw_key_support(kt: KeyType) -> ClientConfig {
@@ -592,8 +591,8 @@ pub fn make_client_config_with_raw_key_support(kt: KeyType) -> ClientConfig {
     // We don't support tls1.2 for Raw Public Keys, hence the version is hard-coded.
     client_config_builder_with_versions(&[&rustls::version::TLS13])
         .dangerous()
-        .with_custom_certificate_verifier(from_cfg_arc!(server_verifier))
-        .with_client_cert_resolver(from_cfg_arc!(client_cert_resolver))
+        .with_custom_certificate_verifier(server_verifier)
+        .with_client_cert_resolver(client_cert_resolver)
 }
 
 pub fn make_client_config_with_cipher_suite_and_raw_key_support(
@@ -614,8 +613,8 @@ pub fn make_client_config_with_cipher_suite_and_raw_key_support(
     .with_protocol_versions(&[&rustls::version::TLS13])
     .unwrap()
     .dangerous()
-    .with_custom_certificate_verifier(from_cfg_arc!(server_verifier))
-    .with_client_cert_resolver(from_cfg_arc!(client_cert_resolver))
+    .with_custom_certificate_verifier(server_verifier)
+    .with_client_cert_resolver(client_cert_resolver)
 }
 
 pub fn finish_client_config(
@@ -691,7 +690,7 @@ pub fn make_client_config_with_verifier(
 ) -> ClientConfig {
     client_config_builder_with_versions(versions)
         .dangerous()
-        .with_custom_certificate_verifier(rustls::from_cfg_arc!(verifier_builder.build().unwrap()))
+        .with_custom_certificate_verifier(verifier_builder.build().unwrap())
         .with_no_client_auth()
 }
 
