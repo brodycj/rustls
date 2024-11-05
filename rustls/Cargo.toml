@@ -33,7 +33,8 @@ pki-types = { package = "rustls-pki-types", version = "1.10", features = ["alloc
 zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
 # XXX TBD MOVE THESE [??? ???]
-portable-atomic = { version = "1.9.0", default-features = false, optional = true }
+# XXX TBD XXX features XXX XXX - XXX XXX XXX
+portable-atomic = { version = "1.9.0", default-features = false, features = ["critical-section"], optional = true }
 portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "coerce-unsized-wip-2024-11-001" }
 
 [features]
@@ -51,8 +52,8 @@ fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
 # XXX TBD XXX XXX - XXX TBD EXPLAIN XXX XXX XXX
 portable-atomic-arc = ["portable-atomic", "portable-atomic-util"]
-# XXX TBD XXX XXX - XXX TODO EXPLAIN XXX with "portable-atomic/critical-section" (as required by XXX XXX XXX)
-critical-section = ["portable-atomic-arc", "once_cell/critical-section", "portable-atomic/critical-section"]
+# XXX TBD XXX XXX - XXX TODO EXPLAIN XXX XXX XXX
+critical-section = ["portable-atomic-arc", "once_cell/critical-section"]
 
 [dev-dependencies]
 base64 = "0.22"
