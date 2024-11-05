@@ -319,7 +319,8 @@ jobs:
           persist-credentials: false
 
       # XXX TBD rust-toolchain - ??? ??? ???
-      - name: Install rust-toolchain - nightly
+      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
+      - name: Install rust-toolchain - nightly - with llvm-tools
         uses: dtolnay/rust-toolchain@nightly
         with:
           components: llvm-tools
@@ -389,6 +390,7 @@ jobs:
           persist-credentials: false
 
       # XXX TBD rust-toolchain - ??? ??? ???
+      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
       - name: Install rust-toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
@@ -419,6 +421,7 @@ jobs:
           persist-credentials: false
 
       # XXX TBD rust-toolchain - ??? ??? ???
+      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
       - name: Install rust-toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
