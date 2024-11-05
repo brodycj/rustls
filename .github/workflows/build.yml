@@ -489,9 +489,9 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y valgrind
 
-      # XXX TBD rust-toolchain - ??? ??? ???
-      - name: Install rust-toolchain - nightly
-        uses: dtolnay/rust-toolchain@nightly
+      # XXX TODO MORE CONSISTENT INSTALL XXX LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
+      - name: Install rust-toolchain - XXX
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
       # - we want to be free of any warnings, so deny them
