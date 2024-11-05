@@ -23,5 +23,3 @@ webpki-roots = "0.26"
 
 [features]
 critical-section = ["portable-atomic-util", "rustls/critical-section"]
-# XXX XXX GONE - NOT NEEDED
-# portable-atomic-util = ["dep:portable-atomic-util"]
