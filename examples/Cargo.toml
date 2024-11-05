@@ -13,7 +13,7 @@ env_logger = "0.10" # 0.11 requires 1.71 MSRV even as a dev-dep (due to manifest
 hickory-resolver = { version = "0.25.0-alpha.1", features = ["dns-over-https-rustls", "webpki-roots"] }
 log = { version = "0.4.4" }
 mio = { version = "0.8", features = ["net", "os-poll"] }
-portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true }
+portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "coerce-unsized-wip-2024-11-001" }
 rcgen = { version = "0.13", features = ["pem", "aws_lc_rs"], default-features = false }
 rustls = { path = "../rustls", features = [ "logging" ]}
 serde = "1.0"
@@ -23,3 +23,5 @@ webpki-roots = "0.26"
 
 [features]
 critical-section = ["portable-atomic-util", "rustls/critical-section"]
+# XXX XXX GONE - NOT NEEDED
+# portable-atomic-util = ["dep:portable-atomic-util"]

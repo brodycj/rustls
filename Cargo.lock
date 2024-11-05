@@ -1855,15 +1855,6 @@ source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-w
 [[package]]
 name = "portable-atomic-util"
 version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90a7d5beecc52a491b54d6dd05c7a45ba1801666a5baad9fdbfc6fef8d2d206c"
-dependencies = [
- "portable-atomic 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "portable-atomic-util"
-version = "0.2.3"
 source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001#df758e8ac5793386b66a9d152e33e76bc0abdd5b"
 dependencies = [
  "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001)",
@@ -2151,7 +2142,7 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "portable-atomic 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "portable-atomic-util 0.2.3 (git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001)",
+ "portable-atomic-util",
  "rcgen",
  "ring",
  "rustls-pki-types",
@@ -2203,7 +2194,7 @@ dependencies = [
  "hickory-resolver",
  "log",
  "mio 0.8.11",
- "portable-atomic-util 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "portable-atomic-util",
  "rcgen",
  "rustls 0.23.16",
  "serde",
