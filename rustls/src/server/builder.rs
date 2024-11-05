@@ -4,9 +4,6 @@ use core::marker::PhantomData;
 use pki_types::{CertificateDer, PrivateKeyDer};
 
 use crate::alias::Arc;
-#[cfg(feature = "std")]
-use crate::arc_helpers::arc_from_arc;
-use crate::arc_helpers::arc_from_contents;
 
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::error::Error;
@@ -34,7 +31,7 @@ impl ConfigBuilder<ServerConfig, WantsVerifier> {
 
     /// Disable client authentication.
     pub fn with_no_client_auth(self) -> ConfigBuilder<ServerConfig, WantsServerCert> {
-        self.with_client_cert_verifier(arc_from_contents!(NoClientAuth))
+        self.with_client_cert_verifier(Arc::new(NoClientAuth))
     }
 }
 
@@ -84,7 +81,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
         }
 
         let resolver = handy::AlwaysResolvesChain::new(certified_key);
-        Ok(self.with_cert_resolver(arc_from_contents!(resolver)))
+        Ok(self.with_cert_resolver(Arc::new(resolver)))
     }
 
     /// Sets a single certificate chain, matching private key and optional OCSP
@@ -119,7 +116,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
         }
 
         let resolver = handy::AlwaysResolvesChain::new_with_extras(certified_key, ocsp);
-        Ok(self.with_cert_resolver(arc_from_contents!(resolver)))
+        Ok(self.with_cert_resolver(Arc::new(resolver)))
     }
 
     /// Sets a custom [`ResolvesServerCert`].
@@ -131,13 +128,13 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             ignore_client_order: false,
             max_fragment_size: None,
             #[cfg(feature = "std")]
-            session_storage: arc_from_arc!(handy::ServerSessionMemoryCache::new(256)),
+            session_storage: handy::ServerSessionMemoryCache::new(256),
             #[cfg(not(feature = "std"))]
-            session_storage: arc_from_contents!(handy::NoServerSessionStorage {}),
-            ticketer: arc_from_contents!(handy::NeverProducesTickets {}),
+            session_storage: Arc::new(handy::NoServerSessionStorage {}),
+            ticketer: Arc::new(handy::NeverProducesTickets {}),
             alpn_protocols: Vec::new(),
             versions: self.state.versions,
-            key_log: arc_from_contents!(NoKeyLog {}),
+            key_log: Arc::new(NoKeyLog {}),
             enable_secret_extraction: false,
             max_early_data_size: 0,
             send_half_rtt_data: false,
