@@ -477,7 +477,7 @@ mod arc_helpers {
     #[cfg(feature = "portable-atomic-arc")]
     macro_rules! arc_from_arc {
         ($x:expr) => {{
-            let xx = crate::alias::Arc::into_raw($x.clone());
+            let xx = crate::alias::Arc::into_raw($x);
             crate::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
         }};
     }
