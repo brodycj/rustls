@@ -1855,7 +1855,7 @@ dependencies = [
 [[package]]
 name = "portable-atomic"
 version = "1.9.0"
-source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001#df758e8ac5793386b66a9d152e33e76bc0abdd5b"
+source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001#e66f4efc276abb72d9f0d1ee6f5bf81e22aa451c"
 dependencies = [
  "critical-section",
 ]
@@ -1863,7 +1863,7 @@ dependencies = [
 [[package]]
 name = "portable-atomic-util"
 version = "0.2.3"
-source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001#df758e8ac5793386b66a9d152e33e76bc0abdd5b"
+source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001#e66f4efc276abb72d9f0d1ee6f5bf81e22aa451c"
 dependencies = [
  "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001)",
 ]
