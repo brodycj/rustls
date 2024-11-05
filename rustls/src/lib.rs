@@ -474,22 +474,21 @@ mod arc_helpers {
         };
     }
 
-    // XXX TBD RENAME TO SOMETHING LIKE: arc_from_arc
     #[cfg(feature = "portable-atomic-arc")]
-    macro_rules! arc_from_clone {
+    macro_rules! arc_from_arc {
         ($x:expr) => {{
             let xx = crate::alias::Arc::into_raw($x.clone());
             crate::aa_dangerous_helper::aaa_arc_from_raw_ptr(xx)
         }};
     }
     #[cfg(not(feature = "portable-atomic-arc"))]
-    macro_rules! arc_from_clone {
+    macro_rules! arc_from_arc {
         ($x:expr) => {
             ($x)
         };
     }
 
-    pub(crate) use {arc_from_clone, arc_from_contents};
+    pub(crate) use {arc_from_arc, arc_from_contents};
 }
 
 #[macro_use]

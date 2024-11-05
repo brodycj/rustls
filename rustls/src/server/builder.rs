@@ -5,7 +5,7 @@ use pki_types::{CertificateDer, PrivateKeyDer};
 
 use crate::alias::Arc;
 #[cfg(feature = "std")]
-use crate::arc_helpers::arc_from_clone;
+use crate::arc_helpers::arc_from_arc;
 use crate::arc_helpers::arc_from_contents;
 
 use crate::builder::{ConfigBuilder, WantsVerifier};
@@ -131,7 +131,7 @@ impl ConfigBuilder<ServerConfig, WantsServerCert> {
             ignore_client_order: false,
             max_fragment_size: None,
             #[cfg(feature = "std")]
-            session_storage: arc_from_clone!(handy::ServerSessionMemoryCache::new(256)),
+            session_storage: arc_from_arc!(handy::ServerSessionMemoryCache::new(256)),
             #[cfg(not(feature = "std"))]
             session_storage: arc_from_contents!(handy::NoServerSessionStorage {}),
             ticketer: arc_from_contents!(handy::NeverProducesTickets {}),

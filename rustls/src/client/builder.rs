@@ -6,7 +6,7 @@ use pki_types::{CertificateDer, PrivateKeyDer};
 use super::client_conn::Resumption;
 
 use crate::alias::Arc;
-use crate::arc_helpers::{arc_from_clone, arc_from_contents};
+use crate::arc_helpers::{arc_from_arc, arc_from_contents};
 
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::client::{handy, ClientConfig, EchMode, ResolvesClientCert};
@@ -74,7 +74,7 @@ impl ConfigBuilder<ClientConfig, WantsVerifier> {
         ConfigBuilder {
             state: WantsClientCert {
                 versions: self.state.versions,
-                verifier: arc_from_clone!(verifier),
+                verifier: arc_from_arc!(verifier),
                 client_ech_mode: self.state.client_ech_mode,
             },
             provider: self.provider,
