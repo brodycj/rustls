@@ -679,12 +679,11 @@ mod tests {
     use std::prelude::v1::*;
     use std::{println, vec};
 
-    use super::{Error, InconsistentKeys, InvalidMessage};
-
     #[cfg(feature = "std")]
     use crate::internal::alias::Arc;
 
-    use crate::error::{CertRevocationListError, OtherError};
+    // XXX TBD @brodycj RAISE SEPARATE PR TO PROPOSE THIS `use super` UPDATE ???
+    use super::{CertRevocationListError, Error, InconsistentKeys, InvalidMessage, OtherError};
 
     #[test]
     fn certificate_error_equality() {
