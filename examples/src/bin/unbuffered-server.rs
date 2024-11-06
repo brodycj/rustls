@@ -12,7 +12,6 @@ use portable_atomic_util::Arc;
 #[cfg(not(feature = "critical-section"))]
 use std::sync::Arc;
 
-use rustls::cfg_arc_from;
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
 use rustls::server::UnbufferedServerConnection;
@@ -42,7 +41,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     config.max_fragment_size = MAX_FRAGMENT_SIZE;
 
-    let config = cfg_arc_from!(config);
+    let config = Arc::new(config);
 
     let listener = TcpListener::bind(format!("[::]:{PORT}"))?;
 

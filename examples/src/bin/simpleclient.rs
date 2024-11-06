@@ -11,7 +11,11 @@
 use std::io::{stdout, Read, Write};
 use std::net::TcpStream;
 
-use rustls::cfg_arc_from;
+#[cfg(feature = "critical-section")]
+use portable_atomic_util::Arc;
+#[cfg(not(feature = "critical-section"))]
+use std::sync::Arc;
+
 use rustls::RootCertStore;
 
 fn main() {
@@ -23,10 +27,10 @@ fn main() {
         .with_no_client_auth();
 
     // Allow using SSLKEYLOGFILE.
-    config.key_log = cfg_arc_from!(rustls::KeyLogFile::new());
+    config.key_log = Arc::new(rustls::KeyLogFile::new());
 
     let server_name = "www.rust-lang.org".try_into().unwrap();
-    let mut conn = rustls::ClientConnection::new(cfg_arc_from!(config), server_name).unwrap();
+    let mut conn = rustls::ClientConnection::new(Arc::new(config), server_name).unwrap();
     let mut sock = TcpStream::connect("www.rust-lang.org:443").unwrap();
     let mut tls = rustls::Stream::new(&mut conn, &mut sock);
     tls.write_all(
