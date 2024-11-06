@@ -606,11 +606,11 @@ fn make_server_config(
         .expect("bad certs/private key?");
 
     if resume == ResumptionParam::SessionId {
-        cfg.session_storage = rustls::from_cfg_arc!(ServerSessionMemoryCache::new(128));
+        cfg.session_storage = ServerSessionMemoryCache::new(128);
     } else if resume == ResumptionParam::Tickets {
         cfg.ticketer = Ticketer::new().unwrap();
     } else {
-        cfg.session_storage = rustls::cfg_arc_from!(NoServerSessionStorage {});
+        cfg.session_storage = Arc::new(NoServerSessionStorage {});
     }
 
     cfg.max_fragment_size = max_fragment_size;
