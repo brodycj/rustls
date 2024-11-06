@@ -404,24 +404,6 @@ mod alias {
     pub use alloc::sync::Arc;
 }
 
-// XXX TODO REMOVE FROM THIS WIP BRANCH:
-#[allow(missing_docs)]
-pub mod cfg_arc_util {
-    #[macro_export]
-    macro_rules! cfg_arc_from {
-        ($x:expr) => {
-            rustls::internal::alias::Arc::new($x)
-        };
-    }
-
-    #[macro_export]
-    macro_rules! from_cfg_arc {
-        ($x:expr) => {
-            ($x)
-        };
-    }
-}
-
 #[macro_use]
 mod msgs;
 mod common_state;
