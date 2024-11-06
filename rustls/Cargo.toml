@@ -35,7 +35,7 @@ webpki = { package = "rustls-webpki", version = "0.102.8", features = ["alloc"],
 pki-types = { package = "rustls-pki-types", version = "1.10", features = ["alloc"] }
 zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
-# XXX TBD MOVE THESE ADDITIONAL ENTRIES [??? ???]
+# XXX TBD MOVE THESE ADDITIONAL ITEM(S) - ???
 # XXX TBD XXX features XXX XXX - XXX XXX XXX
 # XXX TBD USE XXX XXX XXX FROM GITHUB WITH @brodycj XXX PROPOSAL FOR NOW - `portable-atomic` PR REF: https://github.com/taiki-e/portable-atomic/pull/195
 # XXX TODO USE PUBLISHED XXX CRATES ONCE @brodycj XXX PROPOSAL IS ACCEPTED
