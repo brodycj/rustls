@@ -5,10 +5,18 @@ permissions:
 
 on:
   push:
+    branches-ignore:
+    - 'gh-readonly-queue/**'
+    tags:
+    - '**'
   pull_request:
   merge_group:
   schedule:
     - cron: '0 18 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
