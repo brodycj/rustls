@@ -6,14 +6,10 @@
 
 use std::fmt::{Debug, Formatter};
 use std::io::{self, Read, Write};
+use std::sync::Arc;
 use std::{env, net, process, thread, time};
 
 use base64::prelude::{Engine, BASE64_STANDARD};
-
-// XXX TBD RECONSIDER IMPORT ORDER HERE
-use rustls::internal::alias::Arc;
-use rustls::{cfg_arc_from, from_cfg_arc};
-
 use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
 use rustls::client::{
     ClientConfig, ClientConnection, EchConfig, EchGreaseConfig, EchMode, EchStatus, Resumption,
@@ -401,14 +397,14 @@ struct DummyServerAuth {
 impl DummyServerAuth {
     fn new(trusted_cert_file: &str) -> Self {
         DummyServerAuth {
-            parent: from_cfg_arc!(WebPkiServerVerifier::builder_with_provider(
+            parent: WebPkiServerVerifier::builder_with_provider(
                 load_root_certs(trusted_cert_file),
                 SelectedProvider::from_env()
                     .provider()
                     .into(),
             )
             .build()
-            .unwrap()),
+            .unwrap(),
         }
     }
 }
@@ -478,8 +474,7 @@ struct FixedSignatureSchemeServerCertResolver {
 impl server::ResolvesServerCert for FixedSignatureSchemeServerCertResolver {
     fn resolve(&self, client_hello: ClientHello) -> Option<Arc<sign::CertifiedKey>> {
         let mut certkey = self.resolver.resolve(client_hello)?;
-        // XXX TODO ADD IMPORT FOR MACRO BELOW:
-        Arc::make_mut(&mut certkey).key = cfg_arc_from!(FixedSignatureSchemeSigningKey {
+        Arc::make_mut(&mut certkey).key = Arc::new(FixedSignatureSchemeSigningKey {
             key: certkey.key.clone(),
             scheme: self.scheme,
         });
@@ -505,7 +500,7 @@ impl client::ResolvesClientCert for FixedSignatureSchemeClientCertResolver {
         let mut certkey = self
             .resolver
             .resolve(root_hint_subjects, sigschemes)?;
-        Arc::make_mut(&mut certkey).key = cfg_arc_from!(FixedSignatureSchemeSigningKey {
+        Arc::make_mut(&mut certkey).key = Arc::new(FixedSignatureSchemeSigningKey {
             key: certkey.key.clone(),
             scheme: self.scheme,
         });
@@ -548,7 +543,7 @@ impl ServerCacheWithResumptionDelay {
     fn new(delay: u32) -> Arc<Self> {
         Arc::new(Self {
             delay,
-            storage: from_cfg_arc!(server::ServerSessionMemoryCache::new(32)),
+            storage: server::ServerSessionMemoryCache::new(32),
         })
     }
 }
@@ -598,10 +593,9 @@ impl server::StoresServerSessions for ServerCacheWithResumptionDelay {
 }
 
 fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
-    // XXX TBD ARC TYPE XXX - ??? ??? ???
-    let client_auth: Arc<dyn ClientCertVerifier> =
+    let client_auth =
         if opts.verify_peer || opts.offer_no_client_cas || opts.require_any_client_cert {
-            cfg_arc_from!(DummyClientAuth::new(
+            Arc::new(DummyClientAuth::new(
                 &opts.trusted_cert_file,
                 opts.require_any_client_cert,
                 opts.root_hint_subjects.clone(),
@@ -631,7 +625,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
         .with_single_cert_with_ocsp(cert.clone(), key, opts.server_ocsp_response.clone())
         .unwrap();
 
-    cfg.session_storage = from_cfg_arc!(ServerCacheWithResumptionDelay::new(opts.resumption_delay));
+    cfg.session_storage = ServerCacheWithResumptionDelay::new(opts.resumption_delay);
     cfg.max_fragment_size = opts.max_fragment;
     cfg.send_tls13_tickets = 1;
     cfg.require_ems = opts.require_ems;
@@ -639,7 +633,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
 
     if opts.use_signing_scheme > 0 {
         let scheme = lookup_scheme(opts.use_signing_scheme);
-        cfg.cert_resolver = cfg_arc_from!(FixedSignatureSchemeServerCertResolver {
+        cfg.cert_resolver = Arc::new(FixedSignatureSchemeServerCertResolver {
             resolver: cfg.cert_resolver.clone(),
             scheme,
         });
@@ -648,7 +642,7 @@ fn make_server_cfg(opts: &Options) -> Arc<ServerConfig> {
     if opts.tickets {
         cfg.ticketer = opts.selected_provider.ticketer();
     } else if opts.resumes == 0 {
-        cfg.session_storage = cfg_arc_from!(server::NoServerSessionStorage {});
+        cfg.session_storage = Arc::new(server::NoServerSessionStorage {});
     }
 
     if !opts.protocols.is_empty() {
@@ -794,9 +788,7 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
 
     let cfg = cfg
         .dangerous()
-        .with_custom_certificate_verifier(cfg_arc_from!(DummyServerAuth::new(
-            &opts.trusted_cert_file
-        )));
+        .with_custom_certificate_verifier(Arc::new(DummyServerAuth::new(&opts.trusted_cert_file)));
 
     let mut cfg = if !opts.cert_file.is_empty() && !opts.key_file.is_empty() {
         let cert = CertificateDer::pem_file_iter(&opts.cert_file)
@@ -812,16 +804,13 @@ fn make_client_cfg(opts: &Options) -> Arc<ClientConfig> {
 
     if !opts.cert_file.is_empty() && opts.use_signing_scheme > 0 {
         let scheme = lookup_scheme(opts.use_signing_scheme);
-        cfg.client_auth_cert_resolver = cfg_arc_from!(FixedSignatureSchemeClientCertResolver {
+        cfg.client_auth_cert_resolver = Arc::new(FixedSignatureSchemeClientCertResolver {
             resolver: cfg.client_auth_cert_resolver.clone(),
             scheme,
         });
     }
 
-    // XXX TBD RECONSIDER FORMATTING HERE ???
-    cfg.resumption = Resumption::store(from_cfg_arc!(ClientCacheWithoutKxHints::new(
-        opts.resumption_delay
-    )));
+    cfg.resumption = Resumption::store(ClientCacheWithoutKxHints::new(opts.resumption_delay));
     cfg.enable_sni = opts.use_sni;
     cfg.max_fragment_size = opts.max_fragment;
     cfg.require_ems = opts.require_ems;
