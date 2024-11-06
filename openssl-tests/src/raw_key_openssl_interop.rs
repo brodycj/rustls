@@ -7,8 +7,8 @@
 mod client {
     use std::io::{self, Read, Write};
     use std::net::TcpStream;
+    use std::sync::Arc;
 
-    use rustls::cfg_arc_from;
     use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
     use rustls::client::AlwaysResolvesClientRawPublicKeys;
     use rustls::crypto::{
@@ -27,7 +27,7 @@ mod client {
 
     /// Build a `ClientConfig` with the given client private key and a server public key to trust.
     pub(super) fn make_config(client_private_key: &str, server_pub_key: &str) -> ClientConfig {
-        let client_private_key = cfg_arc_from!(provider::default_provider())
+        let client_private_key = Arc::new(provider::default_provider())
             .key_provider
             .load_private_key(
                 PrivateKeyDer::from_pem_file(client_private_key)
@@ -43,17 +43,17 @@ mod client {
         let server_raw_key = SubjectPublicKeyInfoDer::from_pem_file(server_pub_key)
             .expect("cannot open pub key file");
 
-        let certified_key = cfg_arc_from!(CertifiedKey::new(
+        let certified_key = Arc::new(CertifiedKey::new(
             vec![client_public_key_as_cert],
             client_private_key,
         ));
 
         ClientConfig::builder_with_protocol_versions(&[&TLS13])
             .dangerous()
-            .with_custom_certificate_verifier(cfg_arc_from!(SimpleRpkServerCertVerifier::new(
-                vec![server_raw_key,]
-            )))
-            .with_client_cert_resolver(cfg_arc_from!(AlwaysResolvesClientRawPublicKeys::new(
+            .with_custom_certificate_verifier(Arc::new(SimpleRpkServerCertVerifier::new(vec![
+                server_raw_key,
+            ])))
+            .with_client_cert_resolver(Arc::new(AlwaysResolvesClientRawPublicKeys::new(
                 certified_key,
             )))
     }
@@ -63,7 +63,7 @@ mod client {
     /// This client reads a message and then writes 'Hello from the client' to the server.
     pub(super) fn run_client(config: ClientConfig, port: u16) -> Result<String, io::Error> {
         let server_name = "0.0.0.0".try_into().unwrap();
-        let mut conn = ClientConnection::new(cfg_arc_from!(config), server_name).unwrap();
+        let mut conn = ClientConnection::new(Arc::new(config), server_name).unwrap();
         let mut sock = TcpStream::connect(format!("[::]:{}", port)).unwrap();
         let mut tls = Stream::new(&mut conn, &mut sock);
 
@@ -92,7 +92,7 @@ mod client {
         fn new(trusted_spki: Vec<SubjectPublicKeyInfoDer<'static>>) -> Self {
             SimpleRpkServerCertVerifier {
                 trusted_spki,
-                supported_algs: cfg_arc_from!(provider::default_provider())
+                supported_algs: Arc::new(provider::default_provider())
                     .clone()
                     .signature_verification_algorithms,
             }
@@ -157,16 +157,12 @@ mod client {
 
 mod server {
     use std::io::{self, ErrorKind, Read, Write};
-    use std::net::TcpListener;
-
-    // XXX TBD KEEP THIS SEPARATED - ???
-    use rustls::from_cfg_arc;
+    use std::{net::TcpListener, sync::Arc};
 
     use rustls::client::danger::HandshakeSignatureValid;
     use rustls::crypto::aws_lc_rs as provider;
     use rustls::crypto::verify_tls13_signature_with_raw_key;
     use rustls::crypto::WebPkiSupportedAlgorithms;
-    use rustls::internal::alias::Arc;
     use rustls::server::danger::{ClientCertVerified, ClientCertVerifier};
     use rustls::server::AlwaysResolvesServerRawPublicKeys;
     use rustls::sign::CertifiedKey;
@@ -208,8 +204,8 @@ mod server {
         let server_cert_resolver = Arc::new(AlwaysResolvesServerRawPublicKeys::new(certified_key));
 
         ServerConfig::builder_with_protocol_versions(&[&TLS13])
-            .with_client_cert_verifier(from_cfg_arc!(client_cert_verifier))
-            .with_cert_resolver(from_cfg_arc!(server_cert_resolver))
+            .with_client_cert_verifier(client_cert_verifier)
+            .with_cert_resolver(server_cert_resolver)
     }
 
     /// Run the server at the specified port and accept a connection from the client.
