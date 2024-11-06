@@ -46,7 +46,7 @@ portable-atomic-util = { default-features = false, features = ["alloc"], optiona
 # XXX TBD XXX features XXX XXX - XXX XXX XXX
 # portable-atomic = { version = "1.9.0", default-features = false, features = ["critical-section"], optional = true }
 # portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true }
-# XXX XXX EXPLICIT `critical-section` XXX - XXX CAN BE USED TO UPDATE `critical-section` in Cargo.lock
+# XXX TBD ???: EXPLICIT `critical-section` XXX - XXX CAN BE USED TO UPDATE `critical-section` in Cargo.lock
 # critical-section = "1.2.0"
 
 [features]
