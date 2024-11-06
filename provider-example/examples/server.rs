@@ -1,9 +1,5 @@
 use std::io::Write;
-
-// XXX TBD XXX XXX XXX
-use rustls::internal::alias::Arc;
-
-use rustls::cfg_arc_from;
+use std::sync::Arc;
 
 use rustls::pki_types::{CertificateDer, PrivateKeyDer, PrivatePkcs8KeyDer};
 use rustls::server::Acceptor;
@@ -102,8 +98,8 @@ impl TestPki {
                 .with_single_cert(vec![self.server_cert_der], self.server_key_der)
                 .unwrap();
 
-        server_config.key_log = cfg_arc_from!(rustls::KeyLogFile::new());
+        server_config.key_log = Arc::new(rustls::KeyLogFile::new());
 
-        cfg_arc_from!(server_config)
+        Arc::new(server_config)
     }
 }

@@ -4,10 +4,7 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
-// XXX TBD XXX XXX
-// use alloc::sync::Arc;
-use rustls::cfg_arc_from;
-use rustls::internal::alias::Arc;
+use alloc::sync::Arc;
 
 use rustls::crypto::CryptoProvider;
 use rustls::pki_types::PrivateKeyDer;
@@ -48,17 +45,14 @@ impl rustls::crypto::KeyProvider for Provider {
         &self,
         key_der: PrivateKeyDer<'static>,
     ) -> Result<Arc<dyn rustls::sign::SigningKey>, rustls::Error> {
-        // XXX TBD Arc::new vs cfg_arc_from! with added parens - ??? ??? ???
-        #[allow(unused_parens)]
-        Ok(cfg_arc_from!(
-            (sign::EcdsaSigningKeyP256::try_from(key_der).map_err(|err| {
-                // XXX TBD cfg_arc_from! vs Arc::new - ??? ??? ???
+        Ok(Arc::new(
+            sign::EcdsaSigningKeyP256::try_from(key_der).map_err(|err| {
                 #[cfg(feature = "std")]
-                let err = rustls::OtherError(cfg_arc_from!(err));
+                let err = rustls::OtherError(Arc::new(err));
                 #[cfg(not(feature = "std"))]
                 let err = rustls::Error::General(alloc::format!("{}", err));
                 err
-            })?)
+            })?,
         ))
     }
 }

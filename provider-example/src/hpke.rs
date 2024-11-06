@@ -1,4 +1,5 @@
 use alloc::boxed::Box;
+use alloc::sync::Arc;
 use alloc::vec::Vec;
 use core::fmt::Debug;
 use std::error::Error as StdError;
@@ -6,9 +7,6 @@ use std::error::Error as StdError;
 use hpke_rs_crypto::types::{AeadAlgorithm, KdfAlgorithm, KemAlgorithm};
 use hpke_rs_crypto::HpkeCrypto;
 use hpke_rs_rust_crypto::HpkeRustCrypto;
-
-use rustls::cfg_arc_from;
-
 use rustls::crypto::hpke::{
     EncapsulatedSecret, Hpke, HpkeOpener, HpkePrivateKey, HpkePublicKey, HpkeSealer, HpkeSuite,
 };
@@ -217,7 +215,7 @@ impl HpkeOpener for HpkeRsReceiver {
 
 #[cfg(feature = "std")]
 fn other_err(err: impl StdError + Send + Sync + 'static) -> Error {
-    Error::Other(OtherError(cfg_arc_from!(err)))
+    Error::Other(OtherError(Arc::new(err)))
 }
 
 #[cfg(not(feature = "std"))]
