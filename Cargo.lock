@@ -1855,7 +1855,7 @@ dependencies = [
 [[package]]
 name = "portable-atomic"
 version = "1.9.0"
-source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001#e66f4efc276abb72d9f0d1ee6f5bf81e22aa451c"
+source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#cfce1afe1ea4720fea82453ab03457f6fbd4677b"
 dependencies = [
  "critical-section",
 ]
@@ -1863,9 +1863,9 @@ dependencies = [
 [[package]]
 name = "portable-atomic-util"
 version = "0.2.3"
-source = "git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001#e66f4efc276abb72d9f0d1ee6f5bf81e22aa451c"
+source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#cfce1afe1ea4720fea82453ab03457f6fbd4677b"
 dependencies = [
- "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001)",
+ "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions)",
 ]
 
 [[package]]
@@ -2149,7 +2149,7 @@ dependencies = [
  "log",
  "num-bigint",
  "once_cell 1.20.0",
- "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=coerce-unsized-wip-2024-11-001)",
+ "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions)",
  "portable-atomic-util",
  "rcgen",
  "ring",

@@ -39,9 +39,9 @@ zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
 # XXX TBD MOVE THESE [??? ???]
 # XXX TBD XXX features XXX XXX - XXX XXX XXX
-# XXX TBD USE XXX XXX XXX FROM GITHUB WITH @brodycj XXX PROPOSAL FOR NOW:
-portable-atomic = { default-features = false, features = ["critical-section"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "coerce-unsized-wip-2024-11-001" }
-portable-atomic-util = { default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "coerce-unsized-wip-2024-11-001" }
+# XXX TBD USE XXX XXX XXX FROM GITHUB WITH @brodycj XXX PROPOSAL FOR NOW - `portable-atomic` PR REF: https://github.com/taiki-e/portable-atomic/pull/195
+portable-atomic = { default-features = false, features = ["critical-section"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "custom-unsized-coercions" }
+portable-atomic-util = { default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "custom-unsized-coercions" }
 # XXX TODO USE PUBLISHED XXX CRATES ONCE @brodycj XXX PROPOSAL IS ACCEPTED
 # XXX TBD XXX features XXX XXX - XXX XXX XXX
 # portable-atomic = { version = "1.9.0", default-features = false, features = ["critical-section"], optional = true }

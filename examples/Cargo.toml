@@ -15,8 +15,8 @@ log = { version = "0.4.4" }
 mio = { version = "0.8", features = ["net", "os-poll"] }
 # XXX TODO USE PUBLISHED CRATE ONCE @brodycj XXX PROPOSAL IS ACCEPTED:
 # portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true }
-# XXX TBD USE XXX XXX XXX FROM GITHUB WITH @brodycj XXX PROPOSAL FOR NOW:
-portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "coerce-unsized-wip-2024-11-001" }
+# XXX TBD USE XXX XXX XXX FROM GITHUB WITH @brodycj XXX PROPOSAL FOR NOW - `portable-atomic` PR REF: https://github.com/taiki-e/portable-atomic/pull/195
+portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "custom-unsized-coercions" }
 rcgen = { version = "0.13", features = ["pem", "aws_lc_rs"], default-features = false }
 rustls = { path = "../rustls", features = [ "logging" ]}
 serde = "1.0"
