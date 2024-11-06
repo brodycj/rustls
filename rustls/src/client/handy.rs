@@ -1,7 +1,6 @@
 use pki_types::ServerName;
 
 use crate::alias::Arc;
-
 use crate::enums::SignatureScheme;
 use crate::error::Error;
 use crate::msgs::handshake::CertificateChain;
@@ -284,8 +283,7 @@ test_for_each_provider! {
 
     use super::NoClientSessionStorage;
 
-    use crate::internal::alias::Arc;
-
+    use crate::alias::Arc;
     use crate::client::ClientSessionStore;
     use crate::msgs::base::PayloadU16;
     use crate::msgs::enums::NamedGroup;
