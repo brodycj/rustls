@@ -13,7 +13,6 @@ use common::{
 };
 
 use rustls::internal::alias::Arc;
-
 use rustls::{AlertDescription, Error, InvalidMessage};
 
 #[test]

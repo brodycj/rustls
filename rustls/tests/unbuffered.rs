@@ -2,9 +2,8 @@
 
 use std::num::NonZeroUsize;
 
-use rustls::internal::alias::Arc;
-
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
+use rustls::internal::alias::Arc;
 use rustls::server::{ServerConnectionData, UnbufferedServerConnection};
 use rustls::unbuffered::{
     ConnectionState, EncodeError, EncryptError, InsufficientSizeError, UnbufferedConnectionCommon,

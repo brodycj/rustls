@@ -11,10 +11,9 @@ use std::{fmt, mem};
 
 use pki_types::{CertificateDer, IpAddr, ServerName, UnixTime};
 
-use rustls::internal::alias::Arc;
-
 use rustls::client::{verify_server_cert_signed_by_trust_anchor, ResolvesClientCert, Resumption};
 use rustls::crypto::CryptoProvider;
+use rustls::internal::alias::Arc;
 use rustls::internal::msgs::base::Payload;
 use rustls::internal::msgs::codec::Codec;
 use rustls::internal::msgs::enums::{AlertLevel, CertificateType, Compression};
