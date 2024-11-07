@@ -615,7 +615,6 @@ mod static_default {
     use once_cell::sync::OnceCell;
 
     use super::CryptoProvider;
-
     use crate::alias::Arc;
 
     #[cfg(any(feature = "critical-section", feature = "std"))]
