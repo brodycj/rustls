@@ -23,14 +23,23 @@ brotli = { version = "7", optional = true, default-features = false, features = 
 brotli-decompressor = { version = "4.0.1", optional = true } # 4.0.1 required for panic fix
 hashbrown = { version = "0.15", optional = true, default-features = false, features = ["default-hasher", "inline-more"] }
 log = { version = "0.4.8", optional = true }
+# XXX TODO REPLACE THIS COMMENT WITH UPDATED RATIONALE for using external `once_cell` crate
 # remove once our MSRV is >= 1.70
-once_cell = { version = "1.16", default-features = false, features = ["alloc", "race"] }
+# XXX TODO EXPLICIT SPECIFICATION OF `race` FEATURE POSSIBLY REDUNDANT DUE TO XXX XXX XXX
+# XXX XXX USE YANKED VERSION FROM GITHUB - WITH `critical-section` FEATURE WORKING WITH XXX XXX AS WORKAROUND FOR XXX XXX XXX
+# XXX TODO USE PUBLISHED CRATE WITH MOST RECENT VERSION NUMBER ONCE THE ABOVE WORKAROUND IS NO LONGER NEEDED
+once_cell = { version = "1.20.0", default-features = false, features = ["alloc", "race"], git = "https://github.com/matklad/once_cell", tag = "v1.20.0"}
 ring = { version = "0.17", optional = true }
 subtle = { version = "2.5.0", default-features = false }
 webpki = { package = "rustls-webpki", version = "0.102.8", features = ["alloc"], default-features = false }
 pki-types = { package = "rustls-pki-types", version = "1.10", features = ["alloc"] }
 zeroize = "1.7"
 zlib-rs = { version = "0.3", optional = true }
+# XXX TBD MOVE THESE ADDED ITEM(S) - ???
+# XXX TBD USE XXX XXX XXX FROM GITHUB WITH @brodycj XXX PROPOSAL FOR NOW - `portable-atomic` PR REF: https://github.com/taiki-e/portable-atomic/pull/195
+# XXX TODO USE PUBLISHED XXX CRATES ONCE @brodycj XXX PROPOSAL IS ACCEPTED
+portable-atomic = { version = "1.9.0", default-features = false, optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "custom-unsized-coercions" }
+portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "custom-unsized-coercions" }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]
@@ -45,6 +54,12 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
+# XXX TODO NEED TO DOCUMENT THESE NEW OPTIONS
+# XXX TBD MOVE THESE ADDED ITEM(S) - ???
+# XXX TBD XXX XXX - XXX TBD EXPLAIN XXX XXX XXX
+portable-atomic-arc = ["portable-atomic", "portable-atomic-util"]
+# XXX TBD XXX XXX - XXX TODO EXPLAIN XXX XXX XXX
+critical-section = ["portable-atomic-arc", "once_cell/critical-section", "portable-atomic/critical-section"]
 
 [dev-dependencies]
 base64 = "0.22"

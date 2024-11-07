@@ -6,7 +6,9 @@
 use std::io::{self, Read, Write};
 use std::mem;
 use std::ops::{Deref, DerefMut};
-use std::sync::Arc;
+
+use rustls::internal::alias::Arc;
+
 use std::time::{Duration, Instant};
 
 use clap::{Parser, ValueEnum};

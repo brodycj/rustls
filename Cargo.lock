@@ -209,7 +209,7 @@ dependencies = [
  "async-lock",
  "blocking",
  "futures-lite",
- "once_cell",
+ "once_cell 1.20.2",
 ]
 
 [[package]]
@@ -273,7 +273,7 @@ dependencies = [
  "kv-log-macro",
  "log",
  "memchr",
- "once_cell",
+ "once_cell 1.20.2",
  "pin-project-lite",
  "pin-utils",
  "slab",
@@ -651,6 +651,12 @@ checksum = "bdbd43e4f32a9681a504577db2d4ea7d3f7b1bf2e97955561af98501ab600508"
 dependencies = [
  "cc",
 ]
+
+[[package]]
+name = "critical-section"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b"
 
 [[package]]
 name = "crossbeam-deque"
@@ -1155,7 +1161,7 @@ dependencies = [
  "http",
  "idna",
  "ipnet",
- "once_cell",
+ "once_cell 1.20.2",
  "rand",
  "rustls 0.23.14",
  "rustls-pemfile",
@@ -1180,7 +1186,7 @@ dependencies = [
  "hickory-proto",
  "ipconfig",
  "lru-cache",
- "once_cell",
+ "once_cell 1.20.2",
  "parking_lot",
  "rand",
  "resolv-conf",
@@ -1619,6 +1625,15 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
+version = "1.20.0"
+source = "git+https://github.com/matklad/once_cell?tag=v1.20.0#72f7c2e5faed09e84aa1ffe26c25092c87954b98"
+dependencies = [
+ "critical-section",
+ "portable-atomic 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "once_cell"
 version = "1.20.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
@@ -1639,7 +1654,7 @@ dependencies = [
  "cfg-if",
  "foreign-types",
  "libc",
- "once_cell",
+ "once_cell 1.20.2",
  "openssl-macros",
  "openssl-sys",
 ]
@@ -1826,6 +1841,31 @@ dependencies = [
  "cpufeatures",
  "opaque-debug",
  "universal-hash",
+]
+
+[[package]]
+name = "portable-atomic"
+version = "1.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cc9c68a3f6da06753e9335d63e27f6b9754dd1920d941135b7ea8224f141adb2"
+dependencies = [
+ "critical-section",
+]
+
+[[package]]
+name = "portable-atomic"
+version = "1.9.0"
+source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#cfce1afe1ea4720fea82453ab03457f6fbd4677b"
+dependencies = [
+ "critical-section",
+]
+
+[[package]]
+name = "portable-atomic-util"
+version = "0.2.3"
+source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#cfce1afe1ea4720fea82453ab03457f6fbd4677b"
+dependencies = [
+ "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions)",
 ]
 
 [[package]]
@@ -2085,7 +2125,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "415d9944693cb90382053259f89fbb077ea730ad7273047ec63b19bc9b160ba8"
 dependencies = [
  "log",
- "once_cell",
+ "once_cell 1.20.2",
  "ring",
  "rustls-pki-types",
  "rustls-webpki",
@@ -2108,7 +2148,9 @@ dependencies = [
  "hex",
  "log",
  "num-bigint",
- "once_cell",
+ "once_cell 1.20.0",
+ "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions)",
+ "portable-atomic-util",
  "rcgen",
  "ring",
  "rustls-pki-types",
@@ -2160,6 +2202,7 @@ dependencies = [
  "hickory-resolver",
  "log",
  "mio 0.8.11",
+ "portable-atomic-util",
  "rcgen",
  "rustls 0.23.16",
  "serde",
@@ -2175,7 +2218,7 @@ dependencies = [
  "asn1",
  "base64",
  "num-bigint",
- "once_cell",
+ "once_cell 1.20.2",
  "openssl",
  "rustls 0.23.16",
  "rustls-pki-types",
@@ -2586,7 +2629,7 @@ version = "0.1.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c06d3da6113f116aaee68e4d601191614c9053067f9ab7f6edbcb161237daa54"
 dependencies = [
- "once_cell",
+ "once_cell 1.20.2",
 ]
 
 [[package]]
@@ -2686,7 +2729,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "128d1e363af62632b8eb57219c8fd7877144af57558fb2ef0368d0087bddeb2e"
 dependencies = [
  "cfg-if",
- "once_cell",
+ "once_cell 1.20.2",
  "wasm-bindgen-macro",
 ]
 
@@ -2698,7 +2741,7 @@ checksum = "cb6dd4d3ca0ddffd1dd1c9c04f94b868c37ff5fac97c30b97cff2d74fce3a358"
 dependencies = [
  "bumpalo",
  "log",
- "once_cell",
+ "once_cell 1.20.2",
  "proc-macro2",
  "quote",
  "syn 2.0.79",
@@ -2773,7 +2816,7 @@ checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
 dependencies = [
  "either",
  "home",
- "once_cell",
+ "once_cell 1.20.2",
  "rustix",
 ]
 

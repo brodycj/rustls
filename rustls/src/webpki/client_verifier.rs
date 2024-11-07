@@ -1,10 +1,10 @@
-use alloc::sync::Arc;
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, UnixTime};
 use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, UnknownStatusPolicy};
 
 use super::{pki_error, VerifierBuilderError};
+use crate::alias::Arc;
 #[cfg(doc)]
 use crate::crypto;
 use crate::crypto::{CryptoProvider, WebPkiSupportedAlgorithms};
@@ -430,13 +430,13 @@ pub(crate) enum AnonymousClientPolicy {
 
 test_for_each_provider! {
     use std::prelude::v1::*;
-    use std::sync::Arc;
     use std::{format, println, vec};
 
     use pki_types::pem::PemObject;
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use super::WebPkiClientVerifier;
+    use crate::alias::Arc;
     use crate::server::VerifierBuilderError;
     use crate::RootCertStore;
 
