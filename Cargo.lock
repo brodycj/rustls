@@ -2143,7 +2143,6 @@ dependencies = [
  "brotli",
  "brotli-decompressor",
  "clap",
- "critical-section",
  "env_logger",
  "hashbrown",
  "hex",
