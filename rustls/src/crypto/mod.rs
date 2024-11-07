@@ -614,9 +614,9 @@ mod static_default {
     #[cfg(any(feature = "critical-section", feature = "std"))]
     use once_cell::sync::OnceCell;
 
-    use crate::alias::Arc;
-
     use super::CryptoProvider;
+
+    use crate::alias::Arc;
 
     #[cfg(any(feature = "critical-section", feature = "std"))]
     pub(crate) fn install_default(
