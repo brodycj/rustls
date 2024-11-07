@@ -308,7 +308,6 @@ test_for_each_provider! {
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use super::{VerifierBuilderError, WebPkiServerVerifier};
-
     use crate::alias::Arc;
     use crate::RootCertStore;
 

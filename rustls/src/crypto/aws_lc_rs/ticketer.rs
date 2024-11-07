@@ -12,7 +12,6 @@ use aws_lc_rs::{hmac, iv};
 
 use super::ring_like::rand::{SecureRandom, SystemRandom};
 use super::unspecified_err;
-
 use crate::alias::Arc;
 use crate::error::Error;
 #[cfg(debug_assertions)]

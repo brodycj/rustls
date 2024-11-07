@@ -282,7 +282,6 @@ test_for_each_provider! {
     use provider::cipher_suite;
 
     use super::NoClientSessionStorage;
-
     use crate::alias::Arc;
     use crate::client::ClientSessionStore;
     use crate::msgs::base::PayloadU16;

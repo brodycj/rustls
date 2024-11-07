@@ -8,7 +8,6 @@ use subtle::ConstantTimeEq;
 
 use super::hs::{self, HandshakeHashOrBuffer, ServerContext};
 use super::server_conn::ServerConnectionData;
-
 use crate::alias::Arc;
 use crate::check::{inappropriate_handshake_message, inappropriate_message};
 use crate::common_state::{

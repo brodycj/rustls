@@ -679,7 +679,6 @@ mod tests {
     use std::{println, vec};
 
     use super::{CertRevocationListError, Error, InconsistentKeys, InvalidMessage, OtherError};
-
     #[cfg(feature = "std")]
     use crate::alias::Arc;
 
