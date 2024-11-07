@@ -56,6 +56,7 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
+# XXX TODO NEED TO DOCUMENT THESE NEW OPTIONS
 # XXX TBD MOVE THESE ADDED ITEM(S) - ???
 # XXX TBD XXX XXX - XXX TBD EXPLAIN XXX XXX XXX
 portable-atomic-arc = ["portable-atomic", "portable-atomic-util"]
