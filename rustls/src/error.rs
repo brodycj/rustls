@@ -679,11 +679,11 @@ mod tests {
     use std::prelude::v1::*;
     use std::{println, vec};
 
-    // XXX MULTIPLE ERROR IMPORTS MOVED FROM HERE IN SEPARATE PR
+    // XXX TODO XXX XXX
     #[cfg(feature = "std")]
     use crate::alias::Arc;
 
-    // XXX UPDATE ALREADY PROPOSED IN SEPARATE PR
+    // XXX TBD XXX XXX
     use super::{CertRevocationListError, Error, InconsistentKeys, InvalidMessage, OtherError};
 
     #[test]
