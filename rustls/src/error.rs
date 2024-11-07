@@ -626,7 +626,6 @@ mod other_error {
     use std::error::Error as StdError;
 
     use super::Error;
-
     #[cfg(feature = "std")]
     use crate::alias::Arc;
 
