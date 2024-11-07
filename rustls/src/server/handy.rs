@@ -41,7 +41,6 @@ mod cache {
     }
 
     impl ServerSessionMemoryCache {
-        /////// XXX TBD APC API ??? ???
         /// Make a new ServerSessionMemoryCache.  `size` is the maximum
         /// number of stored sessions, and may be rounded-up for
         /// efficiency.
@@ -52,7 +51,6 @@ mod cache {
             })
         }
 
-        ///// XXX TODO XXX XXX
         /// Make a new ServerSessionMemoryCache.  `size` is the maximum
         /// number of stored sessions, and may be rounded-up for
         /// efficiency.

@@ -679,10 +679,11 @@ mod tests {
     use std::prelude::v1::*;
     use std::{println, vec};
 
+    // XXX MULTIPLE ERROR IMPORTS MOVED FROM HERE IN SEPARATE PR
     #[cfg(feature = "std")]
-    use crate::internal::alias::Arc;
+    use crate::alias::Arc;
 
-    // XXX TBD @brodycj RAISE SEPARATE PR TO PROPOSE THIS `use super` UPDATE ???
+    // XXX UPDATE ALREADY PROPOSED IN SEPARATE PR
     use super::{CertRevocationListError, Error, InconsistentKeys, InvalidMessage, OtherError};
 
     #[test]

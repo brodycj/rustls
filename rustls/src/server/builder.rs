@@ -4,7 +4,6 @@ use core::marker::PhantomData;
 use pki_types::{CertificateDer, PrivateKeyDer};
 
 use crate::alias::Arc;
-
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::error::Error;
 use crate::server::{handy, ResolvesServerCert, ServerConfig};

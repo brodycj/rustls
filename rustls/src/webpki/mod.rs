@@ -6,7 +6,6 @@ use webpki::{CertRevocationList, OwnedCertRevocationList};
 
 #[cfg(feature = "std")]
 use crate::alias::Arc;
-
 use crate::error::{CertRevocationListError, CertificateError, Error, OtherError};
 
 mod anchors;

@@ -9,7 +9,6 @@ use core::{fmt, iter};
 use pki_types::{CertificateDer, DnsName};
 
 use crate::alias::Arc;
-
 #[cfg(feature = "tls12")]
 use crate::crypto::ActiveKeyExchange;
 use crate::crypto::SecureRandom;

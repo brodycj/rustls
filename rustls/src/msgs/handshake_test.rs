@@ -3,12 +3,12 @@ use std::{format, println, vec};
 
 use pki_types::{CertificateDer, DnsName};
 
+// IMPORTS MOVED FROM HERE IN SEPARATE PR
 use super::enums::CertificateType;
 use super::handshake::{ServerDhParams, ServerKeyExchange, ServerKeyExchangeParams};
 
-// XXX TBD XXX ??? ???:
-use crate::internal::alias::Arc;
-
+use crate::alias::Arc;
+// XXX MULTIPLE IMPORTS UPDATED BELOW IN SEPARATE PR
 use crate::enums::{
     CertificateCompressionAlgorithm, CipherSuite, HandshakeType, ProtocolVersion, SignatureScheme,
 };

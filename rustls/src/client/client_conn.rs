@@ -8,9 +8,7 @@ use pki_types::{ServerName, UnixTime};
 use super::handy::NoClientSessionStorage;
 use super::hs;
 
-// XXX TODO REMOVE BLANK LINE FROM BELOW THIS IMPORT HERE & IN OTHER SOURCES
 use crate::alias::Arc;
-
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
 use crate::common_state::{CommonState, Protocol, Side};

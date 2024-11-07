@@ -10,7 +10,6 @@ use super::ring_like::aead;
 use super::ring_like::rand::{SecureRandom, SystemRandom};
 
 use crate::alias::Arc;
-
 use crate::error::Error;
 #[cfg(debug_assertions)]
 use crate::log::debug;
@@ -42,7 +41,6 @@ impl Ticketer {
     pub fn new<M: crate::lock::MakeMutex>(
         time_provider: &'static dyn TimeProvider,
     ) -> Result<Arc<dyn ProducesTickets>, Error> {
-        // XXX TODO NEED WORKAROUND HERE - XXX TODO ENSURE THIS IS TESTED IN CI BUILD
         Ok(Arc::new(crate::ticketer::TicketSwitcher::new::<M>(
             6 * 60 * 60,
             make_ticket_generator,

@@ -6,7 +6,6 @@ use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, Unknown
 use super::{pki_error, VerifierBuilderError};
 
 use crate::alias::Arc;
-
 #[cfg(doc)]
 use crate::crypto;
 use crate::crypto::{CryptoProvider, WebPkiSupportedAlgorithms};
@@ -431,9 +430,6 @@ pub(crate) enum AnonymousClientPolicy {
 }
 
 test_for_each_provider! {
-    // XXX XXX TODO MOVE THIS:
-    use crate::internal::alias::Arc;
-
     use std::prelude::v1::*;
     use std::{format, println, vec};
 
@@ -441,6 +437,8 @@ test_for_each_provider! {
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use super::WebPkiClientVerifier;
+
+    use crate::alias::Arc;
     use crate::server::VerifierBuilderError;
     use crate::RootCertStore;
 
