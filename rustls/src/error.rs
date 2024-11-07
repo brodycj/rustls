@@ -679,12 +679,10 @@ mod tests {
     use std::prelude::v1::*;
     use std::{println, vec};
 
-    // XXX TODO XXX XXX
+    use super::{CertRevocationListError, Error, InconsistentKeys, InvalidMessage, OtherError};
+
     #[cfg(feature = "std")]
     use crate::alias::Arc;
-
-    // XXX TBD XXX XXX
-    use super::{CertRevocationListError, Error, InconsistentKeys, InvalidMessage, OtherError};
 
     #[test]
     fn certificate_error_equality() {

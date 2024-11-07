@@ -3,9 +3,6 @@ use std::{format, println, vec};
 
 use pki_types::{CertificateDer, DnsName};
 
-// XXX TODO XXX XXX
-use crate::alias::Arc;
-// XXX TBD XXX XXX
 use super::base::{Payload, PayloadU16, PayloadU24, PayloadU8};
 use super::codec::{put_u16, Codec, Reader};
 use super::enums::{
@@ -24,6 +21,7 @@ use super::handshake::{
     ServerDhParams, ServerEcdhParams, ServerExtension, ServerHelloPayload, ServerKeyExchange,
     ServerKeyExchangeParams, ServerKeyExchangePayload, SessionId, UnknownExtension,
 };
+use crate::alias::Arc;
 use crate::enums::{
     CertificateCompressionAlgorithm, CipherSuite, HandshakeType, ProtocolVersion, SignatureScheme,
 };
