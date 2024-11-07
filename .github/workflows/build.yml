@@ -19,6 +19,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # XXX TODO CONSIDER CI TESTING OF THE FOLLOWING WITH & WITHOUT `critical-section` & portable-atomic ARC:
+  # - bogo
+  # - ci-bench
+  # - fuzz
+  # - openssl-tests
+  # - provider-example
+  # - rustls-post-quantum
   build:
     name: Build+test
     runs-on: ${{ matrix.os }}
