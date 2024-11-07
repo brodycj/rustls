@@ -61,7 +61,6 @@ zlib = ["dep:zlib-rs"]
 # XXX TBD XXX XXX - XXX TBD EXPLAIN XXX XXX XXX
 portable-atomic-arc = ["portable-atomic", "portable-atomic-util"]
 # XXX TBD XXX XXX - XXX TODO EXPLAIN XXX XXX XXX
-# XXX TODO CHECK IF OTHER XXX XXX CRATES ARE TESTING WITH THIS OPTIONAL FEATURE
 critical-section = ["dep:critical-section", "portable-atomic-arc", "once_cell/critical-section", "portable-atomic/critical-section"]
 
 [dev-dependencies]
