@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # XXX TODO CONSIDER CI TESTING OF THE FOLLOWING WITH & WITHOUT `critical-section` & portable-atomic ARC:
+  # XXX TBD CONSIDER CI TESTING OF THE FOLLOWING WITH & WITHOUT `critical-section` & portable-atomic ARC:
   # - bogo
   # - ci-bench
   # - fuzz
@@ -116,6 +116,7 @@ jobs:
       - name: cargo build (debug; rustls-provider-test)
         run: cargo build --locked -p rustls-provider-test
 
+      # XXX TODO FIX & RE-ENABLE
       - name: cargo package --all-features -p rustls
         # XXX XXX SKIP THIS STEP FOR NOW - XXX TODO NEEDS INVESTIGATION
         if: ${{ false }}
