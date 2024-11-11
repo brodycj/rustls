@@ -93,7 +93,7 @@ jobs:
         run: cargo test --release --locked --all-features --all-targets
         env:
           RUST_BACKTRACE: 1
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       # XXX @brodycj TODO CARGO DOC TEST ISSUE SEEMS POSSIBLY RESOLVED - XXX TODO SEE IF THE OS CONDITION CAN BE REMOVED FROM HERE
       # nb. this is separate so it can be skipped on macOS & windows, where
@@ -108,7 +108,7 @@ jobs:
         run: cargo test --release --locked --all-features --doc
         env:
           RUST_BACKTRACE: 1
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       - name: cargo test (debug; aws-lc-rs)
         run: cargo test --no-default-features --features aws_lc_rs,tls12,read_buf,logging,std --all-targets
@@ -204,13 +204,13 @@ jobs:
         run: cargo test --locked --no-default-features --features critical-section,std
         working-directory: rustls
         env:
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       - name: cargo test (debug; no default features; portable-atomic-arc)
         run: cargo test --locked --no-default-features --features portable-atomic-arc,std
         working-directory: rustls
         env:
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       - name: cargo test (debug; no default features; tls12)
         run: cargo test --locked --no-default-features --features tls12,std
@@ -343,7 +343,7 @@ jobs:
         env:
           RUSTDOCFLAGS: -Dwarnings
           # XXX TBD ??? ??? ???
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       - name: Check README.md
         # XXX TBD FEATURES - ??? ??? ???
@@ -353,7 +353,7 @@ jobs:
           git diff --exit-code
         # XXX TBD ??? ??? ???
         env:
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   coverage:
     name: Measure coverage
@@ -379,7 +379,7 @@ jobs:
         run: ./admin/coverage --lcov --output-path final.info
         # XXX TBD ??? - FEATURES ??? ??? ???
         env:
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       - name: Report to codecov.io
         uses: codecov/codecov-action@v4
@@ -451,7 +451,7 @@ jobs:
       - run: cross test --package rustls --target ${{ matrix.target }}
       - run: cross test --features critical-section --package rustls --target ${{ matrix.target }}
         env:
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   cross-build-with-critical-section-feature:
     # XXX TODO EXPLAIN MOVTIVATION - THIS IS TO TEST SUPPORT FOR NO ATOMIC PTR TARGET
@@ -481,7 +481,7 @@ jobs:
       # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
       - run: cross build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
         env:
-          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   semver:
     name: Check semver compatibility
