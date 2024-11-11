@@ -32,9 +32,8 @@ jobs:
     strategy:
       matrix:
         rust:
-          # XXX TBD SKIP MULTIPLE RUST TOOLCHAINS FOR NOW:
-          # - stable
-          # - beta
+          - stable
+          - beta
           - nightly
         os:
           - ubuntu-latest
@@ -84,15 +83,30 @@ jobs:
       # nb. feature sets that include "fips" should be --release --
       # this is required for fips on windows.
       # nb. "--all-targets" does not include doctests
+      - name: cargo test (release; all features except portable-atomic-arc,critical-section)
+        if: ${{ !startsWith(matrix.rust, 'nightly') }}
+        run: cargo test --release --locked --lib $(admin/all-features-except portable-atomic-arc,critical-section rustls) --all-targets
+        env:
+          RUST_BACKTRACE: 1
       - name: cargo test (release; all features)
+        if: startsWith(matrix.rust, 'nightly')
         run: cargo test --release --locked --all-features --all-targets
         env:
           RUST_BACKTRACE: 1
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
+      # XXX @brodycj TODO `cargo test --doc` should likely be done in separate CI job to avoid messy conditions - XXX TODO RAISE SEPARATE PR TO PROPOSE THIS
+      # XXX TBD ALT SOLUTION: UPDATE WITH MORE POSITIVE CONDITION TO ONLY DO THIS DOC TEST ON UBUNTU
+      # XXX @brodycj TODO THIS ISSUE SEEMS POSSIBLY RESOLVED - XXX TODO SEE IF THIS RUNNER OS CONDITION CAN BE REMOVED FROM HERE
       # nb. this is separate so it can be skipped on macOS & windows, where
       # doctests don't work: https://github.com/rust-lang/cargo/issues/8531
+      - name: cargo test --doc (release; all features except portable-atomic-arc,critical-section)
+        if: ${{ !startsWith(matrix.rust, 'nightly') && runner.os != 'macOS' && runner.os != 'Windows' }}
+        run: cargo test --release --locked $(admin/all-features-except portable-atomic-arc,critical-section rustls) --doc
+        env:
+          RUST_BACKTRACE: 1
       - name: cargo test --doc (release; all-features)
-        if: ${{ runner.os != 'macOS' && runner.os != 'Windows' }}
+        if: ${{ startsWith(matrix.rust, 'nightly') && runner.os != 'macOS' && runner.os != 'Windows' }}
         run: cargo test --release --locked --all-features --doc
         env:
           RUST_BACKTRACE: 1
@@ -190,10 +204,14 @@ jobs:
       - name: cargo test (debug; no default features; critical-section)
         run: cargo test --locked --no-default-features --features critical-section,std
         working-directory: rustls
+        env:
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
       - name: cargo test (debug; no default features; portable-atomic-arc)
         run: cargo test --locked --no-default-features --features portable-atomic-arc,std
         working-directory: rustls
+        env:
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
       - name: cargo test (debug; no default features; tls12)
         run: cargo test --locked --no-default-features --features tls12,std
