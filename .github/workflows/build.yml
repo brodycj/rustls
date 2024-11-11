@@ -95,21 +95,20 @@ jobs:
           RUST_BACKTRACE: 1
           RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
-      # XXX @brodycj TODO `cargo test --doc` should likely be done in separate CI job to avoid messy conditions - XXX TODO RAISE SEPARATE PR TO PROPOSE THIS
-      # XXX TBD ALT SOLUTION: UPDATE WITH MORE POSITIVE CONDITION TO ONLY DO THIS DOC TEST ON UBUNTU
-      # XXX @brodycj TODO THIS ISSUE SEEMS POSSIBLY RESOLVED - XXX TODO SEE IF THIS RUNNER OS CONDITION CAN BE REMOVED FROM HERE
+      # XXX @brodycj TODO CARGO DOC TEST ISSUE SEEMS POSSIBLY RESOLVED - XXX TODO SEE IF THE OS CONDITION CAN BE REMOVED FROM HERE
       # nb. this is separate so it can be skipped on macOS & windows, where
       # doctests don't work: https://github.com/rust-lang/cargo/issues/8531
       - name: cargo test --doc (release; all features except portable-atomic-arc,critical-section)
-        if: ${{ !startsWith(matrix.rust, 'nightly') && runner.os != 'macOS' && runner.os != 'Windows' }}
+        if: ${{ !startsWith(matrix.rust, 'nightly') && startsWith(matrix.os, 'ubuntu') }}
         run: cargo test --release --locked $(admin/all-features-except portable-atomic-arc,critical-section rustls) --doc
         env:
           RUST_BACKTRACE: 1
       - name: cargo test --doc (release; all-features)
-        if: ${{ startsWith(matrix.rust, 'nightly') && runner.os != 'macOS' && runner.os != 'Windows' }}
+        if: startsWith(matrix.rust, 'nightly')
         run: cargo test --release --locked --all-features --doc
         env:
           RUST_BACKTRACE: 1
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
       - name: cargo test (debug; aws-lc-rs)
         run: cargo test --no-default-features --features aws_lc_rs,tls12,read_buf,logging,std --all-targets
@@ -306,17 +305,22 @@ jobs:
       - name: Install nightly toolchain
         uses: dtolnay/rust-toolchain@nightly
 
+      # XXX TBD FEATURES - ??? ??? ???
       - name: Smoke-test benchmark program (ring)
-        run: cargo run -p rustls --profile=bench --locked --example bench $(admin/all-features-except aws_lc_rs,aws-lc-rs,fips rustls) -- --multiplier 0.1
+        run: cargo run -p rustls --profile=bench --locked --example bench $(admin/all-features-except aws_lc_rs,aws-lc-rs,fips,portable-atomic-arc,critical-section rustls) -- --multiplier 0.1
 
+      # XXX TBD FEATURES - ??? ??? ???
       - name: Smoke-test benchmark program (aws-lc-rs)
-        run: cargo run -p rustls --profile=bench --locked --example bench $(admin/all-features-except ring,fips rustls) -- --multiplier 0.1
+        run: cargo run -p rustls --profile=bench --locked --example bench $(admin/all-features-except ring,fips,portable-atomic-arc,critical-section rustls) -- --multiplier 0.1
 
+      # XXX TBD FEATURES - ??? ??? ???
       - name: Smoke-test benchmark program (fips)
-        run: cargo run -p rustls --profile=bench --locked --example bench $(admin/all-features-except aws_lc_rs,aws-lc-rs,ring rustls) -- --multiplier 0.1
+        run: cargo run -p rustls --profile=bench --locked --example bench $(admin/all-features-except aws_lc_rs,aws-lc-rs,ring,portable-atomic-arc,critical-section rustls) -- --multiplier 0.1
 
-      - name: Run micro-benchmarks
-        run: cargo bench --locked --all-features
+      # XXX TBD FEATURES - ??? ??? ???
+      - name: Run micro-benchmarks - XXX TBD XXX XXX FEATURES
+        # run: cargo bench --locked --all-features
+        run: cargo bench --locked $(admin/all-features-except portable-atomic-arc,critical-section rustls)
         env:
           RUSTFLAGS: --cfg=bench
 
@@ -333,10 +337,13 @@ jobs:
       - name: Install rust toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
 
+      # XXX TBD FEATURES - ??? ??? ???
       - name: cargo doc (rustls; all features)
         run: cargo doc --locked --all-features --no-deps --document-private-items --package rustls
         env:
           RUSTDOCFLAGS: -Dwarnings
+          # XXX TBD ??? ??? ???
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
       - name: Check README.md
         run: |
@@ -436,6 +443,8 @@ jobs:
         run: cargo add --dev --features bindgen aws-lc-sys --package rustls --verbose && cargo install bindgen-cli --verbose
       - run: cross test --package rustls --target ${{ matrix.target }}
       - run: cross test --features critical-section --package rustls --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
   cross-build-with-critical-section-feature:
     # XXX TODO EXPLAIN MOVTIVATION - THIS IS TO TEST SUPPORT FOR NO ATOMIC PTR TARGET
