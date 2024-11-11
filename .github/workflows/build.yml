@@ -346,10 +346,14 @@ jobs:
           RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
       - name: Check README.md
+        # XXX TBD FEATURES - ??? ??? ???
         run: |
           cargo build --locked --all-features
           ./admin/pull-readme
           git diff --exit-code
+        # XXX TBD ??? ??? ???
+        env:
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
   coverage:
     name: Measure coverage
@@ -373,6 +377,9 @@ jobs:
 
       - name: Measure coverage
         run: ./admin/coverage --lcov --output-path final.info
+        # XXX TBD ??? - FEATURES ??? ??? ???
+        env:
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
       - name: Report to codecov.io
         uses: codecov/codecov-action@v4
@@ -473,6 +480,8 @@ jobs:
         run: cargo install cross --git https://github.com/cross-rs/cross
       # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
       - run: cross build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: --cfg portable_atomic_coerce_unsized
 
   semver:
     name: Check semver compatibility
