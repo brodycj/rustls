@@ -11,7 +11,7 @@ mod std_lock {
     /// A wrapper around [`std::sync::Mutex`].
     #[derive(Debug)]
     pub struct Mutex<T> {
-        inner: std::sync::Mutex<T>,
+        inner: StdMutex<T>,
     }
 
     impl<T> Mutex<T> {
@@ -40,8 +40,8 @@ mod no_std_lock {
 
     use crate::alias::Arc;
 
-    #[derive(Debug)]
     /// A no-std compatible wrapper around [`Lock`].
+    #[derive(Debug)]
     pub struct Mutex<T> {
         inner: Arc<dyn Lock<T>>,
     }

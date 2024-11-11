@@ -4,12 +4,13 @@
 // etc. because it's unstable at the time of writing.
 
 use std::io::{self, Read, Write};
-use std::mem;
+use std::num::NonZeroUsize;
 use std::ops::{Deref, DerefMut};
 
 use rustls::internal::alias::Arc;
 
 use std::time::{Duration, Instant};
+use std::{mem, thread};
 
 use clap::{Parser, ValueEnum};
 use pki_types::pem::PemObject;
@@ -40,6 +41,7 @@ pub fn main() {
     let options = Options {
         work_multiplier: args.multiplier,
         api: args.api,
+        threads: args.threads,
     };
 
     match args.command() {
@@ -94,6 +96,9 @@ struct Args {
         help = "Multiplies the length of every test by the given float value"
     )]
     multiplier: f64,
+
+    #[arg(long, default_value = "1", help = "Number of threads to use")]
+    threads: NonZeroUsize,
 
     #[arg(long, value_enum, default_value_t = Api::Both, help = "Choose buffered or unbuffered API")]
     api: Api,
@@ -222,30 +227,41 @@ fn bench_handshake(
     );
 
     if options.api.use_buffered() {
-        report_handshake_result(
-            "handshakes",
-            params,
-            clientauth,
-            resume,
-            rounds,
-            bench_handshake_buffered(rounds, resume, client_config.clone(), server_config.clone()),
+        let results = multithreaded(
+            options.threads,
+            &client_config,
+            &server_config,
+            move |client_config, server_config| {
+                bench_handshake_buffered(rounds, resume, client_config, server_config)
+            },
         );
+
+        report_handshake_result("handshakes", params, clientauth, resume, rounds, results);
     }
 
     if options.api.use_unbuffered() {
+        let results = multithreaded(
+            options.threads,
+            &client_config,
+            &server_config,
+            move |client_config, server_config| {
+                bench_handshake_unbuffered(rounds, resume, client_config, server_config)
+            },
+        );
+
         report_handshake_result(
             "handshakes-unbuffered",
             params,
             clientauth,
             resume,
             rounds,
-            bench_handshake_unbuffered(rounds, resume, client_config, server_config),
+            results,
         );
     }
 }
 
 fn bench_handshake_buffered(
-    rounds: u64,
+    mut rounds: u64,
     resume: ResumptionParam,
     client_config: Arc<ClientConfig>,
     server_config: Arc<ServerConfig>,
@@ -253,52 +269,70 @@ fn bench_handshake_buffered(
     let mut timings = Timings::default();
     let mut buffers = TempBuffers::new();
 
-    for _ in 0..rounds {
-        let mut client = time(&mut timings.client, || {
+    while rounds > 0 {
+        let mut client_time = 0f64;
+        let mut server_time = 0f64;
+
+        let mut client = time(&mut client_time, || {
             let server_name = "localhost".try_into().unwrap();
             ClientConnection::new(Arc::clone(&client_config), server_name).unwrap()
         });
-        let mut server = time(&mut timings.server, || {
+        let mut server = time(&mut server_time, || {
             ServerConnection::new(Arc::clone(&server_config)).unwrap()
         });
 
-        time(&mut timings.server, || {
+        time(&mut server_time, || {
             transfer(&mut buffers, &mut client, &mut server, None);
         });
-        time(&mut timings.client, || {
+        time(&mut client_time, || {
             transfer(&mut buffers, &mut server, &mut client, None);
         });
-        time(&mut timings.server, || {
+        time(&mut server_time, || {
             transfer(&mut buffers, &mut client, &mut server, None);
         });
-        time(&mut timings.client, || {
+        time(&mut client_time, || {
             transfer(&mut buffers, &mut server, &mut client, None);
         });
 
         // check we reached idle
         assert!(!client.is_handshaking());
         assert!(!server.is_handshaking());
-        assert_eq!(client.handshake_kind(), Some(resume.as_handshake_kind()));
-        assert_eq!(server.handshake_kind(), Some(resume.as_handshake_kind()));
+
+        // if we achieved the desired handshake shape, count this handshake.
+        if client.handshake_kind() == Some(resume.as_handshake_kind())
+            && server.handshake_kind() == Some(resume.as_handshake_kind())
+        {
+            timings.client += client_time;
+            timings.server += server_time;
+            rounds -= 1;
+        } else {
+            // otherwise, this handshake is ignored against the quota for this thread,
+            // and serves just to refresh the session cache.  that is mainly
+            // necessary for TLS1.3, where tickets are single-use and limited to
+            // 8 per server.
+        }
     }
 
     timings
 }
 
 fn bench_handshake_unbuffered(
-    rounds: u64,
+    mut rounds: u64,
     resume: ResumptionParam,
     client_config: Arc<ClientConfig>,
     server_config: Arc<ServerConfig>,
 ) -> Timings {
     let mut timings = Timings::default();
 
-    for _ in 0..rounds {
-        let client = time(&mut timings.client, || {
+    while rounds > 0 {
+        let mut client_time = 0f64;
+        let mut server_time = 0f64;
+
+        let client = time(&mut client_time, || {
             let server_name = "localhost".try_into().unwrap();
             UnbufferedClientConnection::new(Arc::clone(&client_config), server_name).unwrap()
         });
-        let server = time(&mut timings.server, || {
+        let server = time(&mut server_time, || {
             UnbufferedServerConnection::new(Arc::clone(&server_config)).unwrap()
         });
 
@@ -306,22 +340,22 @@ fn bench_handshake_unbuffered(
         let mut client = Unbuffered::new_client(client);
         let mut server = Unbuffered::new_server(server);
 
-        let client_wrote = time(&mut timings.client, || client.communicate());
+        let client_wrote = time(&mut client_time, || client.communicate());
         if client_wrote {
             client.swap_buffers(&mut server);
         }
 
-        let server_wrote = time(&mut timings.server, || server.communicate());
+        let server_wrote = time(&mut server_time, || server.communicate());
         if server_wrote {
             server.swap_buffers(&mut client);
         }
 
-        let client_wrote = time(&mut timings.client, || client.communicate());
+        let client_wrote = time(&mut client_time, || client.communicate());
         if client_wrote {
             client.swap_buffers(&mut server);
         }
 
-        let server_wrote = time(&mut timings.server, || server.communicate());
+        let server_wrote = time(&mut server_time, || server.communicate());
         if server_wrote {
             server.swap_buffers(&mut client);
         }
@@ -329,17 +363,49 @@ fn bench_handshake_unbuffered(
         // check we reached idle
         assert!(!server.communicate());
         assert!(!client.communicate());
-        assert_eq!(
-            client.conn.handshake_kind(),
-            Some(resume.as_handshake_kind())
-        );
-        assert_eq!(
-            server.conn.handshake_kind(),
-            Some(resume.as_handshake_kind())
-        );
+
+        // if we achieved the desired handshake shape, count this handshake.
+        if client.conn.handshake_kind() == Some(resume.as_handshake_kind())
+            && server.conn.handshake_kind() == Some(resume.as_handshake_kind())
+        {
+            timings.client += client_time;
+            timings.server += server_time;
+            rounds -= 1;
+        } else {
+            // otherwise, this handshake is ignored against the quota for this thread,
+            // and serves just to refresh the session cache.  that is mainly
+            // necessary for TLS1.3, where tickets are single-use and limited to
+            // 8 per server.
+        }
     }
 
     timings
+}
+
+/// Run `f` on `count` threads, and then return the timings produced
+/// by each thread.
+///
+/// `client_config` and `server_config` are cloned into each thread fn.
+fn multithreaded(
+    count: NonZeroUsize,
+    client_config: &Arc<ClientConfig>,
+    server_config: &Arc<ServerConfig>,
+    f: impl Fn(Arc<ClientConfig>, Arc<ServerConfig>) -> Timings + Send + Sync,
+) -> Vec<Timings> {
+    thread::scope(|s| {
+        let threads = (0..count.into())
+            .map(|_| {
+                let client_config = client_config.clone();
+                let server_config = server_config.clone();
+                s.spawn(|| f(client_config, server_config))
+            })
+            .collect::<Vec<_>>();
+
+        threads
+            .into_iter()
+            .map(|thr| thr.join().unwrap())
+            .collect::<Vec<Timings>>()
+    })
 }
 
 fn report_handshake_result(
@@ -348,10 +414,10 @@ fn report_handshake_result(
     clientauth: ClientAuth,
     resume: ResumptionParam,
     rounds: u64,
-    timings: Timings,
+    timings: Vec<Timings>,
 ) {
-    println!(
-        "{}\t{:?}\t{:?}\t{:?}\tclient\t{}\t{}\t{:.2}\thandshake/s",
+    print!(
+        "{}\t{:?}\t{:?}\t{:?}\tclient\t{}\t{}\t",
         variant,
         params.version,
         params.key_type,
@@ -362,10 +428,11 @@ fn report_handshake_result(
             "server-auth"
         },
         resume.label(),
-        (rounds as f64) / timings.client
     );
-    println!(
-        "{}\t{:?}\t{:?}\t{:?}\tserver\t{}\t{}\t{:.2}\thandshake/s",
+
+    report_timings("handshakes/s", &timings, rounds as f64, |t| t.client);
+    print!(
+        "{}\t{:?}\t{:?}\t{:?}\tserver\t{}\t{}\t",
         variant,
         params.version,
         params.key_type,
@@ -376,11 +443,41 @@ fn report_handshake_result(
             "server-auth"
         },
         resume.label(),
-        (rounds as f64) / timings.server
+    );
+
+    report_timings("handshakes/s", &timings, rounds as f64, |t| t.server);
+}
+
+fn report_timings(
+    units: &str,
+    thread_timings: &[Timings],
+    work_per_thread: f64,
+    which: impl Fn(&Timings) -> f64,
+) {
+    // maintain old output for --threads=1
+    if let &[timing] = thread_timings {
+        println!("{:.2}\t{}", work_per_thread / which(&timing), units);
+        return;
+    }
+
+    let mut total_rate = 0.;
+    print!("threads\t{}\t", thread_timings.len());
+
+    for t in thread_timings.iter() {
+        let rate = work_per_thread / which(t);
+        total_rate += rate;
+        print!("{:.2}\t", rate);
+    }
+
+    println!(
+        "total\t{:.2}\tper-thread\t{:.2}\t{}",
+        total_rate,
+        total_rate / (thread_timings.len() as f64),
+        units,
     );
 }
 
-#[derive(Debug, Default)]
+#[derive(Clone, Copy, Debug, Default)]
 struct Timings {
     client: f64,
     server: f64,
@@ -412,14 +509,18 @@ fn bench_bulk(
     let rounds = total_data / plaintext_size;
 
     if options.api.use_buffered() {
+        let results = multithreaded(
+            options.threads,
+            &client_config,
+            &server_config,
+            move |client_config, server_config| {
+                bench_bulk_buffered(client_config, server_config, plaintext_size, rounds)
+            },
+        );
+
         report_bulk_result(
             "bulk",
-            bench_bulk_buffered(
-                client_config.clone(),
-                server_config.clone(),
-                plaintext_size,
-                rounds,
-            ),
+            results,
             plaintext_size,
             rounds,
             max_fragment_size,
@@ -428,9 +529,18 @@ fn bench_bulk(
     }
 
     if options.api.use_unbuffered() {
+        let results = multithreaded(
+            options.threads,
+            &client_config,
+            &server_config,
+            move |client_config, server_config| {
+                bench_bulk_unbuffered(client_config, server_config, plaintext_size, rounds)
+            },
+        );
+
         report_bulk_result(
             "bulk-unbuffered",
-            bench_bulk_unbuffered(client_config, server_config, plaintext_size, rounds),
+            results,
             plaintext_size,
             rounds,
             max_fragment_size,
@@ -444,29 +554,27 @@ fn bench_bulk_buffered(
     server_config: Arc<ServerConfig>,
     plaintext_size: u64,
     rounds: u64,
-) -> (f64, f64) {
+) -> Timings {
     let server_name = "localhost".try_into().unwrap();
     let mut client = ClientConnection::new(client_config, server_name).unwrap();
     client.set_buffer_limit(None);
     let mut server = ServerConnection::new(server_config).unwrap();
     server.set_buffer_limit(None);
 
+    let mut timings = Timings::default();
     let mut buffers = TempBuffers::new();
     do_handshake(&mut buffers, &mut client, &mut server);
 
-    let mut time_send = 0f64;
-    let mut time_recv = 0f64;
-
     let buf = vec![0; plaintext_size as usize];
     for _ in 0..rounds {
-        time(&mut time_send, || {
+        time(&mut timings.server, || {
             server.writer().write_all(&buf).unwrap();
         });
 
-        time_recv += transfer(&mut buffers, &mut server, &mut client, Some(buf.len()));
+        timings.client += transfer(&mut buffers, &mut server, &mut client, Some(buf.len()));
     }
 
-    (time_send, time_recv)
+    timings
 }
 
 fn bench_bulk_unbuffered(
@@ -474,7 +582,7 @@ fn bench_bulk_unbuffered(
     server_config: Arc<ServerConfig>,
     plaintext_size: u64,
     rounds: u64,
-) -> (f64, f64) {
+) -> Timings {
     let server_name = "localhost".try_into().unwrap();
     let mut client = Unbuffered::new_client(
         UnbufferedClientConnection::new(client_config, server_name).unwrap(),
@@ -484,28 +592,27 @@ fn bench_bulk_unbuffered(
 
     client.handshake(&mut server);
 
-    let mut time_send = 0f64;
-    let mut time_recv = 0f64;
+    let mut timings = Timings::default();
 
     let buf = vec![0; plaintext_size as usize];
     for _ in 0..rounds {
-        time(&mut time_send, || {
+        time(&mut timings.server, || {
             server.write(&buf);
         });
 
         server.swap_buffers(&mut client);
 
-        time(&mut time_recv, || {
+        time(&mut timings.client, || {
             client.read_and_discard(buf.len());
         });
     }
 
-    (time_send, time_recv)
+    timings
 }
 
 fn report_bulk_result(
     variant: &str,
-    (time_send, time_recv): (f64, f64),
+    timings: Vec<Timings>,
     plaintext_size: u64,
     rounds: u64,
     max_fragment_size: Option<usize>,
@@ -518,22 +625,23 @@ fn report_bulk_result(
             .unwrap_or_else(|| "default".to_string())
     );
     let total_mbs = ((plaintext_size * rounds) as f64) / (1024. * 1024.);
-    println!(
-        "{}\t{:?}\t{:?}\t{}\tsend\t{:.2}\tMB/s",
+    print!(
+        "{}\t{:?}\t{:?}\t{}\tsend\t",
         variant,
         params.version,
         params.ciphersuite.suite(),
         mfs_str,
-        total_mbs / time_send
     );
-    println!(
-        "{}\t{:?}\t{:?}\t{}\trecv\t{:.2}\tMB/s",
+    report_timings("MB/s", &timings, total_mbs, |t| t.server);
+
+    print!(
+        "{}\t{:?}\t{:?}\t{}\trecv\t",
         variant,
         params.version,
         params.ciphersuite.suite(),
         mfs_str,
-        total_mbs / time_recv
     );
+    report_timings("MB/s", &timings, total_mbs, |t| t.client);
 }
 
 fn bench_memory(params: &BenchmarkParam, conn_count: u64) {
@@ -717,6 +825,7 @@ impl ResumptionParam {
 struct Options {
     work_multiplier: f64,
     api: Api,
+    threads: NonZeroUsize,
 }
 
 impl Options {
