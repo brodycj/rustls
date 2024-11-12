@@ -55,6 +55,7 @@ read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
 # XXX TODO NEED TO DOCUMENT THESE NEW OPTIONS
+# XXX TODO NEED TO INCLUDE DOCUMENTATION HOW TO GET BUILD WORKING WITH THESE NEW OPTIONS - NEED XXX BUILD FLAGS TOGETHER WITH RUST NIGHTLY FOR BUILD TO WORK WITH ANY OF THESE OPTIONS ENABLED
 # XXX TBD MOVE THESE ADDED ITEM(S) - ???
 # XXX TBD XXX XXX - XXX TBD EXPLAIN XXX XXX XXX
 portable-atomic-arc = ["portable-atomic", "portable-atomic-util"]
