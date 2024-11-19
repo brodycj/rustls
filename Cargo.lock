@@ -133,18 +133,19 @@ checksum = "86fdf8605db99b54d3cd748a44c6d04df638eb5dafb219b135d0149bd0db01f6"
 
 [[package]]
 name = "asn1"
-version = "0.18.0"
+version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3522623dbb7db59b34439c022ab0445a0257a62ad20d499da3a3507394708559"
+checksum = "18d97d0d2e60ad0595a73b82264dcd46c2f96769b0f555ae71c14122f0679f65"
 dependencies = [
  "asn1_derive",
+ "itoa",
 ]
 
 [[package]]
 name = "asn1_derive"
-version = "0.18.0"
+version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da79157fc864ed738b596d622929466c68ed48371f17a5f05e329880420a160d"
+checksum = "00cec5ab4e9217b82bdd194bf6a4c74890a7e6d530159546bd83684f42211b8a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -449,7 +450,7 @@ version = "0.1.0"
 dependencies = [
  "base64",
  "env_logger",
- "rustls 0.23.16",
+ "rustls 0.23.17",
  "rustls-post-quantum",
 ]
 
@@ -1144,9 +1145,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hickory-proto"
-version = "0.25.0-alpha.2"
+version = "0.25.0-alpha.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8270a1857fb962b9914aafd46a89a187a4e63d0eb4190c327e7c7b8256a2d055"
+checksum = "993f9d675890080b3bab88e475e6a0db4fe96b39b2fbd42a72eb315dc9009798"
 dependencies = [
  "async-recursion",
  "async-trait",
@@ -1164,9 +1165,7 @@ dependencies = [
  "once_cell 1.20.2",
  "rand",
  "rustls 0.23.14",
- "rustls-pemfile",
  "thiserror",
- "time",
  "tinyvec",
  "tokio",
  "tokio-rustls",
@@ -1177,9 +1176,9 @@ dependencies = [
 
 [[package]]
 name = "hickory-resolver"
-version = "0.25.0-alpha.2"
+version = "0.25.0-alpha.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46c110355b5703070d9e29c344d79818a7cde3de9c27fc35750defea6074b0ad"
+checksum = "0eec9ac701a9b34a77c8ccbe39d589db876290f6bdc6e05ac118fd114cb1ad26"
 dependencies = [
  "cfg-if",
  "futures-util",
@@ -2135,14 +2134,13 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.23.16"
+version = "0.23.17"
 dependencies = [
  "aws-lc-rs",
  "base64",
  "bencher",
  "brotli",
  "brotli-decompressor",
- "clap",
  "env_logger",
  "hashbrown",
  "hex",
@@ -2159,11 +2157,19 @@ dependencies = [
  "serde",
  "serde_json",
  "subtle",
- "tikv-jemallocator",
  "time",
  "webpki-roots",
  "zeroize",
  "zlib-rs",
+]
+
+[[package]]
+name = "rustls-bench"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "rustls 0.23.17",
+ "tikv-jemallocator",
 ]
 
 [[package]]
@@ -2178,7 +2184,7 @@ dependencies = [
  "fxhash",
  "itertools 0.13.0",
  "rayon",
- "rustls 0.23.16",
+ "rustls 0.23.17",
  "tikv-jemallocator",
 ]
 
@@ -2189,7 +2195,8 @@ dependencies = [
  "hickory-resolver",
  "regex",
  "ring",
- "rustls 0.23.16",
+ "rustls 0.23.17",
+ "tokio",
 ]
 
 [[package]]
@@ -2204,7 +2211,7 @@ dependencies = [
  "mio 0.8.11",
  "portable-atomic-util",
  "rcgen",
- "rustls 0.23.16",
+ "rustls 0.23.17",
  "serde",
  "serde_derive",
  "tokio",
@@ -2220,17 +2227,7 @@ dependencies = [
  "num-bigint",
  "once_cell 1.20.2",
  "openssl",
- "rustls 0.23.16",
- "rustls-pki-types",
-]
-
-[[package]]
-name = "rustls-pemfile"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dce314e5fee3f39953d46bb63bb8a46d40c2f8fb7cc5a3b6cab2bde9721d6e50"
-dependencies = [
- "rustls-pki-types",
+ "rustls 0.23.17",
 ]
 
 [[package]]
@@ -2244,7 +2241,7 @@ name = "rustls-post-quantum"
 version = "0.2.0"
 dependencies = [
  "aws-lc-rs",
- "rustls 0.23.16",
+ "rustls 0.23.17",
 ]
 
 [[package]]
@@ -2264,7 +2261,7 @@ dependencies = [
  "rand_core",
  "rcgen",
  "rsa",
- "rustls 0.23.16",
+ "rustls 0.23.17",
  "rustls-webpki",
  "sha2",
  "signature",
@@ -2277,7 +2274,7 @@ name = "rustls-provider-test"
 version = "0.1.0"
 dependencies = [
  "hex",
- "rustls 0.23.16",
+ "rustls 0.23.17",
  "rustls-provider-example",
  "serde",
  "serde_json",
