@@ -1854,7 +1854,7 @@ dependencies = [
 [[package]]
 name = "portable-atomic"
 version = "1.9.0"
-source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#d321a7071426f60f1345ff194e55a20cd4912ca8"
+source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#8bf0f3a7562af2ce95a9fa97b091b08e6b99185c"
 dependencies = [
  "critical-section",
 ]
@@ -1862,7 +1862,7 @@ dependencies = [
 [[package]]
 name = "portable-atomic-util"
 version = "0.2.3"
-source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#d321a7071426f60f1345ff194e55a20cd4912ca8"
+source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#8bf0f3a7562af2ce95a9fa97b091b08e6b99185c"
 dependencies = [
  "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions)",
 ]
