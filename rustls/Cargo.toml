@@ -38,8 +38,8 @@ zlib-rs = { version = "0.4", optional = true }
 # XXX TBD MOVE THESE ADDED ITEM(S) - ???
 # XXX TBD USE XXX XXX XXX FROM GITHUB WITH @brodycj XXX PROPOSAL FOR NOW - `portable-atomic` PR REF: https://github.com/taiki-e/portable-atomic/pull/195
 # XXX TODO USE PUBLISHED XXX CRATES ONCE @brodycj XXX PROPOSAL IS ACCEPTED
-portable-atomic = { version = "1.9.0", default-features = false, optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "custom-unsized-coercions" }
-portable-atomic-util = { version = "0.2.3", default-features = false, features = ["alloc"], optional = true, git = "https://github.com/brodycj/portable-atomic", branch = "custom-unsized-coercions" }
+portable-atomic = { version = "1.10.0", default-features = false, optional = true }
+portable-atomic-util = { version = "0.2.4", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]

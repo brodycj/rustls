@@ -1628,7 +1628,7 @@ version = "1.20.0"
 source = "git+https://github.com/matklad/once_cell?tag=v1.20.0#72f7c2e5faed09e84aa1ffe26c25092c87954b98"
 dependencies = [
  "critical-section",
- "portable-atomic 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "portable-atomic",
 ]
 
 [[package]]
@@ -1844,27 +1844,20 @@ dependencies = [
 
 [[package]]
 name = "portable-atomic"
-version = "1.9.0"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc9c68a3f6da06753e9335d63e27f6b9754dd1920d941135b7ea8224f141adb2"
-dependencies = [
- "critical-section",
-]
-
-[[package]]
-name = "portable-atomic"
-version = "1.9.0"
-source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#8bf0f3a7562af2ce95a9fa97b091b08e6b99185c"
+checksum = "280dc24453071f1b63954171985a0b0d30058d287960968b9b2aca264c8d4ee6"
 dependencies = [
  "critical-section",
 ]
 
 [[package]]
 name = "portable-atomic-util"
-version = "0.2.3"
-source = "git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions#8bf0f3a7562af2ce95a9fa97b091b08e6b99185c"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8a2f0d8d040d7848a709caf78912debcc3f33ee4b3cac47d73d1e1069e83507"
 dependencies = [
- "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions)",
+ "portable-atomic",
 ]
 
 [[package]]
@@ -2147,7 +2140,7 @@ dependencies = [
  "log",
  "num-bigint",
  "once_cell 1.20.0",
- "portable-atomic 1.9.0 (git+https://github.com/brodycj/portable-atomic?branch=custom-unsized-coercions)",
+ "portable-atomic",
  "portable-atomic-util",
  "rcgen",
  "ring",
