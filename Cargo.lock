@@ -210,7 +210,7 @@ dependencies = [
  "async-lock",
  "blocking",
  "futures-lite",
- "once_cell 1.20.2",
+ "once_cell",
 ]
 
 [[package]]
@@ -274,7 +274,7 @@ dependencies = [
  "kv-log-macro",
  "log",
  "memchr",
- "once_cell 1.20.2",
+ "once_cell",
  "pin-project-lite",
  "pin-utils",
  "slab",
@@ -1162,7 +1162,7 @@ dependencies = [
  "http",
  "idna",
  "ipnet",
- "once_cell 1.20.2",
+ "once_cell",
  "rand",
  "rustls 0.23.14",
  "thiserror",
@@ -1185,7 +1185,7 @@ dependencies = [
  "hickory-proto",
  "ipconfig",
  "lru-cache",
- "once_cell 1.20.2",
+ "once_cell",
  "parking_lot",
  "rand",
  "resolv-conf",
@@ -1624,18 +1624,13 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.20.0"
-source = "git+https://github.com/matklad/once_cell?tag=v1.20.0#72f7c2e5faed09e84aa1ffe26c25092c87954b98"
+version = "1.20.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 dependencies = [
  "critical-section",
  "portable-atomic",
 ]
-
-[[package]]
-name = "once_cell"
-version = "1.20.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 
 [[package]]
 name = "opaque-debug"
@@ -1653,7 +1648,7 @@ dependencies = [
  "cfg-if",
  "foreign-types",
  "libc",
- "once_cell 1.20.2",
+ "once_cell",
  "openssl-macros",
  "openssl-sys",
 ]
@@ -2117,7 +2112,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "415d9944693cb90382053259f89fbb077ea730ad7273047ec63b19bc9b160ba8"
 dependencies = [
  "log",
- "once_cell 1.20.2",
+ "once_cell",
  "ring",
  "rustls-pki-types",
  "rustls-webpki",
@@ -2139,7 +2134,7 @@ dependencies = [
  "hex",
  "log",
  "num-bigint",
- "once_cell 1.20.0",
+ "once_cell",
  "portable-atomic",
  "portable-atomic-util",
  "rcgen",
@@ -2218,7 +2213,7 @@ dependencies = [
  "asn1",
  "base64",
  "num-bigint",
- "once_cell 1.20.2",
+ "once_cell",
  "openssl",
  "rustls 0.23.17",
 ]
@@ -2619,7 +2614,7 @@ version = "0.1.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c06d3da6113f116aaee68e4d601191614c9053067f9ab7f6edbcb161237daa54"
 dependencies = [
- "once_cell 1.20.2",
+ "once_cell",
 ]
 
 [[package]]
@@ -2719,7 +2714,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "128d1e363af62632b8eb57219c8fd7877144af57558fb2ef0368d0087bddeb2e"
 dependencies = [
  "cfg-if",
- "once_cell 1.20.2",
+ "once_cell",
  "wasm-bindgen-macro",
 ]
 
@@ -2731,7 +2726,7 @@ checksum = "cb6dd4d3ca0ddffd1dd1c9c04f94b868c37ff5fac97c30b97cff2d74fce3a358"
 dependencies = [
  "bumpalo",
  "log",
- "once_cell 1.20.2",
+ "once_cell",
  "proc-macro2",
  "quote",
  "syn 2.0.79",
@@ -2806,7 +2801,7 @@ checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
 dependencies = [
  "either",
  "home",
- "once_cell 1.20.2",
+ "once_cell",
  "rustix",
 ]
 
