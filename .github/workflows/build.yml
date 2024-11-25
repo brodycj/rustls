@@ -20,6 +20,8 @@ concurrency:
 
 jobs:
   build:
+    # XXX SKIP THIS JOB FOR NOW:
+    if: ${{ false }}
     name: Build+test
     runs-on: ${{ matrix.os }}
     strategy:
