@@ -25,7 +25,7 @@ for p in $(admin/all-workspace-members) ; do
   # `bogo` is allergic to `--all-features`
   if [ "$p" == "bogo" ] ; then
     ALL_FEATURES="--features fips"
-  else if [ "$p" == "rustls" ] ; then
+  elif [ "$p" == "rustls" ] ; then
     ALL_FEATURES=$(admin/all-features-except portable-atomic-arc,critical-section rustls)
   else
     ALL_FEATURES="--all-features"
