@@ -606,12 +606,16 @@ pub fn default_fips_provider() -> CryptoProvider {
 }
 
 mod static_default {
+    // XXX XXX TBD ??? ??? ???
     #[cfg(not(any(feature = "critical-section", feature = "std")))]
     use alloc::boxed::Box;
+    #[cfg(feature = "std")]
+    use std::sync::OnceLock;
 
+    // XXX XXX TBD ??? ??? ???
     #[cfg(not(any(feature = "critical-section", feature = "std")))]
     use once_cell::race::OnceBox;
-    #[cfg(any(feature = "critical-section", feature = "std"))]
+    #[cfg(feature = "critical-section")]
     use once_cell::sync::OnceCell;
 
     use super::CryptoProvider;
@@ -637,8 +641,13 @@ mod static_default {
         PROCESS_DEFAULT_PROVIDER.get()
     }
 
-    #[cfg(any(feature = "critical-section", feature = "std"))]
+    // XXX XXX TBD ??? ??? ???
+    #[cfg(feature = "critical-section")]
     static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
+    // XXX XXX TBD ??? ??? ???
+    // #[cfg(feature = "std")]
+    #[cfg(all(feature = "std", not(feature = "critical-section")))]
+    static PROCESS_DEFAULT_PROVIDER: OnceLock<Arc<CryptoProvider>> = OnceLock::new();
     #[cfg(not(any(feature = "critical-section", feature = "std")))]
     static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 }

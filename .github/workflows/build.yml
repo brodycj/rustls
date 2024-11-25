@@ -149,7 +149,7 @@ jobs:
       # XXX TODO ADD CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.63"
+          toolchain: "1.71"
 
       # zlib-rs is optional and requires a later MSRV
       - run: cargo check --locked --lib $(admin/all-features-except zlib rustls) -p rustls
@@ -384,7 +384,7 @@ jobs:
       - name: Report to codecov.io
         uses: codecov/codecov-action@v5
         with:
-          file: final.info
+          files: final.info
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 

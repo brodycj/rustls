@@ -869,6 +869,8 @@ enum Provider {
     AwsLcRsFips,
     #[cfg(feature = "ring")]
     Ring,
+    #[value(skip)]
+    _None, // prevents this enum being uninhabited when built with no features
 }
 
 impl Provider {
@@ -880,6 +882,7 @@ impl Provider {
             Self::AwsLcRsFips => rustls::crypto::default_fips_provider(),
             #[cfg(feature = "ring")]
             Self::Ring => rustls::crypto::ring::default_provider(),
+            Self::_None => unreachable!(),
         }
     }
 
@@ -891,6 +894,7 @@ impl Provider {
             Self::AwsLcRsFips => rustls::crypto::aws_lc_rs::Ticketer::new(),
             #[cfg(feature = "ring")]
             Self::Ring => rustls::crypto::ring::Ticketer::new(),
+            Self::_None => unreachable!(),
         }
     }
 

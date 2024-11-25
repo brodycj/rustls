@@ -1516,9 +1516,8 @@ fn check_sni_error(alteration: impl Fn(&mut Message) -> Altered, expected_error:
         transfer_altered(&mut client, &alteration, &mut server);
         assert_eq!(server.process_new_packets(), Err(expected_error.clone()),);
 
-        let server_inner = match server {
-            rustls::Connection::Server(server) => server,
-            _ => unreachable!(),
+        let rustls::Connection::Server(server_inner) = server else {
+            unreachable!();
         };
         assert_eq!(None, server_inner.server_name());
     }
@@ -5020,11 +5019,18 @@ mod test_quic {
 
         // Key updates
 
-        let (mut client_secrets, mut server_secrets) = match (client_1rtt, server_1rtt) {
-            (quic::KeyChange::OneRtt { next: c, .. }, quic::KeyChange::OneRtt { next: s, .. }) => {
-                (c, s)
-            }
-            _ => unreachable!(),
+        let (
+            quic::KeyChange::OneRtt {
+                next: mut client_secrets,
+                ..
+            },
+            quic::KeyChange::OneRtt {
+                next: mut server_secrets,
+                ..
+            },
+        ) = (client_1rtt, server_1rtt)
+        else {
+            unreachable!();
         };
 
         let mut client_next = client_secrets.next_packet_keys();
@@ -6199,6 +6205,40 @@ fn test_server_rejects_clients_without_any_kx_groups() {
             PeerIncompatible::NoKxGroupsInCommon
         ))
     );
+}
+
+/// Tests that session_ticket(35) extension
+/// is not sent if the client does not support TLS 1.2.
+#[test]
+fn test_no_session_ticket_request_on_tls_1_3() {
+    /// Panics if TLS 1.2 session_ticket(35) extension is detected.
+    ///
+    /// Does not actually alter the payload.
+    fn panic_on_session_ticket(msg: &mut Message) -> Altered {
+        let MessagePayload::Handshake { parsed, encoded: _ } = &msg.payload else {
+            return Altered::InPlace;
+        };
+
+        let HandshakePayload::ClientHello(ch) = &parsed.payload else {
+            return Altered::InPlace;
+        };
+
+        for ext in &ch.extensions {
+            if matches!(ext, ClientExtension::SessionTicket(_)) {
+                panic!("TLS 1.2 session_ticket extension in TLS 1.3 handshake detected.");
+            }
+        }
+
+        Altered::InPlace
+    }
+
+    let client_config =
+        make_client_config_with_versions(KeyType::Rsa2048, &[&rustls::version::TLS13]);
+    let server_config = make_server_config(KeyType::Rsa2048);
+
+    let (client, server) = make_pair_for_configs(client_config, server_config);
+    let (mut client, mut server) = (client.into(), server.into());
+    transfer_altered(&mut client, panic_on_session_ticket, &mut server);
 }
 
 #[test]
@@ -8115,6 +8155,34 @@ fn tls13_packed_handshake() {
             .unwrap_err(),
         Error::InvalidCertificate(CertificateError::UnknownIssuer),
     );
+}
+
+#[test]
+fn large_client_hello() {
+    let (_, mut server) = make_pair(KeyType::Rsa2048);
+    let hello = include_bytes!("data/bug2227-clienthello.bin");
+    let mut cursor = io::Cursor::new(hello);
+    loop {
+        if server.read_tls(&mut cursor).unwrap() == 0 {
+            break;
+        }
+        server.process_new_packets().unwrap();
+    }
+}
+
+#[test]
+fn large_client_hello_acceptor() {
+    let mut acceptor = rustls::server::Acceptor::default();
+    let hello = include_bytes!("data/bug2227-clienthello.bin");
+    let mut cursor = io::Cursor::new(hello);
+    loop {
+        acceptor.read_tls(&mut cursor).unwrap();
+
+        if let Some(accepted) = acceptor.accept().unwrap() {
+            println!("{accepted:?}");
+            break;
+        }
+    }
 }
 
 const CONFIDENTIALITY_LIMIT: u64 = 1024;
