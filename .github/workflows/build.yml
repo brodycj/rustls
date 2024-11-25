@@ -539,8 +539,6 @@ jobs:
 
   clippy:
     # XXX TBD IMPROVE THIS JOB LABEL & REVIEW CONSISTENCY WITH LOOSER clippy-nightly JOB - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
-    # XXX SKIP THIS JOB FOR NOW - XXX TODO XXX XXX
-    if: ${{ false }}
     name: Clippy (strict / deny warnings)
     runs-on: ubuntu-latest
     steps:
