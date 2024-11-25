@@ -564,8 +564,6 @@ jobs:
       - run: ./admin/clippy -- --deny warnings --allow clippy::incompatible_msrv
 
   clippy-nightly:
-    # XXX SKIP THIS JOB FOR NOW - XXX TODO XXX XXX
-    if: ${{ false }}
     name: Clippy (Nightly)
     runs-on: ubuntu-latest
     steps:
