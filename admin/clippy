@@ -27,6 +27,8 @@ for p in $(admin/all-workspace-members) ; do
     ALL_FEATURES="--features fips"
   elif [ "$p" == "rustls" ] ; then
     ALL_FEATURES=$(admin/all-features-except portable-atomic-arc,critical-section rustls)
+  elif [ "$p" == "rustls-examples" ] ; then
+    ALL_FEATURES=$(admin/all-features-except critical-section rustls)
   else
     ALL_FEATURES="--all-features"
   fi
