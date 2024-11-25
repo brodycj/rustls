@@ -331,7 +331,7 @@ jobs:
           fail_ci_if_error: false
 
   minver:
-    name: Check minimum versions of direct dependencies
+    name: Test minimum versions of direct dependencies
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -349,6 +349,7 @@ jobs:
       - name: Install cargo-hack
         uses: taiki-e/install-action@cargo-hack
 
+      # XXX TODO TEST WITH ALL FEATURES (IF POSSIBLE)
       - name: Check direct-minimal-versions
         run: cargo minimal-versions --direct --ignore-private test
         working-directory: rustls/
