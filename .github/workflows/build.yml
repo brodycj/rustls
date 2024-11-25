@@ -411,12 +411,9 @@ jobs:
         working-directory: rustls/
 
   cross:
-    # XXX SKIP THIS JOB FOR NOW:
-    if: ${{ false }}
     name: cross-target testing
     runs-on: ubuntu-latest
-    # XXX TODO RE-ENABLE:
-    # if: github.event_name != 'merge_group'
+    if: github.event_name != 'merge_group'
     strategy:
       matrix:
         target:
