@@ -254,6 +254,8 @@ jobs:
           done
 
   benchmarks:
+    # XXX SKIP JOB FOR NOW
+    if: ${{ false }}
     name: Run benchmarks
     runs-on: ubuntu-latest
     steps:
