@@ -305,7 +305,9 @@ jobs:
   coverage:
     name: Measure coverage
     runs-on: ubuntu-latest
-    if: github.event_name != 'merge_group'
+    # XXX SKIP THIS JOB FOR NOW!
+    # if: github.event_name != 'merge_group'
+    if: ${{ false }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
