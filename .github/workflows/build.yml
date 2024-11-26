@@ -20,8 +20,6 @@ concurrency:
 
 jobs:
   build:
-    # XXX SKIP THIS JOB FOR NOW:
-    if: ${{ false }}
     name: Build+test
     runs-on: ${{ matrix.os }}
     strategy:
@@ -190,8 +188,6 @@ jobs:
         working-directory: rustls
 
   bogo:
-    # XXX SKIP JOB FOR NOW
-    if: ${{ false }}
     name: BoGo test suite
     runs-on: ubuntu-latest
     steps:
@@ -234,8 +230,6 @@ jobs:
           BOGO_SHIM_PROVIDER: post-quantum
 
   fuzz:
-    # XXX SKIP JOB FOR NOW
-    if: ${{ false }}
     name: Smoke-test fuzzing targets
     runs-on: ubuntu-latest
     steps:
@@ -258,8 +252,6 @@ jobs:
           done
 
   benchmarks:
-    # XXX SKIP JOB FOR NOW
-    if: ${{ false }}
     name: Run benchmarks
     runs-on: ubuntu-latest
     steps:
@@ -311,9 +303,7 @@ jobs:
   coverage:
     name: Measure coverage
     runs-on: ubuntu-latest
-    # XXX SKIP THIS JOB FOR NOW!
-    # if: github.event_name != 'merge_group'
-    if: ${{ false }}
+    if: github.event_name != 'merge_group'
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -362,12 +352,9 @@ jobs:
         working-directory: rustls/
 
   cross:
-    # XXX SKIP THIS JOB FOR NOW:
-    if: ${{ false }}
     name: cross-target testing
     runs-on: ubuntu-latest
-    # XXX TODO RE-ENABLE:
-    # if: github.event_name != 'merge_group'
+    if: github.event_name != 'merge_group'
     strategy:
       matrix:
         target:
