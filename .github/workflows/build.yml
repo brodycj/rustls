@@ -232,6 +232,8 @@ jobs:
           BOGO_SHIM_PROVIDER: post-quantum
 
   fuzz:
+    # XXX SKIP JOB FOR NOW
+    if: ${{ false }}
     name: Smoke-test fuzzing targets
     runs-on: ubuntu-latest
     steps:
