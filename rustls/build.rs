@@ -16,9 +16,7 @@ fn setup_unstable_clippy() {
     println!("cargo:rustc-check-cfg=cfg(unstable_clippy)");
 }
 
-// #[cfg_attr(feature = "read_buf", rustversion::not(nightly))]
-#[cfg(feature = "read_buf")]
-#[rustversion::not(nightly)]
+#[cfg_attr(feature = "read_buf", rustversion::not(nightly))]
 fn setup_read_buf() {
     // XXX TODO REPEATED STATEMENT(S) HERE:
     println!("cargo:rustc-check-cfg=cfg(bench)");
@@ -36,6 +34,5 @@ fn setup_read_buf() {
 fn main() {
     setup_unstable_clippy();
 
-    #[cfg(feature = "read_buf")]
     setup_read_buf();
 }
