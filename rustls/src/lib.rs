@@ -347,7 +347,7 @@
     clippy::new_without_default
 )]
 // XXX TODO ADD XXX XXX HERE - XXX LIKELY SIMILAR TO XXX STATEMENT BELOW
-#![cfg_attr(unstable_clippy, deny(clippy::unnecessary_map_or))]
+#![cfg_attr(nightly_clippy, deny(clippy::unnecessary_map_or))]
 // Enable documentation for all features on docs.rs
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 // XXX: Because of https://github.com/rust-lang/rust/issues/54726, we cannot

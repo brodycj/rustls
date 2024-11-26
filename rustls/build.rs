@@ -5,15 +5,15 @@
 /// See the comment in lib.rs to understand why we need this.
 
 #[rustversion::nightly]
-fn setup_cfg_unstable_clippy() {
-    println!("cargo:rustc-check-cfg=cfg(unstable_clippy)");
-    println!("cargo:rustc-cfg=unstable_clippy");
+fn setup_cfg_nightly_clippy() {
+    println!("cargo:rustc-check-cfg=cfg(nightly_clippy)");
+    println!("cargo:rustc-cfg=nightly_clippy");
 }
 
 #[rustversion::not(nightly)]
-fn setup_cfg_unstable_clippy() {
+fn setup_cfg_nightly_clippy() {
     // XXX TODO REPEATED STATEMENT(S) HERE:
-    println!("cargo:rustc-check-cfg=cfg(unstable_clippy)");
+    println!("cargo:rustc-check-cfg=cfg(nightly_clippy)");
 }
 
 #[cfg_attr(feature = "read_buf", rustversion::not(nightly))]
@@ -32,7 +32,7 @@ fn setup_cfg_read_buf() {
 }
 
 fn main() {
-    setup_cfg_unstable_clippy();
+    setup_cfg_nightly_clippy();
 
     setup_cfg_read_buf();
 }
