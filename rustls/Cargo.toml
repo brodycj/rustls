@@ -15,7 +15,7 @@ exclude = ["src/testdata", "tests/**"]
 build = "build.rs"
 
 [build-dependencies]
-rustversion = { version = "1.0.6", optional = true }
+rustversion = { version = "1.0.6" }
 
 [dependencies]
 aws-lc-rs = { workspace = true, optional = true }
@@ -42,7 +42,7 @@ brotli = ["dep:brotli", "dep:brotli-decompressor", "std"]
 ring = ["dep:ring", "webpki/ring"]
 custom-provider = []
 tls12 = []
-read_buf = ["rustversion", "std"]
+read_buf = ["std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
 
