@@ -42,6 +42,7 @@ default = ["aws_lc_rs", "logging", "std", "tls12"]
 std = ["webpki/std", "pki-types/std", "once_cell/std"]
 logging = ["log"]
 aws_lc_rs = ["dep:aws-lc-rs", "webpki/aws_lc_rs"]
+# XXX TODO extra aws-lc-rs alias looks redundant & confusing to @brodycj - XXX TODO @brodycj RAISE PR TO REMOVE THIS FROM HERE & FROM DOCUMENTATION
 aws-lc-rs = ["aws_lc_rs"] # Alias because Cargo features commonly use `-`
 brotli = ["dep:brotli", "dep:brotli-decompressor", "std"]
 ring = ["dep:ring", "webpki/ring"]
