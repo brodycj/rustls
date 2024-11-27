@@ -23,14 +23,19 @@ brotli = { workspace = true, optional = true }
 brotli-decompressor = { workspace = true, optional = true }
 hashbrown = { workspace = true, optional = true }
 log = { workspace = true, optional = true }
-# only required for no-std
-once_cell = { version = "1.16", default-features = false, features = ["alloc", "race"] }
+# XXX TBD "race" OPTION IS ONLY NEEDED IN LIMITED CASE - SEE XXX COMMENT in rustls/src/crypto/mod.rs
+once_cell = { workspace = true, default-features = false, features = ["alloc", "race"] } # (only required for no-std)
 ring = { workspace = true, optional = true }
 subtle = { workspace = true }
 webpki = { workspace = true }
 pki-types = { workspace = true }
 zeroize = { workspace = true }
 zlib-rs = { workspace = true, optional = true }
+# XXX TBD MOVE THESE ADDED ITEM(S) - ???
+# XXX TODO MOVE VERSION SPEC TO TOP-LEVEL CARGO TOML
+# XXX XXX TBD KEEP XXX FEATURES HERE OR IN TOP-LEVEL CARGO TOML - ???
+portable-atomic = { version = "1.10.0", default-features = false, optional = true }
+portable-atomic-util = { version = "0.2.4", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]
@@ -45,6 +50,10 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
+# XXX TODO NEED TO DOCUMENT NEW critical-section feature option
+# XXX TODO NEED TO INCLUDE DOCUMENTATION HOW TO GET BUILD WORKING WITH NEW critical-section feature option - NEED XXX BUILD FLAG TOGETHER WITH RUST NIGHTLY FOR BUILD TO WORK WITH ANY THIS FEATURE ENABLED
+# XXX TBD XXX XXX - XXX TBD EXPLAIN USE OF critical-section feature option witih XXX XXX DEPENDENCIES
+critical-section = ["dep:portable-atomic", "dep:portable-atomic-util", "once_cell/critical-section", "portable-atomic/critical-section"]
 
 [dev-dependencies]
 base64 = { workspace = true }
