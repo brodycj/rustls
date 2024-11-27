@@ -266,7 +266,7 @@ jobs:
         run: cargo run -p rustls-bench --profile=bench --locked --features ring -- --multiplier 0.1
 
       - name: Smoke-test benchmark program (aws-lc-rs)
-        run: cargo run -p rustls-bench --profile=bench --locked --features aws-lc-rs -- --multiplier 0.1
+        run: cargo run -p rustls-bench --profile=bench --locked --features aws_lc_rs -- --multiplier 0.1
 
       - name: Smoke-test benchmark program (fips)
         run: cargo run -p rustls-bench --profile=bench --locked --features fips -- --provider aws-lc-rs-fips --multiplier 0.1
