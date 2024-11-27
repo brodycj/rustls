@@ -25,17 +25,14 @@ hashbrown = { workspace = true, optional = true }
 log = { workspace = true, optional = true }
 # once_cell is only required for no-std; race feature is only required for combination no-std & no critical-section feature
 once_cell = { workspace = true, default-features = false, features = ["alloc", "race"] }
+portable-atomic = { workspace = true, default-features = false, optional = true }
+portable-atomic-util = { workspace = true, optional = true, default-features = false, features = ["alloc"] }
 ring = { workspace = true, optional = true }
 subtle = { workspace = true }
 webpki = { workspace = true }
 pki-types = { workspace = true }
 zeroize = { workspace = true }
 zlib-rs = { workspace = true, optional = true }
-# XXX TBD MOVE THESE ADDED ITEM(S) - ???
-# XXX TODO MOVE VERSION SPEC TO TOP-LEVEL CARGO TOML
-# XXX XXX TBD KEEP XXX FEATURES HERE OR IN TOP-LEVEL CARGO TOML - ???
-portable-atomic = { version = "1.10.0", default-features = false, optional = true }
-portable-atomic-util = { version = "0.2.4", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 default = ["aws_lc_rs", "logging", "std", "tls12"]

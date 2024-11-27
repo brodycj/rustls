@@ -13,16 +13,12 @@ env_logger = { workspace = true }
 hickory-resolver = { workspace = true }
 log = { workspace = true }
 mio = { workspace = true }
-# XXX TODO MOVE NEW OPTIONAL DEPENDENCY TO HERE (WITH VERSION NUMBER IN TOP-LEVEL CARGO TOML):
-# portable-atomic-util = { version = "0.2.4", default-features = false, optional = true }
+portable-atomic-util = { workspace = true, optional = true, default-features = false, features = ["alloc"]  }
 rcgen = { workspace = true }
 rustls = { path = "../rustls", features = [ "logging" ]}
 serde = { workspace = true }
 tokio = { workspace = true }
 webpki-roots = { workspace = true }
-# XXX TODO MOVE ADDED ITEM(S)
-# XXX XXX TODO USE VERSION NUMBER FROM TOP-LEVEL CARGO TOML
-portable-atomic-util = { version = "0.2.4", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 # for XXX XXX:
