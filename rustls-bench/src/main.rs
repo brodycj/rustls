@@ -926,9 +926,9 @@ impl ResumptionParam {
 
 #[derive(Copy, Clone, Debug, PartialEq, ValueEnum)]
 enum Provider {
-    #[cfg(feature = "aws-lc-rs")]
+    #[cfg(feature = "aws_lc_rs")]
     AwsLcRs,
-    #[cfg(all(feature = "aws-lc-rs", feature = "fips"))]
+    #[cfg(all(feature = "aws_lc_rs", feature = "fips"))]
     AwsLcRsFips,
     #[cfg(feature = "ring")]
     Ring,
@@ -939,9 +939,9 @@ enum Provider {
 impl Provider {
     fn build(self) -> CryptoProvider {
         match self {
-            #[cfg(feature = "aws-lc-rs")]
+            #[cfg(feature = "aws_lc_rs")]
             Self::AwsLcRs => rustls::crypto::aws_lc_rs::default_provider(),
-            #[cfg(all(feature = "aws-lc-rs", feature = "fips"))]
+            #[cfg(all(feature = "aws_lc_rs", feature = "fips"))]
             Self::AwsLcRsFips => rustls::crypto::default_fips_provider(),
             #[cfg(feature = "ring")]
             Self::Ring => rustls::crypto::ring::default_provider(),
@@ -951,9 +951,9 @@ impl Provider {
 
     fn ticketer(self) -> Result<Arc<dyn ProducesTickets>, Error> {
         match self {
-            #[cfg(feature = "aws-lc-rs")]
+            #[cfg(feature = "aws_lc_rs")]
             Self::AwsLcRs => rustls::crypto::aws_lc_rs::Ticketer::new(),
-            #[cfg(all(feature = "aws-lc-rs", feature = "fips"))]
+            #[cfg(all(feature = "aws_lc_rs", feature = "fips"))]
             Self::AwsLcRsFips => rustls::crypto::aws_lc_rs::Ticketer::new(),
             #[cfg(feature = "ring")]
             Self::Ring => rustls::crypto::ring::Ticketer::new(),
@@ -985,10 +985,10 @@ impl Provider {
         #[allow(unused_mut)]
         let mut available = vec![];
 
-        #[cfg(feature = "aws-lc-rs")]
+        #[cfg(feature = "aws_lc_rs")]
         available.push(Self::AwsLcRs);
 
-        #[cfg(all(feature = "aws-lc-rs", feature = "fips"))]
+        #[cfg(all(feature = "aws_lc_rs", feature = "fips"))]
         available.push(Self::AwsLcRsFips);
 
         #[cfg(feature = "ring")]

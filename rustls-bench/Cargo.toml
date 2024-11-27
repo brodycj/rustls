@@ -9,8 +9,8 @@ rustls = { path = "../rustls" }
 
 [features]
 default = []
-aws-lc-rs = ["rustls/aws-lc-rs"]
-fips = ["rustls/fips", "aws-lc-rs"]
+aws_lc_rs = ["rustls/aws_lc_rs"]
+fips = ["rustls/fips", "aws_lc_rs"]
 ring = ["rustls/ring"]
 
 [target.'cfg(not(target_env = "msvc"))'.dependencies]

@@ -139,7 +139,7 @@
 //! the Mozilla set of root certificates.
 //!
 //! ```rust,no_run
-//! # #[cfg(feature = "aws-lc-rs")] {
+//! # #[cfg(feature = "aws_lc_rs")] {
 //! let root_store = rustls::RootCertStore::from_iter(
 //!     webpki_roots::TLS_SERVER_ROOTS
 //!         .iter()
