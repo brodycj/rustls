@@ -50,8 +50,6 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
-# XXX TODO NEED TO DOCUMENT NEW critical-section feature option
-# XXX TODO NEED TO INCLUDE DOCUMENTATION HOW TO GET BUILD WORKING WITH NEW critical-section feature option - NEED XXX BUILD FLAG TOGETHER WITH RUST NIGHTLY FOR BUILD TO WORK WITH ANY THIS FEATURE ENABLED
 # XXX TBD XXX XXX - XXX TBD EXPLAIN USE OF critical-section feature option witih XXX XXX DEPENDENCIES
 critical-section = ["dep:portable-atomic", "dep:portable-atomic-util", "once_cell/critical-section", "portable-atomic/critical-section"]
 
