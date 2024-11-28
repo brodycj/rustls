@@ -47,7 +47,6 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
-# XXX TBD XXX XXX - XXX TBD EXPLAIN USE OF critical-section feature option witih XXX XXX DEPENDENCIES
 critical-section = ["dep:portable-atomic", "dep:portable-atomic-util", "once_cell/critical-section", "portable-atomic/critical-section"]
 
 [dev-dependencies]

@@ -21,5 +21,4 @@ tokio = { workspace = true }
 webpki-roots = { workspace = true }
 
 [features]
-# for XXX XXX:
 critical-section = ["portable-atomic-util", "rustls/critical-section"]
