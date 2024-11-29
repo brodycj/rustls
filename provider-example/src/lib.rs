@@ -5,7 +5,7 @@ extern crate alloc;
 extern crate std;
 
 use rustls::crypto::CryptoProvider;
-// XXX TODO USAGE OF INTERNAL, UNDOCUMENTED FEATURE IN AN EXAMPLE
+// XXX TODO USAGE OF INTERNAL, UNDOCUMENTED FEATURE IN A PROVIDER EXAMPLE
 use rustls::internal::alias::Arc;
 use rustls::pki_types::PrivateKeyDer;
 
