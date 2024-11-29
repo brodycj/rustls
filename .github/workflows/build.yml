@@ -488,6 +488,9 @@ jobs:
       - run: cross build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+      - run: cross build --no-default-features --features critical-section --package rustls-provider-example --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   semver:
     name: Check semver compatibility
