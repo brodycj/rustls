@@ -80,23 +80,22 @@ jobs:
       - name: cargo build (debug; default features)
         run: cargo build --locked
 
-      # XXX TODO ADD RATIONALE HERE & OTHER PLACES FOR EXCLUDING NEW critical-section FEATURE
       # nb. feature sets that include "fips" should be --release --
       # this is required for fips on windows.
       # nb. "--all-targets" does not include doctests
+      # critical-section feature requires both `--cfg portable_atomic_unstable_coerce_unsized` & Rust nightly
       - name: cargo test (release; all features except critical-section)
         if: ${{ !startsWith(matrix.rust, 'nightly') }}
         run: cargo test --release --locked --lib $(admin/all-features-except critical-section rustls) --all-targets
         env:
           RUST_BACKTRACE: 1
-      - name: cargo test (release; all features)
+      - name: cargo test (release; all features including critical-section - Rust nightly only)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --release --locked --all-features --all-targets
         env:
           RUST_BACKTRACE: 1
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-      # XXX TODO DESCRIBE RATIONALE: nightly with all features vs stable & beta with all features except critical-section
       # nb. this is separate since `--doc` option cannot be combined with other target option(s) ref:
       # - https://doc.rust-lang.org/cargo/commands/cargo-test.html
       - name: cargo test --doc (release; all features except critical-section)
@@ -104,7 +103,7 @@ jobs:
         run: cargo test --release --locked $(admin/all-features-except critical-section rustls) --doc
         env:
           RUST_BACKTRACE: 1
-      - name: cargo test --doc (release; all-features)
+      - name: cargo test --doc (release; all features including critical-section - Rust nightly only)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --release --locked --all-features --doc
         env:
@@ -150,8 +149,7 @@ jobs:
         with:
           toolchain: "1.71"
 
-      # XXX TODO ADD RATIONALE HERE & OTHER PLACES FOR EXCLUDING NEW critical-section FEATURE
-      # zlib-rs is optional and requires a later MSRV
+      # zlib-rs is optional and requires a later MSRV; critical-section requires Rust nightly
       - run: cargo check --locked --lib $(admin/all-features-except zlib,critical-section rustls) -p rustls
 
       # XXX TODO ADD CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
@@ -159,7 +157,7 @@ jobs:
         with:
           toolchain: "1.75"
 
-      # XXX TODO ADD RATIONALE HERE & OTHER PLACES FOR EXCLUDING NEW critical-section FEATURE
+      # critical-section requires Rust nightly; check build of all other features with MSRV
       - run: cargo check --locked --lib $(admin/all-features-except critical-section rustls) -p rustls
 
   features:
