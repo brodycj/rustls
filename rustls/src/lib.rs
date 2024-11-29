@@ -317,6 +317,8 @@
 //!   (see documentation in `portable-atomic-util` for more details).
 //!   As stated in the `portable-atomic` crate documentation, this option also requires a
 //!   "suitable critical section implementation" (see `critical-section` documentation).
+//!   Note that with this feature enabled, `rustls` will use both `once-cell` & `portable-atomic`
+//!   with `critical-section` feature enabled.
 
 // Require docs for public APIs, deny unsafe code, etc.
 #![forbid(unsafe_code, unused_must_use)]
