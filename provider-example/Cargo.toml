@@ -31,4 +31,5 @@ webpki-roots = { workspace = true }
 
 [features]
 default = ["std"]
+critical-section = ["rustls/critical-section"]
 std = ["hpke-rs/std", "hpke-rs-crypto/std", "pkcs8/std", "rustls/std"]

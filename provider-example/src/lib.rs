@@ -4,9 +4,9 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
-use alloc::sync::Arc;
-
 use rustls::crypto::CryptoProvider;
+// XXX TODO USAGE OF INTERNAL, UNDOCUMENTED FEATURE IN AN EXAMPLE
+use rustls::internal::alias::Arc;
 use rustls::pki_types::PrivateKeyDer;
 
 mod aead;

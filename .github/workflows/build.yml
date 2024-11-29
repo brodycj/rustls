@@ -24,7 +24,6 @@ jobs:
   # - ci-bench
   # - fuzz
   # - openssl-tests
-  # - provider-example
   # - rustls-post-quantum
   build:
     name: Build+test
@@ -126,6 +125,12 @@ jobs:
 
       - name: cargo build (debug; rustls-provider-example lib in no-std mode)
         run: cargo build --locked -p rustls-provider-example --no-default-features
+
+      - name: cargo build (debug; rustls-provider-example lib in no-std mode with critical-section feature - Rust nightly only)
+        if: startsWith(matrix.rust, 'nightly')
+        run: cargo build --locked -p rustls-provider-example --no-default-features --feature critical-section
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       - name: cargo build (debug; rustls-provider-test)
         run: cargo build --locked -p rustls-provider-test
