@@ -496,6 +496,8 @@ jobs:
       - run: cross build --no-default-features --features aws-lc-rs,critical-section --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+          CC: /usr/bin/clang
+          CXX: /usr/bin/clang++
 
   cross-build-with-critical-section-and-ring:
     # XXX XXX
