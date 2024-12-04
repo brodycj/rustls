@@ -453,7 +453,7 @@ jobs:
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
       # XXX TODO UPDATE THIS LABEL IN PR 2200 - EXPLAIN --dev is good for cargo test but NOT for cargo build only
-      - name: Install bindgen feature (including CLI) for aws-lc-sys (as needed for many cross targets)
+      - name: Install bindgen feature & CLI for aws-lc-sys (as needed for many cross targets)
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
         run: cargo add --dev --features bindgen 'aws-lc-sys@>0.20' --package rustls --verbose && cargo install bindgen-cli --verbose
       - run: cross test --package rustls --target ${{ matrix.target }}
