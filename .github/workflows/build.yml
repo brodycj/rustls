@@ -489,7 +489,7 @@ jobs:
       - run: cargo build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
-      - run: sudo apt-get remove --auto-remove clang-14.0.0
+      - run: sudo apt-get remove --auto-remove clang-14
       # XXX TODO EXPLAIN THAT USING --dev flag ENCOUNTERS XXX issue with `cargo build`
       - name: Install bindgen feature for cargo build & CLI for aws-lc-sys (as needed for XXX XXX)
         # XXX TBD ??? ???:
