@@ -349,12 +349,9 @@ jobs:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   coverage:
-    # XXX SKIP THIS JOB FOR NOW
-    if: ${{ false }}
     name: Measure coverage
     runs-on: ubuntu-latest
-    # XXX TODO INVESTIGATE / FIX / RE-ENABLE WITH THIS INSTEAD:
-    # if: github.event_name != 'merge_group'
+    if: github.event_name != 'merge_group'
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
