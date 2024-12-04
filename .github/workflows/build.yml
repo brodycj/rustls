@@ -452,7 +452,8 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
-      - name: Install bindgen feature & CLI for aws-lc-sys (as needed for many cross targets)
+      # XXX TODO UPDATE THIS LABEL IN PR 2200 - EXPLAIN --dev is good for cargo test but NOT for cargo build only
+      - name: Install bindgen feature (including CLI) for aws-lc-sys (as needed for many cross targets)
         if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
         run: cargo add --dev --features bindgen 'aws-lc-sys@>0.20' --package rustls --verbose && cargo install bindgen-cli --verbose
       - run: cross test --package rustls --target ${{ matrix.target }}
@@ -485,10 +486,11 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
-      - name: Install bindgen feature & CLI for aws-lc-sys (as needed for many cross targets)
+      # XXX TODO EXPLAIN THAT USING --dev flag does not resolve XXX issue with `cargo build`
+      - name: Install bindgen feature for cargo build (including CLI) for aws-lc-sys (as needed for many cross targets)
         # XXX TBD ??? ???:
         # if: ${{ matrix.target != 'i686-unknown-linux-gnu' }}
-        run: cargo add --dev --features bindgen 'aws-lc-sys@>0.20' --package rustls --verbose && cargo install bindgen-cli --verbose
+        run: cargo add --features bindgen 'aws-lc-sys@>0.20' --package rustls --verbose && cargo install bindgen-cli --verbose
       # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
       - run: cross build --no-default-features --features aws-lc-rs,critical-section --package rustls --target ${{ matrix.target }}
         env:
