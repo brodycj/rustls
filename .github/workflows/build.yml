@@ -489,7 +489,7 @@ jobs:
       - run: cargo build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
-      - run: cargo build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
+      - run: cargo build --no-default-features --features aws-lc-rs,critical-section --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
       # - name: Install cross (cross-rs) from GitHub
