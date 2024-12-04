@@ -494,7 +494,7 @@ jobs:
       # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
       - run: cross build --no-default-features --features aws-lc-rs,critical-section --package rustls --target ${{ matrix.target }}
         env:
-          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized -x c++
 
   cross-build-with-critical-section-and-ring:
     # XXX XXX
