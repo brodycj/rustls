@@ -465,7 +465,7 @@ jobs:
     # NOTE: The purpose of this CI job is to test build support for CPU targets with no atomic ptr support
     # (using critical-section feature)
     name: cross-target build with critical-section feature & aws-lc-rs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         target:
