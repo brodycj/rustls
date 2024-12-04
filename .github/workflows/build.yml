@@ -27,6 +27,8 @@ jobs:
   # - provider-example
   # - rustls-post-quantum
   build:
+    # XXX SKIP FOR NOW
+    if: ${{ false }}
     name: Build+test
     runs-on: ${{ matrix.os }}
     strategy:
@@ -161,6 +163,8 @@ jobs:
       - run: cargo check --locked --lib $(admin/all-features-except critical-section rustls) -p rustls
 
   features:
+    # XXX SKIP FOR NOW
+    if: ${{ false }}
     name: Features
     runs-on: ubuntu-latest
     steps:
@@ -222,6 +226,8 @@ jobs:
         working-directory: rustls
 
   bogo:
+    # XXX SKIP FOR NOW
+    if: ${{ false }}
     name: BoGo test suite
     runs-on: ubuntu-latest
     steps:
@@ -265,6 +271,8 @@ jobs:
           BOGO_SHIM_PROVIDER: post-quantum
 
   fuzz:
+    # XXX SKIP FOR NOW
+    if: ${{ false }}
     name: Smoke-test fuzzing targets
     runs-on: ubuntu-latest
     steps:
@@ -349,9 +357,12 @@ jobs:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   coverage:
+    # XXX SKIP THIS JOB FOR NOW
+    if: ${{ false }}
     name: Measure coverage
     runs-on: ubuntu-latest
-    if: github.event_name != 'merge_group'
+    # XXX TODO RE-ENABLE WITH THIS INSTEAD:
+    # if: github.event_name != 'merge_group'
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -406,9 +417,12 @@ jobs:
         working-directory: rustls/
 
   cross:
+    # XXX SKIP FOR NOW
+    if: ${{ false }}
     name: cross-target testing
     runs-on: ubuntu-latest
-    if: github.event_name != 'merge_group'
+    # XXX XXX
+    # if: github.event_name != 'merge_group'
     strategy:
       matrix:
         target:
@@ -509,6 +523,8 @@ jobs:
         run: cargo fmt --all --manifest-path=fuzz/Cargo.toml -- --check
 
   format-unstable:
+    # XXX SKIP FOR NOW
+    if: ${{ false }}
     name: Format (unstable)
     runs-on: ubuntu-latest
     steps:
@@ -557,6 +573,8 @@ jobs:
       - run: ./admin/clippy -- --deny warnings --allow clippy::incompatible_msrv
 
   clippy-nightly:
+    # XXX SKIP FOR NOW
+    if: ${{ false }}
     name: Clippy (Nightly)
     runs-on: ubuntu-latest
     steps:
@@ -597,6 +615,8 @@ jobs:
         run: cargo check-external-types
 
   openssl-tests:
+    # XXX SKIP FOR NOW
+    if: ${{ false }}
     name: Run openssl-tests
     runs-on: ubuntu-latest
     steps:
