@@ -480,6 +480,7 @@ jobs:
         with:
           persist-credentials: false
 
+      - run: clang --version
       # XXX TBD rust-toolchain - ??? ??? ???
       # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
       - name: Install rust-toolchain - nightly
