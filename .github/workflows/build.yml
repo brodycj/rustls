@@ -463,7 +463,7 @@ jobs:
   cross-build-with-critical-section-feature:
     # NOTE: The purpose of this CI job is to test build support for CPU targets with no atomic ptr support
     # (using critical-section feature)
-    name: cross-target build with critical-section feature
+    name: cross-target build with critical-section feature & aws-lc-rs
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -486,7 +486,35 @@ jobs:
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
       # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
-      - run: cross build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
+      - run: cross build --no-default-features --features aws-lc-rs,critical-section --package rustls --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+
+  cross-build-with-critical-section-and-ring:
+    name: cross-target build with critical-section & ring
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          # FOR FUTURE CONSIDERATION: test with some other targets with & without atomic ptr support
+          # 32-bit target(s) with no atomic ptr:
+          - thumbv6m-none-eabi
+          # 32-bit Android (Linux) target(s):
+          - armv7-linux-androideabi
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # XXX TBD rust-toolchain - ??? ??? ???
+      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
+      - name: Install cross (cross-rs) from GitHub
+        run: cargo install cross --git https://github.com/cross-rs/cross
+      # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
+      - run: cross build --no-default-features --features critical-section,ring --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
