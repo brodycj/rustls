@@ -498,8 +498,6 @@ jobs:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   cross-build-with-critical-section-and-ring:
-    # XXX XXX
-    if: ${{ false }}
     name: cross-target build with critical-section & ring
     runs-on: ubuntu-latest
     strategy:
