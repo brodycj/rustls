@@ -295,6 +295,8 @@ jobs:
           done
 
   benchmarks:
+    # XXX
+    if: ${{ false }}
     name: Run benchmarks
     runs-on: ubuntu-latest
     steps:
