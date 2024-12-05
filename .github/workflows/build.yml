@@ -507,7 +507,7 @@ jobs:
         target:
           # FOR FUTURE CONSIDERATION: test with some other targets with & without atomic ptr support
           # 32-bit target(s) with no atomic ptr:
-          # - thumbv6m-none-eabi
+          - thumbv6m-none-eabi
           # 32-bit Android (Linux) target(s):
           - armv7-linux-androideabi
     steps:
@@ -522,6 +522,9 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
+      # XXX TDO ADD STEP NAMES & ADD SOME DESCRIPTION **WHY**
+      - run: cargo add -F custom getrandom -p rustls
+      - run: cargo add -F portable_atomic spin -p rustls
       - run: cross build --no-default-features --features critical-section,ring --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
