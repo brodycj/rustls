@@ -126,6 +126,7 @@ jobs:
         run: cargo build --locked -p rustls-provider-example --no-default-features
 
       - name: cargo build (debug; rustls-provider-example; all features including critical-section - Rust nightly only)
+        if: startsWith(matrix.rust, 'nightly')
         run: cargo build --locked -p rustls-provider-example --all-features
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
