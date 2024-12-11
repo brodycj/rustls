@@ -464,6 +464,7 @@ mod webpki;
 #[allow(missing_docs)]
 #[doc(hidden)]
 pub mod internal {
+    // XXX TODO REMOVE IN FAVOR of util::alias
     pub mod alias {
         pub use crate::alias::Arc;
     }
@@ -687,6 +688,17 @@ pub mod quic;
 #[cfg(any(feature = "std", feature = "hashbrown"))] // < XXX: incorrect feature gate
 /// APIs for implementing TLS tickets
 pub mod ticketer;
+
+// XXX TODO DOC XXX
+// XXX TODO EXPLAIN MOTIVATION - EXPECTED TO HELP PEOPLE IMPLEMENTING EXTERNAL PROVIDERS
+// XXX TODO REMOVE THE FOLLOWING ALLOW:
+#[allow(missing_docs)]
+pub mod util {
+    // XXX TODO DOC XXX
+    pub mod alias {
+        pub use crate::alias::Arc;
+    }
+}
 
 /// This is the rustls manual.
 pub mod manual;

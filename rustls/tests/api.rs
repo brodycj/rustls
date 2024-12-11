@@ -13,7 +13,6 @@ use pki_types::{CertificateDer, IpAddr, ServerName, UnixTime};
 
 use rustls::client::{verify_server_cert_signed_by_trust_anchor, ResolvesClientCert, Resumption};
 use rustls::crypto::{ActiveKeyExchange, CryptoProvider, SharedSecret, SupportedKxGroup};
-use rustls::internal::alias::Arc;
 use rustls::internal::msgs::base::Payload;
 use rustls::internal::msgs::codec::Codec;
 use rustls::internal::msgs::enums::{AlertLevel, CertificateType, Compression};
@@ -23,6 +22,7 @@ use rustls::internal::msgs::handshake::{
 };
 use rustls::internal::msgs::message::{Message, MessagePayload, PlainMessage};
 use rustls::server::{ClientHello, ParsedCertificate, ResolvesServerCert};
+use rustls::util::alias::Arc;
 #[cfg(feature = "aws_lc_rs")]
 use rustls::{
     client::{EchConfig, EchGreaseConfig, EchMode},
