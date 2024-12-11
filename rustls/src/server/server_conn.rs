@@ -706,7 +706,7 @@ mod connection {
     ///
     /// ```no_run
     /// # #[cfg(feature = "aws_lc_rs")] {
-    /// # use rustls::internal::alias::Arc;
+    /// # use rustls::util::alias::Arc;
     /// # fn choose_server_config(
     /// #     _: rustls::server::ClientHello,
     /// # ) -> Arc<rustls::ServerConfig> {

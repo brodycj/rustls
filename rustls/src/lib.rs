@@ -174,7 +174,7 @@
 //! ```rust
 //! # #[cfg(feature = "aws_lc_rs")] {
 //! # use rustls;
-//! # use rustls::internal::alias::Arc;
+//! # use rustls::util::alias::Arc;
 //! # use webpki;
 //! # rustls::crypto::aws_lc_rs::default_provider().install_default();
 //! # let root_store = rustls::RootCertStore::from_iter(
@@ -464,10 +464,6 @@ mod webpki;
 #[allow(missing_docs)]
 #[doc(hidden)]
 pub mod internal {
-    // XXX TODO REMOVE IN FAVOR of util::alias
-    pub mod alias {
-        pub use crate::alias::Arc;
-    }
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {
         pub mod base {

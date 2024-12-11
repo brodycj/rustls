@@ -16,7 +16,6 @@ use rustls::client::{
 };
 use rustls::crypto::cipher::{InboundOpaqueMessage, MessageDecrypter, MessageEncrypter};
 use rustls::crypto::{verify_tls13_signature_with_raw_key, CryptoProvider};
-use rustls::internal::alias::Arc;
 use rustls::internal::msgs::codec::{Codec, Reader};
 use rustls::internal::msgs::message::{Message, OutboundOpaqueMessage, PlainMessage};
 use rustls::server::danger::{ClientCertVerified, ClientCertVerifier};
@@ -24,6 +23,7 @@ use rustls::server::{
     AlwaysResolvesServerRawPublicKeys, ClientCertVerifierBuilder, WebPkiClientVerifier,
 };
 use rustls::sign::CertifiedKey;
+use rustls::util::alias::Arc;
 use rustls::{
     ClientConfig, ClientConnection, Connection, ConnectionCommon, ContentType,
     DigitallySignedStruct, DistinguishedName, Error, InconsistentKeys, NamedGroup, ProtocolVersion,

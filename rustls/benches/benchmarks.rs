@@ -8,7 +8,7 @@ mod test_utils;
 
 use std::io;
 
-use rustls::internal::alias::Arc;
+use rustls::util::alias::Arc;
 
 use rustls::ServerConnection;
 

@@ -12,7 +12,7 @@ use common::{
     ALL_KEY_TYPES,
 };
 
-use rustls::internal::alias::Arc;
+use rustls::util::alias::Arc;
 use rustls::{AlertDescription, Error, InvalidMessage};
 
 #[test]
