@@ -111,7 +111,7 @@ name = "unbuffered"
 path = "tests/runners/unbuffered.rs"
 
 [package.metadata.docs.rs]
-# all non-default features except fips (cannot build on docs.rs environment)
+# all non-default features except critical-section (uses portable-atomic-util) & fips (cannot build on docs.rs environment)
 features = ["read_buf", "ring"]
 rustdoc-args = ["--cfg", "docsrs"]
 
