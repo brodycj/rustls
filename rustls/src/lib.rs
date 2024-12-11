@@ -417,10 +417,10 @@ mod alias {
     extern crate portable_atomic_util;
 
     #[cfg(feature = "critical-section")]
-    pub use portable_atomic_util::Arc;
+    pub(crate) use portable_atomic_util::Arc;
 
     #[cfg(not(feature = "critical-section"))]
-    pub use alloc::sync::Arc;
+    pub(crate) use alloc::sync::Arc;
 }
 
 #[macro_use]
@@ -685,14 +685,16 @@ pub mod quic;
 /// APIs for implementing TLS tickets
 pub mod ticketer;
 
-// XXX TODO DOC XXX
-// XXX TODO EXPLAIN MOTIVATION - EXPECTED TO HELP PEOPLE IMPLEMENTING EXTERNAL PROVIDERS
-// XXX TODO REMOVE THE FOLLOWING ALLOW:
-#[allow(missing_docs)]
+/// Utility module
 pub mod util {
-    // XXX TODO DOC XXX
+    /// External type alias
     pub mod alias {
-        pub use crate::alias::Arc;
+        /// Alias to the correct `Arc` type: alias to `portable_atomic_util::Arc` in case `critical-section`
+        /// feature is enabled, otherwise alias to `alloc::sync::Arc`.
+        ///
+        /// This is to help rustls library users and custom providers use the correct `Arc` type,
+        /// regardless of whether `critical-section` feature is enabled or not.
+        pub type Arc<T> = crate::alias::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
     }
 }
 
