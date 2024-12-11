@@ -22,11 +22,15 @@ run_clippy --package rustls --no-default-features --all-targets
 
 # run all workspace members (individually, because we don't want feature unification)
 for p in $(admin/all-workspace-members) ; do
+  # XXX TODO REWORD LAST 2 POINTS IN WORKAROUND LIST BELOW
   # with the following workaround(s):
   # - `bogo` is allergic to `--all-features`
-  # - skip `critical-section` feature, as it requires build with unstable cfg option for portable-atomic-util & Rust nightly
+  # - `rustls-provider-test` only has `critical-section` - see point below, just omit features option
+  # - otherwise skip `critical-section` feature, as it requires build with unstable cfg option for portable-atomic-util & Rust nightly
   if [ "$p" == "bogo" ] ; then
     ALL_FEATURES="--features fips"
+  elif [ "$p" == "rustls-provider-test" ] ; then
+    ALL_FEATURES=""
   else
     ALL_FEATURES=$(admin/all-features-except critical-section $p)
   fi
