@@ -154,10 +154,8 @@ jobs:
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-      - name: cargo package --all-features -p rustls
-        # XXX XXX SKIP THIS STEP FOR NOW - XXX TODO NEEDS INVESTIGATION
-        if: ${{ false }}
-        run: cargo package --all-features -p rustls
+      - name: cargo package (all stable features)
+        run: cargo package $(admin/all-stable-features rustls) -p rustls
 
   msrv:
     name: MSRV
