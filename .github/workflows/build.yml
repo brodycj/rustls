@@ -82,13 +82,13 @@ jobs:
       # nb. feature sets that include "fips" should be --release --
       # this is required for fips on windows.
       # nb. "--all-targets" does not include doctests
-      # critical-section feature requires both `--cfg portable_atomic_unstable_coerce_unsized` & Rust nightly
-      - name: cargo test (release; all features except critical-section)
+      # unstable critical-section feature requires both `--cfg portable_atomic_unstable_coerce_unsized` & Rust nightly
+      - name: cargo test (release; all stable features)
         if: ${{ !startsWith(matrix.rust, 'nightly') }}
-        run: cargo test --release --locked --lib $(admin/all-features-except critical-section rustls) --all-targets
+        run: cargo test --release --locked --lib $(admin/all-stable-features rustls) --all-targets
         env:
           RUST_BACKTRACE: 1
-      - name: cargo test (release; all features including critical-section - Rust nightly only)
+      - name: cargo test (release; all features including unstable feature(s) - Rust nightly only)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --release --locked --all-features --all-targets
         env:
