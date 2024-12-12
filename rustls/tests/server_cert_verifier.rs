@@ -11,7 +11,6 @@ use common::{
     make_pair_for_arc_configs, make_server_config, ErrorFromPeer, MockServerVerifier,
     ALL_KEY_TYPES,
 };
-
 use rustls::util::alias::Arc;
 use rustls::{AlertDescription, Error, InvalidMessage};
 
