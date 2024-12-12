@@ -131,9 +131,8 @@ jobs:
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-      # XXX TODO THIS UPDATE SHOULD COME FROM SEPARATE PR
-      # - name: cargo test (debug; rustls-provider-example)
-      #   run: cargo test -p rustls-provider-example
+      - name: cargo test (debug; rustls-provider-example; all features)
+        run: cargo test --all-features -p rustls-provider-example
 
       # XXX TODO test release - locked (instead?) [???]
       - name: cargo test (debug; rustls-provider-example; all features including critical-section - Rust nightly only)
@@ -145,9 +144,8 @@ jobs:
       - name: cargo build (debug; rustls-provider-test)
         run: cargo build --locked -p rustls-provider-test
 
-      # XXX TODO THIS UPDATE SHOULD COME FROM SEPARATE PR
-      # - name: cargo test (debug; rustls-provider-test)
-      #   run: cargo test -p rustls-provider-test
+      - name: cargo test (debug; rustls-provider-test; all features)
+        run: cargo test --all-features -p rustls-provider-test
 
       # XXX TODO test release - locked (instead?) [???]
       - name: cargo test (debug; rustls-provider-test; all features including critical-section - Rust nightly only)

@@ -17,10 +17,10 @@ cargo test --locked $(admin/all-features-except brotli rustls)
 ## bogo
 cargo test --locked --test bogo -- --ignored --test-threads 1
 
-# XXX TODO THIS UPDATE SHOULD COME FROM SEPARATE PR
+# provider example unit tests
 cargo test --locked --package rustls-provider-example
 
-## provider tests
+## provider example tests
 cargo test --locked --package rustls-provider-test
 
 cargo llvm-cov report "$@"
