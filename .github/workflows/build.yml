@@ -128,7 +128,6 @@ jobs:
       - name: cargo test (debug; rustls-provider-example) # NOTE: only optional feature is critical-section - requires Rust nightly
         run: cargo test -p rustls-provider-example
 
-      # XXX TODO test release - locked (instead?) [???]
       - name: cargo test (debug; rustls-provider-example; all features [critical-section] - Rust nightly only)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --all-features -p rustls-provider-example
@@ -141,7 +140,6 @@ jobs:
       - name: cargo test (debug; rustls-provider-test) # NOTE: only optional feature is critical-section - requires Rust nightly
         run: cargo test -p rustls-provider-test
 
-      # XXX TODO test release - locked (instead?) [???]
       - name: cargo test (debug; rustls-provider-test; all features [critical-section] - Rust nightly only)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --all-features -p rustls-provider-test
