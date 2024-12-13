@@ -485,7 +485,8 @@ jobs:
       matrix:
         target:
           # FOR FUTURE CONSIDERATION: test with some other targets with & without atomic ptr support
-          # 32-bit target(s) with no atomic ptr:
+          # 32-bit targets with no atomic ptr:
+          - riscv32imc-unknown-none-elf
           - thumbv6m-none-eabi
           # 32-bit Android (Linux) target(s):
           - armv7-linux-androideabi
