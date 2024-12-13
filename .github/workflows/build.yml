@@ -312,22 +312,17 @@ jobs:
       - name: Install nightly toolchain
         uses: dtolnay/rust-toolchain@nightly
 
-      # XXX TBD FEATURES - ??? ??? ???
       - name: Smoke-test benchmark program (ring)
         run: cargo run -p rustls-bench --profile=bench --locked --features ring -- --multiplier 0.1
 
-      # XXX TBD FEATURES - ??? ??? ???
       - name: Smoke-test benchmark program (aws-lc-rs)
         run: cargo run -p rustls-bench --profile=bench --locked --features aws-lc-rs -- --multiplier 0.1
 
-      # XXX TBD FEATURES - ??? ??? ???
       - name: Smoke-test benchmark program (fips)
         run: cargo run -p rustls-bench --profile=bench --locked --features fips -- --provider aws-lc-rs-fips --multiplier 0.1
 
-      # XXX TBD FEATURES - ??? ??? ???
-      - name: Run micro-benchmarks - XXX TBD XXX XXX FEATURES
-        # run: cargo bench --locked --all-features
-        run: cargo bench --locked $(admin/all-features-except critical-section rustls)
+      - name: Run micro-benchmarks (all stable features)
+        run: cargo bench --locked $(admin/all-stable-features rustls)
         env:
           RUSTFLAGS: --cfg=bench
 
