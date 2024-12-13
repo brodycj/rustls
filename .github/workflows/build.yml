@@ -82,7 +82,7 @@ jobs:
         run: cargo test --release --locked --lib $(admin/all-stable-features rustls) --all-targets
         env:
           RUST_BACKTRACE: 1
-      - name: cargo test (release; all features including unstable feature(s) - Rust nightly only)
+      - name: cargo test (release; all features including unstable feature(s) - Rust nightly only - using unstable --cfg option)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --release --locked --all-features --all-targets
         env:
@@ -91,12 +91,12 @@ jobs:
 
       # nb. this is separate since `--doc` option cannot be combined with other target option(s) ref:
       # - https://doc.rust-lang.org/cargo/commands/cargo-test.html
-      - name: cargo test --doc (release; all features except critical-section)
+      - name: cargo test --doc (release; all stable features)
         if: ${{ !startsWith(matrix.rust, 'nightly') }}
-        run: cargo test --release --locked $(admin/all-features-except critical-section rustls) --doc
+        run: cargo test --release --locked $(admin/all-stable-features rustls) --doc
         env:
           RUST_BACKTRACE: 1
-      - name: cargo test --doc (release; all features including critical-section - Rust nightly only)
+      - name: cargo test --doc (release; all features including unstable feature(s) - Rust nightly only - using unstable --cfg option)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --release --locked --all-features --doc
         env:
@@ -119,16 +119,16 @@ jobs:
       - name: cargo build (debug; rustls-provider-example lib in no-std mode)
         run: cargo build --locked -p rustls-provider-example --no-default-features
 
-      - name: cargo build (debug; rustls-provider-example; all features including critical-section - Rust nightly only)
+      - name: cargo build (debug; rustls-provider-example; all features including unstable feature(s) - Rust nightly only - using unstable --cfg option)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo build --locked -p rustls-provider-example --all-features
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-      - name: cargo test (debug; rustls-provider-example) # NOTE: only optional feature is critical-section - requires Rust nightly
+      - name: cargo test (debug; rustls-provider-example) # NOTE: only optional feature is critical-section (requires Rust nightly)
         run: cargo test -p rustls-provider-example
 
-      - name: cargo test (debug; rustls-provider-example; all features [critical-section] - Rust nightly only)
+      - name: cargo test (debug; rustls-provider-example; all features [unstable critical-section feature] - Rust nightly only - using unstable --cfg option)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --all-features -p rustls-provider-example
         env:
@@ -137,10 +137,10 @@ jobs:
       - name: cargo build (debug; rustls-provider-test)
         run: cargo build --locked -p rustls-provider-test
 
-      - name: cargo test (debug; rustls-provider-test) # NOTE: only optional feature is critical-section - requires Rust nightly
+      - name: cargo test (debug; rustls-provider-test) # NOTE: only optional feature is critical-section (requires Rust nightly)
         run: cargo test -p rustls-provider-test
 
-      - name: cargo test (debug; rustls-provider-test; all features [critical-section] - Rust nightly only)
+      - name: cargo test (debug; rustls-provider-test; all features [unstable critical-section feature] - Rust nightly only - using unstable --cfg option)
         if: startsWith(matrix.rust, 'nightly')
         run: cargo test --all-features -p rustls-provider-test
         env:
@@ -163,7 +163,7 @@ jobs:
         with:
           toolchain: "1.71"
 
-      # zlib-rs is optional and requires a later MSRV; critical-section requires Rust nightly
+      # zlib-rs is optional and requires a later MSRV; unstable critical-section feature requires Rust nightly
       - run: cargo check --locked --lib $(admin/all-features-except zlib,critical-section rustls) -p rustls
 
       # XXX TODO ADD CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
@@ -171,8 +171,8 @@ jobs:
         with:
           toolchain: "1.75"
 
-      # critical-section requires Rust nightly; check build of all other features with MSRV
-      - run: cargo check --locked --lib $(admin/all-features-except critical-section rustls) -p rustls
+      # critical-section requires Rust nightly; check build of all stable features with MSRV
+      - run: cargo check --locked --lib $(admin/all-stable-features rustls) -p rustls
 
   features:
     name: Features
@@ -248,19 +248,19 @@ jobs:
 
         # this target does _not_ include the libstd crate in its sysroot
         # it will catch unwanted usage of libstd in _dependencies_
-      - name: cargo build (debug; no default features; no-std; unstable critical-section)
+      - name: cargo build (debug; no default features; no-std; unstable critical-section feature - using unstable --cfg option)
         run: cargo build --locked --no-default-features --features critical-section --target x86_64-unknown-none
         working-directory: rustls
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-      - name: cargo test (debug; no default features; critical-section)
+      - name: cargo test (debug; no default features; unstable critical-section feature - using unstable --cfg option)
         run: cargo test --locked --no-default-features --features critical-section,std
         working-directory: rustls
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-      - name: cargo test (release; no run; all features including unstable feature(s))
+      - name: cargo test (release; no run; all features including unstable feature(s) - using unstable --cfg option)
         run: cargo test --locked --release --no-run --all-features
         working-directory: rustls
         env:
@@ -488,8 +488,8 @@ jobs:
 
   cross-build-with-critical-section-feature:
     # NOTE: The purpose of this CI job is to test build support for CPU targets with no atomic ptr support
-    # (using critical-section feature)
-    name: cross-target build with critical-section feature
+    # (using unstable critical-section feature)
+    name: cross-target build with unstable critical-section feature
     runs-on: ubuntu-latest
     strategy:
       matrix:
