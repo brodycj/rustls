@@ -464,9 +464,7 @@ jobs:
         with:
           persist-credentials: false
 
-      # XXX TBD rust-toolchain - ??? ??? ???
-      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
-      - name: Install rust-toolchain - nightly
+      - name: Install rust-toolchain - nightly # Rust nightly needed to test with unstable critical-section feature
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
@@ -497,13 +495,12 @@ jobs:
         with:
           persist-credentials: false
 
-      # XXX TBD rust-toolchain - ??? ??? ???
-      # XXX TODO MORE CONSISTENT LABEL HERE - XXX TODO RAISE SEPARATE PR TO UPDATE THIS
-      - name: Install rust-toolchain - nightly
+      - name: Install rust-toolchain - nightly # Rust nightly needed to test with unstable critical-section feature
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
-      # XXX TBD TEST WITH XXX TBD XXX PROVIDER(S)
+      # Omitting built-in aws-lc-rs & ring providers due to cross build issues encountered with target(s) with no atomic ptr
+      # XXX TODO REMOVE custom-provider feature (if possible) from this
       - run: cross build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
