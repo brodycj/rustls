@@ -502,8 +502,7 @@ jobs:
       - name: Install cross (cross-rs) from GitHub
         run: cargo install cross --git https://github.com/cross-rs/cross
       # Omitting built-in aws-lc-rs & ring providers due to cross build issues encountered with target(s) with no atomic ptr
-      # XXX TODO REMOVE custom-provider feature (if possible) from this
-      - run: cross build --no-default-features --features critical-section,custom-provider --package rustls --target ${{ matrix.target }}
+      - run: cross build --no-default-features --features critical-section --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
