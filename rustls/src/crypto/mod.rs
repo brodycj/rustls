@@ -158,6 +158,11 @@ pub use crate::suites::CipherSuiteCommon;
 /// - **Authentication key loading** - see [`crypto::KeyProvider::load_private_key()`] and
 ///   [`sign::SigningKey`].
 ///
+/// # Recommended crate features
+///
+/// - `std` (generally enabled by default) - enable functionality that is not available with `no-std` build
+/// - `critical-section` - XXX TODO XXX
+///
 /// # Example code
 ///
 /// See [provider-example/] for a full client and server example that uses
