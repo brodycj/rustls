@@ -484,9 +484,10 @@ jobs:
     strategy:
       matrix:
         target:
-          # FOR FUTURE CONSIDERATION: test with some other targets with & without atomic ptr support
+          # FOR FUTURE CONSIDERATION: test with some more targets with & without atomic ptr support
           # 32-bit targets with no atomic ptr:
-          - riscv32imc-unknown-none-elf
+          # XXX TODO GET BUILD WORKING WITH THIS RISC 32-BIT TARGET - ALREADY WORKS IN THIS: https://github.com/brodycj/rustls-rustcrypto/pull/1
+          # - riscv32imc-unknown-none-elf
           - thumbv6m-none-eabi
           # 32-bit Android (Linux) target(s):
           - armv7-linux-androideabi
