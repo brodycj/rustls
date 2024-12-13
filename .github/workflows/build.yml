@@ -183,11 +183,8 @@ jobs:
         with:
           persist-credentials: false
 
-      # XXX TBD rust-toolchain - ??? ??? ???
-      - name: Install rust-toolchain - nightly
-        uses: dtolnay/rust-toolchain@nightly
-        with:
-          target: x86_64-unknown-none
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@stable
 
       - name: cargo build (debug; default features)
         run: cargo build --locked
@@ -213,12 +210,6 @@ jobs:
         run: cargo test --locked --no-default-features
         working-directory: rustls
 
-      - name: cargo test (debug; no default features; critical-section)
-        run: cargo test --locked --no-default-features --features critical-section,std
-        working-directory: rustls
-        env:
-          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
-
       - name: cargo test (debug; no default features; tls12)
         run: cargo test --locked --no-default-features --features tls12,std
         working-directory: rustls
@@ -234,6 +225,44 @@ jobs:
       - name: cargo test (release; no run)
         run: cargo test --locked --release --no-run
         working-directory: rustls
+
+  features-unstable:
+    name: Features - unstable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          target: x86_64-unknown-none
+
+      - name: cargo build (debug; default features)
+        run: cargo build --locked
+        working-directory: rustls
+
+        # this target does _not_ include the libstd crate in its sysroot
+        # it will catch unwanted usage of libstd in _dependencies_
+      - name: cargo build (debug; no default features; no-std; unstable critical-section)
+        run: cargo build --locked --no-default-features --features critical-section --target x86_64-unknown-none
+        working-directory: rustls
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+
+      - name: cargo test (debug; no default features; critical-section)
+        run: cargo test --locked --no-default-features --features critical-section,std
+        working-directory: rustls
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+
+      - name: cargo test (release; no run; all features including unstable feature(s))
+        run: cargo test --locked --release --no-run --all-features
+        working-directory: rustls
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   bogo:
     name: BoGo test suite
