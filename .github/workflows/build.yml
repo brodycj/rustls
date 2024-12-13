@@ -369,23 +369,16 @@ jobs:
       - name: Install rust toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
 
-      # XXX TBD FEATURES - ??? ??? ???
-      - name: cargo doc (rustls; all features)
-        run: cargo doc --locked --all-features --no-deps --document-private-items --package rustls
+      - name: cargo doc (rustls; all stable features)
+        run: cargo doc --locked $(admin/all-stable-features rustls) --no-deps --document-private-items --package rustls
         env:
           RUSTDOCFLAGS: -Dwarnings
-          # XXX TBD ??? ??? ???
-          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       - name: Check README.md
-        # XXX TBD FEATURES - ??? ??? ???
         run: |
-          cargo build --locked --all-features
+          cargo build --locked $(admin/all-stable-features rustls)
           ./admin/pull-readme
           git diff --exit-code
-        # XXX TBD ??? ??? ???
-        env:
-          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   coverage:
     name: Measure coverage
