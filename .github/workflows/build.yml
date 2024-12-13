@@ -275,9 +275,8 @@ jobs:
         with:
           persist-credentials: false
 
-      # XXX TBD rust-toolchain - ??? ??? ???
-      - name: Install rust-toolchain - nightly
-        uses: dtolnay/rust-toolchain@nightly
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Install golang toolchain
         uses: actions/setup-go@v5
