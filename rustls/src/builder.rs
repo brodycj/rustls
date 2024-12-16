@@ -4,7 +4,6 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 
-use crate::alias_old::Arc;
 use crate::alias_new_1::Rc;
 use crate::client::EchMode;
 use crate::crypto::CryptoProvider;
@@ -166,7 +165,7 @@ use crate::{ClientConfig, ServerConfig};
 pub struct ConfigBuilder<Side: ConfigSide, State> {
     pub(crate) state: State,
     pub(crate) provider: Rc<Box<CryptoProvider>>,
-    pub(crate) time_provider: Arc<dyn TimeProvider>,
+    pub(crate) time_provider: Rc<Box<dyn TimeProvider>>,
     pub(crate) side: PhantomData<Side>,
 }
 

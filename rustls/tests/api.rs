@@ -2,6 +2,7 @@
 
 #![allow(clippy::duplicate_mod)]
 
+use std::boxed::Box;
 use std::fmt::Debug;
 use std::io::{self, IoSlice, Read, Write};
 use std::ops::{Deref, DerefMut};
@@ -737,7 +738,7 @@ fn config_builder_for_server_rejects_incompatible_cipher_suites() {
 fn config_builder_for_client_with_time() {
     ClientConfig::builder_with_details(
         provider::default_provider().into(),
-        Arc::new(rustls::time_provider::DefaultTimeProvider),
+        Box::new(rustls::time_provider::DefaultTimeProvider),
     )
     .with_safe_default_protocol_versions()
     .unwrap();
@@ -747,7 +748,7 @@ fn config_builder_for_client_with_time() {
 fn config_builder_for_server_with_time() {
     ServerConfig::builder_with_details(
         provider::default_provider().into(),
-        Arc::new(rustls::time_provider::DefaultTimeProvider),
+        Box::new(rustls::time_provider::DefaultTimeProvider),
     )
     .with_safe_default_protocol_versions()
     .unwrap();

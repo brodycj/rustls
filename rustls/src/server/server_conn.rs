@@ -31,8 +31,9 @@ use crate::msgs::message::Message;
 use crate::time_provider::DefaultTimeProvider;
 use crate::time_provider::TimeProvider;
 use crate::vecbuf::ChunkVecBuffer;
-#[cfg(feature = "std")]
-use crate::WantsVerifier;
+// XXX TODO XXX XXX
+// #[cfg(feature = "std")]
+// use crate::WantsVerifier;
 use crate::{compress, sign, verify, versions, DistinguishedName, KeyLog, WantsVersions};
 
 /// A trait for the ability to store server session data.
@@ -359,7 +360,7 @@ pub struct ServerConfig {
     pub require_ems: bool,
 
     /// Provides the current system time
-    pub time_provider: Arc<dyn TimeProvider>,
+    pub time_provider: Rc<Box<dyn TimeProvider>>,
 
     /// How to compress the server's certificate chain.
     ///
@@ -446,8 +447,8 @@ impl ServerConfig {
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {},
-            provider: Arc::new(provider),
-            time_provider: Arc::new(DefaultTimeProvider),
+            provider: Rc::new(provider),
+            time_provider: Rc::new(Box::new(DefaultTimeProvider)),
             side: PhantomData,
         }
     }
@@ -468,12 +469,12 @@ impl ServerConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
         provider: Box<CryptoProvider>,
-        time_provider: Arc<dyn TimeProvider>,
+        time_provider: Box<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {},
-            provider: Arc::new(provider),
-            time_provider,
+            provider: Rc::new(provider),
+            time_provider: Rc::new(time_provider),
             side: PhantomData,
         }
     }

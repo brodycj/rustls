@@ -223,7 +223,7 @@ pub struct ClientConfig {
     pub require_ems: bool,
 
     /// Provides the current system time
-    pub time_provider: Arc<dyn TimeProvider>,
+    pub time_provider: Rc<Box<dyn TimeProvider>>,
 
     /// Source of randomness and other crypto.
     pub(super) provider: Rc<Box<CryptoProvider>>,
@@ -322,8 +322,8 @@ impl ClientConfig {
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {},
-            provider: Arc::new(provider),
-            time_provider: Arc::new(DefaultTimeProvider),
+            provider: Rc::new(provider),
+            time_provider: Rc::new(Box::new(DefaultTimeProvider)),
             side: PhantomData,
         }
     }
@@ -344,12 +344,12 @@ impl ClientConfig {
     pub fn builder_with_details(
         // XXX TBD XXX XXX
         provider: Box<CryptoProvider>,
-        time_provider: Arc<dyn TimeProvider>,
+        time_provider: Box<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {},
-            provider: Arc::new(provider),
-            time_provider,
+            provider: Rc::new(provider),
+            time_provider: Rc::new(time_provider),
             side: PhantomData,
         }
     }
