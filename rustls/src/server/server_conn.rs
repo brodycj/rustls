@@ -11,6 +11,7 @@ use pki_types::{DnsName, UnixTime};
 
 use super::hs;
 use crate::alias_old::Arc;
+use crate::alias_new_1::Rc;
 use crate::builder::ConfigBuilder;
 use crate::common_state::{CommonState, Side};
 #[cfg(feature = "std")]
@@ -246,7 +247,7 @@ impl<'a> ClientHello<'a> {
 #[derive(Clone, Debug)]
 pub struct ServerConfig {
     /// Source of randomness and other crypto.
-    pub(super) provider: Arc<CryptoProvider>,
+    pub(super) provider: Rc<Box<CryptoProvider>>,
 
     /// Ignore the client's ciphersuite order. Instead,
     /// choose the top ciphersuite in the server list
@@ -398,10 +399,11 @@ impl ServerConfig {
     /// and safe protocol version defaults.
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
-    #[cfg(feature = "std")]
-    pub fn builder() -> ConfigBuilder<Self, WantsVerifier> {
-        Self::builder_with_protocol_versions(versions::DEFAULT_VERSIONS)
-    }
+    // XXX XXX
+    // #[cfg(feature = "std")]
+    // pub fn builder() -> ConfigBuilder<Self, WantsVerifier> {
+    //     Self::builder_with_protocol_versions(versions::DEFAULT_VERSIONS)
+    // }
 
     /// Create a builder for a server configuration with
     /// [the process-default `CryptoProvider`][CryptoProvider#using-the-per-process-default-cryptoprovider]
@@ -415,19 +417,20 @@ impl ServerConfig {
     ///   the crate features and process default.
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
-    #[cfg(feature = "std")]
-    pub fn builder_with_protocol_versions(
-        versions: &[&'static versions::SupportedProtocolVersion],
-    ) -> ConfigBuilder<Self, WantsVerifier> {
-        // Safety assumptions:
-        // 1. that the provider has been installed (explicitly or implicitly)
-        // 2. that the process-level default provider is usable with the supplied protocol versions.
-        Self::builder_with_provider(Arc::clone(
-            CryptoProvider::get_default_or_install_from_crate_features(),
-        ))
-        .with_protocol_versions(versions)
-        .unwrap()
-    }
+    // XXX XXX
+    // #[cfg(feature = "std")]
+    // pub fn builder_with_protocol_versions(
+    //     versions: &[&'static versions::SupportedProtocolVersion],
+    // ) -> ConfigBuilder<Self, WantsVerifier> {
+    //     // Safety assumptions:
+    //     // 1. that the provider has been installed (explicitly or implicitly)
+    //     // 2. that the process-level default provider is usable with the supplied protocol versions.
+    //     Self::builder_with_provider(Arc::clone(
+    //         CryptoProvider::get_default_or_install_from_crate_features(),
+    //     ))
+    //     .with_protocol_versions(versions)
+    //     .unwrap()
+    // }
 
     /// Create a builder for a server configuration with a specific [`CryptoProvider`].
     ///
@@ -439,11 +442,11 @@ impl ServerConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     #[cfg(feature = "std")]
     pub fn builder_with_provider(
-        provider: Arc<CryptoProvider>,
+        provider: Box<CryptoProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {},
-            provider,
+            provider: Arc::new(provider),
             time_provider: Arc::new(DefaultTimeProvider),
             side: PhantomData,
         }
@@ -464,12 +467,12 @@ impl ServerConfig {
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
-        provider: Arc<CryptoProvider>,
+        provider: Box<CryptoProvider>,
         time_provider: Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {},
-            provider,
+            provider: Arc::new(provider),
             time_provider,
             side: PhantomData,
         }
@@ -494,7 +497,7 @@ impl ServerConfig {
     }
 
     /// Return the crypto provider used to construct this client configuration.
-    pub fn crypto_provider(&self) -> &Arc<CryptoProvider> {
+    pub fn crypto_provider(&self) -> &Box<CryptoProvider> {
         &self.provider
     }
 

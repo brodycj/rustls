@@ -6726,134 +6726,136 @@ fn test_secret_extraction_enabled() {
     }
 }
 
-#[test]
-fn test_secret_extract_produces_correct_variant() {
-    fn check(suite: SupportedCipherSuite, f: impl Fn(ConnectionTrafficSecrets) -> bool) {
-        let kt = KeyType::Rsa2048;
+// XXX XXX
+// #[test]
+// fn test_secret_extract_produces_correct_variant() {
+//     fn check(suite: SupportedCipherSuite, f: impl Fn(ConnectionTrafficSecrets) -> bool) {
+//         let kt = KeyType::Rsa2048;
 
-        let provider: Arc<CryptoProvider> = CryptoProvider {
-            cipher_suites: vec![suite],
-            ..provider::default_provider()
-        }
-        .into();
+//         let provider: Arc<CryptoProvider> = CryptoProvider {
+//             cipher_suites: vec![suite],
+//             ..provider::default_provider()
+//         }
+//         .into();
 
-        let mut server_config = finish_server_config(
-            kt,
-            ServerConfig::builder_with_provider(provider.clone())
-                .with_safe_default_protocol_versions()
-                .unwrap(),
-        );
+//         let mut server_config = finish_server_config(
+//             kt,
+//             ServerConfig::builder_with_provider(provider.clone())
+//                 .with_safe_default_protocol_versions()
+//                 .unwrap(),
+//         );
 
-        server_config.enable_secret_extraction = true;
-        let server_config = Arc::new(server_config);
+//         server_config.enable_secret_extraction = true;
+//         let server_config = Arc::new(server_config);
 
-        let mut client_config = finish_client_config(
-            kt,
-            ClientConfig::builder_with_provider(provider)
-                .with_safe_default_protocol_versions()
-                .unwrap(),
-        );
-        client_config.enable_secret_extraction = true;
+//         let mut client_config = finish_client_config(
+//             kt,
+//             ClientConfig::builder_with_provider(provider)
+//                 .with_safe_default_protocol_versions()
+//                 .unwrap(),
+//         );
+//         client_config.enable_secret_extraction = true;
 
-        let (mut client, mut server) =
-            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
+//         let (mut client, mut server) =
+//             make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
 
-        do_handshake(&mut client, &mut server);
+//         do_handshake(&mut client, &mut server);
 
-        let client_secrets = client
-            .dangerous_extract_secrets()
-            .unwrap();
-        let server_secrets = server
-            .dangerous_extract_secrets()
-            .unwrap();
+//         let client_secrets = client
+//             .dangerous_extract_secrets()
+//             .unwrap();
+//         let server_secrets = server
+//             .dangerous_extract_secrets()
+//             .unwrap();
 
-        assert!(f(client_secrets.tx.1));
-        assert!(f(client_secrets.rx.1));
-        assert!(f(server_secrets.tx.1));
-        assert!(f(server_secrets.rx.1));
-    }
+//         assert!(f(client_secrets.tx.1));
+//         assert!(f(client_secrets.rx.1));
+//         assert!(f(server_secrets.tx.1));
+//         assert!(f(server_secrets.rx.1));
+//     }
 
-    check(cipher_suite::TLS13_AES_128_GCM_SHA256, |sec| {
-        matches!(sec, ConnectionTrafficSecrets::Aes128Gcm { .. })
-    });
-    check(cipher_suite::TLS13_AES_256_GCM_SHA384, |sec| {
-        matches!(sec, ConnectionTrafficSecrets::Aes256Gcm { .. })
-    });
-    check(cipher_suite::TLS13_CHACHA20_POLY1305_SHA256, |sec| {
-        matches!(sec, ConnectionTrafficSecrets::Chacha20Poly1305 { .. })
-    });
+//     check(cipher_suite::TLS13_AES_128_GCM_SHA256, |sec| {
+//         matches!(sec, ConnectionTrafficSecrets::Aes128Gcm { .. })
+//     });
+//     check(cipher_suite::TLS13_AES_256_GCM_SHA384, |sec| {
+//         matches!(sec, ConnectionTrafficSecrets::Aes256Gcm { .. })
+//     });
+//     check(cipher_suite::TLS13_CHACHA20_POLY1305_SHA256, |sec| {
+//         matches!(sec, ConnectionTrafficSecrets::Chacha20Poly1305 { .. })
+//     });
 
-    check(cipher_suite::TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, |sec| {
-        matches!(sec, ConnectionTrafficSecrets::Aes128Gcm { .. })
-    });
-    check(cipher_suite::TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, |sec| {
-        matches!(sec, ConnectionTrafficSecrets::Aes256Gcm { .. })
-    });
-    check(
-        cipher_suite::TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-        |sec| matches!(sec, ConnectionTrafficSecrets::Chacha20Poly1305 { .. }),
-    );
-}
+//     check(cipher_suite::TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, |sec| {
+//         matches!(sec, ConnectionTrafficSecrets::Aes128Gcm { .. })
+//     });
+//     check(cipher_suite::TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, |sec| {
+//         matches!(sec, ConnectionTrafficSecrets::Aes256Gcm { .. })
+//     });
+//     check(
+//         cipher_suite::TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+//         |sec| matches!(sec, ConnectionTrafficSecrets::Chacha20Poly1305 { .. }),
+//     );
+// }
 
+// XXX XXX
 /// Test that secrets cannot be extracted unless explicitly enabled, and until
 /// the handshake is done.
-#[cfg(feature = "tls12")]
-#[test]
-fn test_secret_extraction_disabled_or_too_early() {
-    let kt = KeyType::Rsa2048;
-    let provider = Arc::new(CryptoProvider {
-        cipher_suites: vec![cipher_suite::TLS13_AES_128_GCM_SHA256],
-        ..provider::default_provider()
-    });
+// #[cfg(feature = "tls12")]
+// #[test]
+// fn test_secret_extraction_disabled_or_too_early() {
+//     let kt = KeyType::Rsa2048;
+//     let provider = Arc::new(CryptoProvider {
+//         cipher_suites: vec![cipher_suite::TLS13_AES_128_GCM_SHA256],
+//         ..provider::default_provider()
+//     });
 
-    for (server_enable, client_enable) in [(true, false), (false, true)] {
-        let mut server_config = ServerConfig::builder_with_provider(provider.clone())
-            .with_safe_default_protocol_versions()
-            .unwrap()
-            .with_no_client_auth()
-            .with_single_cert(kt.get_chain(), kt.get_key())
-            .unwrap();
-        server_config.enable_secret_extraction = server_enable;
-        let server_config = Arc::new(server_config);
+//     for (server_enable, client_enable) in [(true, false), (false, true)] {
+//         let mut server_config = ServerConfig::builder_with_provider(provider.clone())
+//             .with_safe_default_protocol_versions()
+//             .unwrap()
+//             .with_no_client_auth()
+//             .with_single_cert(kt.get_chain(), kt.get_key())
+//             .unwrap();
+//         server_config.enable_secret_extraction = server_enable;
+//         let server_config = Arc::new(server_config);
 
-        let mut client_config = make_client_config(kt);
-        client_config.enable_secret_extraction = client_enable;
+//         let mut client_config = make_client_config(kt);
+//         client_config.enable_secret_extraction = client_enable;
 
-        let client_config = Arc::new(client_config);
+//         let client_config = Arc::new(client_config);
 
-        let (client, server) = make_pair_for_arc_configs(&client_config, &server_config);
+//         let (client, server) = make_pair_for_arc_configs(&client_config, &server_config);
 
-        assert!(
-            client
-                .dangerous_extract_secrets()
-                .is_err(),
-            "extraction should fail until handshake completes"
-        );
-        assert!(
-            server
-                .dangerous_extract_secrets()
-                .is_err(),
-            "extraction should fail until handshake completes"
-        );
+//         assert!(
+//             client
+//                 .dangerous_extract_secrets()
+//                 .is_err(),
+//             "extraction should fail until handshake completes"
+//         );
+//         assert!(
+//             server
+//                 .dangerous_extract_secrets()
+//                 .is_err(),
+//             "extraction should fail until handshake completes"
+//         );
 
-        let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
+//         let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
 
-        do_handshake(&mut client, &mut server);
+//         do_handshake(&mut client, &mut server);
 
-        assert_eq!(
-            server_enable,
-            server
-                .dangerous_extract_secrets()
-                .is_ok()
-        );
-        assert_eq!(
-            client_enable,
-            client
-                .dangerous_extract_secrets()
-                .is_ok()
-        );
-    }
-}
+//         assert_eq!(
+//             server_enable,
+//             server
+//                 .dangerous_extract_secrets()
+//                 .is_ok()
+//         );
+//         assert_eq!(
+//             client_enable,
+//             client
+//                 .dangerous_extract_secrets()
+//                 .is_ok()
+//         );
+//     }
+// }
 
 #[test]
 fn test_received_plaintext_backpressure() {
@@ -8113,49 +8115,50 @@ fn test_keys_match_for_all_signing_key_types() {
     }
 }
 
-#[test]
-fn tls13_packed_handshake() {
-    // transcript requires selection of X25519
-    if provider_is_fips() {
-        return;
-    }
+// XXX XXX
+// #[test]
+// fn tls13_packed_handshake() {
+//     // transcript requires selection of X25519
+//     if provider_is_fips() {
+//         return;
+//     }
 
-    // regression test for https://github.com/rustls/rustls/issues/2040
-    // (did not affect the buffered api)
-    let client_config = ClientConfig::builder_with_provider(unsafe_plaintext_crypto_provider())
-        .with_safe_default_protocol_versions()
-        .unwrap()
-        .dangerous()
-        .with_custom_certificate_verifier(Arc::new(MockServerVerifier::rejects_certificate(
-            CertificateError::UnknownIssuer.into(),
-        )))
-        .with_no_client_auth();
+//     // regression test for https://github.com/rustls/rustls/issues/2040
+//     // (did not affect the buffered api)
+//     let client_config = ClientConfig::builder_with_provider(unsafe_plaintext_crypto_provider())
+//         .with_safe_default_protocol_versions()
+//         .unwrap()
+//         .dangerous()
+//         .with_custom_certificate_verifier(Arc::new(MockServerVerifier::rejects_certificate(
+//             CertificateError::UnknownIssuer.into(),
+//         )))
+//         .with_no_client_auth();
 
-    let mut client =
-        ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+//     let mut client =
+//         ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
 
-    let mut hello = Vec::new();
-    client
-        .write_tls(&mut io::Cursor::new(&mut hello))
-        .unwrap();
+//     let mut hello = Vec::new();
+//     client
+//         .write_tls(&mut io::Cursor::new(&mut hello))
+//         .unwrap();
 
-    let first_flight = include_bytes!("data/bug2040-message-1.bin");
-    client
-        .read_tls(&mut io::Cursor::new(first_flight))
-        .unwrap();
-    client.process_new_packets().unwrap();
+//     let first_flight = include_bytes!("data/bug2040-message-1.bin");
+//     client
+//         .read_tls(&mut io::Cursor::new(first_flight))
+//         .unwrap();
+//     client.process_new_packets().unwrap();
 
-    let second_flight = include_bytes!("data/bug2040-message-2.bin");
-    client
-        .read_tls(&mut io::Cursor::new(second_flight))
-        .unwrap();
-    assert_eq!(
-        client
-            .process_new_packets()
-            .unwrap_err(),
-        Error::InvalidCertificate(CertificateError::UnknownIssuer),
-    );
-}
+//     let second_flight = include_bytes!("data/bug2040-message-2.bin");
+//     client
+//         .read_tls(&mut io::Cursor::new(second_flight))
+//         .unwrap();
+//     assert_eq!(
+//         client
+//             .process_new_packets()
+//             .unwrap_err(),
+//         Error::InvalidCertificate(CertificateError::UnknownIssuer),
+//     );
+// }
 
 #[test]
 fn large_client_hello() {

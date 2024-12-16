@@ -18,7 +18,7 @@ use crate::client::common::ClientHelloDetails;
 use crate::client::ech::EchState;
 use crate::client::{tls13, ClientConfig, EchMode, EchStatus};
 use crate::common_state::{
-    CommonState, HandshakeKind, KxState, RawKeyNegotationResult, RawKeyNegotiationParams, State,
+    CommonState, HandshakeKind, KxState, RawKeyNegotationResult, RawKeyNegotiationParams, State, // StateBase, // XXX TBD ???
 };
 use crate::conn::ConnectionRandoms;
 use crate::crypto::{ActiveKeyExchange, KeyExchangeAlgorithm};
@@ -739,6 +739,9 @@ pub(super) fn process_client_cert_type_extension(
     }
 }
 
+// XXX TBD ???
+// impl StateBase for ExpectServerHello {}
+
 impl State<ClientConnectionData> for ExpectServerHello {
     fn handle<'m>(
         mut self: Box<Self>,
@@ -1145,6 +1148,9 @@ impl ExpectServerHelloOrHelloRetryRequest {
         )
     }
 }
+
+// XXX TBD ???
+// impl StateBase for ExpectServerHelloOrHelloRetryRequest {}
 
 impl State<ClientConnectionData> for ExpectServerHelloOrHelloRetryRequest {
     fn handle<'m>(

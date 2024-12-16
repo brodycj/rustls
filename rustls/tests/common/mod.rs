@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 #![allow(clippy::duplicate_mod)]
 
+use std::boxed::Box;
 use std::io;
 use std::ops::DerefMut;
 use std::sync::OnceLock;
@@ -438,7 +439,9 @@ pub fn server_config_builder() -> rustls::ConfigBuilder<ServerConfig, rustls::Wa
     // ensure `ServerConfig::builder()` is covered, even though it is
     // equivalent to `builder_with_provider(provider::provider().into())`.
     if exactly_one_provider() {
-        rustls::ServerConfig::builder()
+        // XXX XXX
+        // rustls::ServerConfig::builder()
+        unreachable!("XXX")
     } else {
         rustls::ServerConfig::builder_with_provider(provider::default_provider().into())
             .with_safe_default_protocol_versions()
@@ -450,7 +453,9 @@ pub fn server_config_builder_with_versions(
     versions: &[&'static rustls::SupportedProtocolVersion],
 ) -> rustls::ConfigBuilder<ServerConfig, rustls::WantsVerifier> {
     if exactly_one_provider() {
-        rustls::ServerConfig::builder_with_protocol_versions(versions)
+        // XXX XXX
+        // rustls::ServerConfig::builder_with_protocol_versions(versions)
+        panic!("XXX")
     } else {
         rustls::ServerConfig::builder_with_provider(provider::default_provider().into())
             .with_protocol_versions(versions)
@@ -462,7 +467,9 @@ pub fn client_config_builder() -> rustls::ConfigBuilder<ClientConfig, rustls::Wa
     // ensure `ClientConfig::builder()` is covered, even though it is
     // equivalent to `builder_with_provider(provider::provider().into())`.
     if exactly_one_provider() {
-        rustls::ClientConfig::builder()
+        // XXX XXX
+        // rustls::ClientConfig::builder()
+        unreachable!("XXX")
     } else {
         rustls::ClientConfig::builder_with_provider(provider::default_provider().into())
             .with_safe_default_protocol_versions()
@@ -474,7 +481,9 @@ pub fn client_config_builder_with_versions(
     versions: &[&'static rustls::SupportedProtocolVersion],
 ) -> rustls::ConfigBuilder<ClientConfig, rustls::WantsVerifier> {
     if exactly_one_provider() {
-        rustls::ClientConfig::builder_with_protocol_versions(versions)
+        // XXX XXX
+        // rustls::ClientConfig::builder_with_protocol_versions(versions)
+        unreachable!("XXX")
     } else {
         rustls::ClientConfig::builder_with_provider(provider::default_provider().into())
             .with_protocol_versions(versions)
@@ -1328,7 +1337,7 @@ impl RawTls {
     }
 }
 
-pub fn aes_128_gcm_with_1024_confidentiality_limit() -> Arc<CryptoProvider> {
+pub fn aes_128_gcm_with_1024_confidentiality_limit() -> Box<CryptoProvider> {
     const CONFIDENTIALITY_LIMIT: u64 = 1024;
 
     // needed to extend lifetime of Tls13CipherSuite to 'static

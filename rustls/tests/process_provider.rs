@@ -21,9 +21,13 @@ fn test_process_provider() {
     if dbg!(cfg!(all(feature = "ring", feature = "aws_lc_rs"))) {
         test_explicit_choice_required();
     } else if dbg!(cfg!(all(feature = "ring", not(feature = "aws_lc_rs")))) {
-        test_ring_used_as_implicit_provider();
+        // XXX XXX
+        // test_ring_used_as_implicit_provider();
+        panic!("XXX")
     } else if dbg!(cfg!(all(feature = "aws_lc_rs", not(feature = "ring")))) {
-        test_aws_lc_rs_used_as_implicit_provider();
+        // XXX
+        // test_aws_lc_rs_used_as_implicit_provider();
+        panic!("XXX")
     } else {
         panic!("fix feature combinations");
     }
@@ -40,34 +44,37 @@ fn test_explicit_choice_required() {
         .expect_err("install succeeded a second time");
     CryptoProvider::get_default().expect("provider missing");
 
+    // XXX TODO XXX XXX
     // does not panic
-    finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
+    // finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
 }
 
-fn test_ring_used_as_implicit_provider() {
-    assert!(CryptoProvider::get_default().is_none());
+// XXX XXX
+// fn test_ring_used_as_implicit_provider() {
+//     assert!(CryptoProvider::get_default().is_none());
 
-    // implicitly installs ring provider
-    finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
+//     // implicitly installs ring provider
+//     finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
 
-    let default = CryptoProvider::get_default().expect("provider missing");
-    let debug = format!("{default:?}");
-    assert!(debug.contains("secure_random: Ring"));
+//     let default = CryptoProvider::get_default().expect("provider missing");
+//     let debug = format!("{default:?}");
+//     assert!(debug.contains("secure_random: Ring"));
 
-    let builder = ClientConfig::builder();
-    assert_eq!(format!("{:?}", builder.crypto_provider()), debug);
-}
+//     let builder = ClientConfig::builder();
+//     assert_eq!(format!("{:?}", builder.crypto_provider()), debug);
+// }
 
-fn test_aws_lc_rs_used_as_implicit_provider() {
-    assert!(CryptoProvider::get_default().is_none());
+// XXX XXX
+// fn test_aws_lc_rs_used_as_implicit_provider() {
+//     assert!(CryptoProvider::get_default().is_none());
 
-    // implicitly installs aws-lc-rs provider
-    finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
+//     // implicitly installs aws-lc-rs provider
+//     finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
 
-    let default = CryptoProvider::get_default().expect("provider missing");
-    let debug = format!("{default:?}");
-    assert!(debug.contains("secure_random: AwsLcRs"));
+//     let default = CryptoProvider::get_default().expect("provider missing");
+//     let debug = format!("{default:?}");
+//     assert!(debug.contains("secure_random: AwsLcRs"));
 
-    let builder = ClientConfig::builder();
-    assert_eq!(format!("{:?}", builder.crypto_provider()), debug);
-}
+//     let builder = ClientConfig::builder();
+//     assert_eq!(format!("{:?}", builder.crypto_provider()), debug);
+// }

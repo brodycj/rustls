@@ -1,3 +1,4 @@
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
@@ -8,6 +9,7 @@ use pki_types::{ServerName, UnixTime};
 use super::handy::NoClientSessionStorage;
 use super::hs;
 use crate::alias_old::Arc;
+use crate::alias_new_1::Rc;
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
 use crate::common_state::{CommonState, Protocol, Side};
@@ -24,8 +26,9 @@ use crate::suites::SupportedCipherSuite;
 use crate::time_provider::DefaultTimeProvider;
 use crate::time_provider::TimeProvider;
 use crate::unbuffered::{EncryptError, TransmitTlsData};
-#[cfg(feature = "std")]
-use crate::WantsVerifier;
+// XXX TODO XXX
+// #[cfg(feature = "std")]
+// use crate::WantsVerifier;
 use crate::{compress, sign, verify, versions, KeyLog, WantsVersions};
 #[cfg(doc)]
 use crate::{crypto, DistinguishedName};
@@ -223,7 +226,7 @@ pub struct ClientConfig {
     pub time_provider: Arc<dyn TimeProvider>,
 
     /// Source of randomness and other crypto.
-    pub(super) provider: Arc<CryptoProvider>,
+    pub(super) provider: Rc<Box<CryptoProvider>>,
 
     /// Supported versions, in no particular order.  The default
     /// is all supported versions.
@@ -272,10 +275,11 @@ impl ClientConfig {
     /// and safe protocol version defaults.
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
-    #[cfg(feature = "std")]
-    pub fn builder() -> ConfigBuilder<Self, WantsVerifier> {
-        Self::builder_with_protocol_versions(versions::DEFAULT_VERSIONS)
-    }
+    // XXX TODO XXX
+    // #[cfg(feature = "std")]
+    // pub fn builder() -> ConfigBuilder<Self, WantsVerifier> {
+    //     Self::builder_with_protocol_versions(versions::DEFAULT_VERSIONS)
+    // }
 
     /// Create a builder for a client configuration with
     /// [the process-default `CryptoProvider`][CryptoProvider#using-the-per-process-default-cryptoprovider]
@@ -289,19 +293,20 @@ impl ClientConfig {
     ///   the crate features and process default.
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
-    #[cfg(feature = "std")]
-    pub fn builder_with_protocol_versions(
-        versions: &[&'static versions::SupportedProtocolVersion],
-    ) -> ConfigBuilder<Self, WantsVerifier> {
-        // Safety assumptions:
-        // 1. that the provider has been installed (explicitly or implicitly)
-        // 2. that the process-level default provider is usable with the supplied protocol versions.
-        Self::builder_with_provider(Arc::clone(
-            CryptoProvider::get_default_or_install_from_crate_features(),
-        ))
-        .with_protocol_versions(versions)
-        .unwrap()
-    }
+    // XXX TODO XXX
+    // #[cfg(feature = "std")]
+    // pub fn builder_with_protocol_versions(
+    //     versions: &[&'static versions::SupportedProtocolVersion],
+    // ) -> ConfigBuilder<Self, WantsVerifier> {
+    //     // Safety assumptions:
+    //     // 1. that the provider has been installed (explicitly or implicitly)
+    //     // 2. that the process-level default provider is usable with the supplied protocol versions.
+    //     Self::builder_with_provider(Arc::clone(
+    //         CryptoProvider::get_default_or_install_from_crate_features(),
+    //     ))
+    //     .with_protocol_versions(versions)
+    //     .unwrap()
+    // }
 
     /// Create a builder for a client configuration with a specific [`CryptoProvider`].
     ///
@@ -313,11 +318,11 @@ impl ClientConfig {
     /// For more information, see the [`ConfigBuilder`] documentation.
     #[cfg(feature = "std")]
     pub fn builder_with_provider(
-        provider: Arc<CryptoProvider>,
+        provider: Box<CryptoProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {},
-            provider,
+            provider: Arc::new(provider),
             time_provider: Arc::new(DefaultTimeProvider),
             side: PhantomData,
         }
@@ -337,12 +342,13 @@ impl ClientConfig {
     ///
     /// For more information, see the [`ConfigBuilder`] documentation.
     pub fn builder_with_details(
-        provider: Arc<CryptoProvider>,
+        // XXX TBD XXX XXX
+        provider: Box<CryptoProvider>,
         time_provider: Arc<dyn TimeProvider>,
     ) -> ConfigBuilder<Self, WantsVersions> {
         ConfigBuilder {
             state: WantsVersions {},
-            provider,
+            provider: Arc::new(provider),
             time_provider,
             side: PhantomData,
         }
@@ -370,7 +376,7 @@ impl ClientConfig {
     }
 
     /// Return the crypto provider used to construct this client configuration.
-    pub fn crypto_provider(&self) -> &Arc<CryptoProvider> {
+    pub fn crypto_provider(&self) -> &Box<CryptoProvider> {
         &self.provider
     }
 

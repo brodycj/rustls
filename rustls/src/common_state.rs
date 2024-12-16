@@ -831,7 +831,11 @@ impl IoState {
     }
 }
 
-pub(crate) trait State<Data>: Send + Sync {
+// XXX TBD ??? ??? ???:
+// pub(crate) trait StateBase: Send + Sync {}
+
+// XXX TBD XXX XXX
+pub(crate) trait State<Data>: /* StateBase */ Send + Sync {
     fn handle<'m>(
         self: Box<Self>,
         cx: &mut Context<'_, Data>,
