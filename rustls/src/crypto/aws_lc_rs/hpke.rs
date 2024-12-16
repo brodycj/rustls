@@ -12,7 +12,7 @@ use aws_lc_rs::encoding::{AsBigEndian, Curve25519SeedBin, EcPrivateKeyBin};
 use zeroize::Zeroize;
 
 #[cfg(feature = "std")]
-use crate::alias::Arc;
+use crate::alias_old::Arc;
 use crate::crypto::aws_lc_rs::hmac::{HMAC_SHA256, HMAC_SHA384, HMAC_SHA512};
 use crate::crypto::aws_lc_rs::unspecified_err;
 use crate::crypto::hpke::{

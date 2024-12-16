@@ -420,7 +420,8 @@ mod log {
 #[macro_use]
 mod test_macros;
 
-mod alias {
+// XXX TODO REPLACE THIS:
+mod alias_old {
     // NOTE: `Arc` from `portable_atomic_util` is ONLY used to support the `critical-section` feature (as documented above).
     #[cfg(feature = "critical-section")]
     extern crate portable_atomic_util;
@@ -431,6 +432,15 @@ mod alias {
     #[cfg(not(feature = "critical-section"))]
     pub(crate) use alloc::sync::Arc;
 }
+
+// XXX TBD
+// XXX TBD COMBINE INTO SINGLE mod alias ONCE READY
+// mod alias_new_1 {
+//     pub(crate) use alloc::rc::Rc;
+// }
+// mod alias_new_2 {
+//     pub(crate) use alloc::sync::Arc;
+// }
 
 #[macro_use]
 mod msgs;
@@ -703,7 +713,7 @@ pub mod util {
         ///
         /// This is to help rustls library users and custom providers use the correct `Arc` type,
         /// regardless of whether `critical-section` feature is enabled or not.
-        pub type Arc<T> = crate::alias::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
+        pub type Arc<T> = crate::alias_old::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
     }
 }
 

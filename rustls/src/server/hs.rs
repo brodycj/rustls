@@ -7,7 +7,7 @@ use pki_types::DnsName;
 use super::server_conn::ServerConnectionData;
 #[cfg(feature = "tls12")]
 use super::tls12;
-use crate::alias::Arc;
+use crate::alias_old::Arc;
 use crate::common_state::{
     KxState, Protocol, RawKeyNegotationResult, RawKeyNegotiationParams, State,
 };

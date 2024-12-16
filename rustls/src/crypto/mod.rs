@@ -5,7 +5,7 @@ use core::fmt::Debug;
 use pki_types::PrivateKeyDer;
 use zeroize::Zeroize;
 
-use crate::alias::Arc;
+use crate::alias_old::Arc;
 use crate::msgs::ffdhe_groups::FfdheGroup;
 use crate::sign::SigningKey;
 pub use crate::webpki::{
@@ -713,7 +713,7 @@ mod static_default {
     use once_cell::sync::OnceCell;
 
     use super::CryptoProvider;
-    use crate::alias::Arc;
+    use crate::alias_old::Arc;
 
     #[cfg(any(feature = "critical-section", feature = "std"))]
     pub(crate) fn install_default(

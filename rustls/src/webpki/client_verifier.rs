@@ -4,7 +4,7 @@ use pki_types::{CertificateDer, CertificateRevocationListDer, UnixTime};
 use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, UnknownStatusPolicy};
 
 use super::{pki_error, VerifierBuilderError};
-use crate::alias::Arc;
+use crate::alias_old::Arc;
 #[cfg(doc)]
 use crate::crypto;
 use crate::crypto::{CryptoProvider, WebPkiSupportedAlgorithms};
@@ -438,7 +438,7 @@ mod tests {
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use super::{provider, WebPkiClientVerifier};
-    use crate::alias::Arc;
+    use crate::alias_old::Arc;
     use crate::server::VerifierBuilderError;
     use crate::RootCertStore;
 

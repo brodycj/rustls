@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use pki_types::{CertificateDer, PrivateKeyDer};
 
 use super::client_conn::Resumption;
-use crate::alias::Arc;
+use crate::alias_old::Arc;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::client::{handy, ClientConfig, EchMode, ResolvesClientCert};
 use crate::error::Error;
@@ -91,7 +91,7 @@ impl ConfigBuilder<ClientConfig, WantsVerifier> {
 pub(super) mod danger {
     use core::marker::PhantomData;
 
-    use crate::alias::Arc;
+    use crate::alias_old::Arc;
     use crate::client::WantsClientCert;
     use crate::{verify, ClientConfig, ConfigBuilder, WantsVerifier};
 

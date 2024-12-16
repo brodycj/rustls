@@ -3,7 +3,7 @@ use alloc::vec::Vec;
 use pki_types::{CertificateDer, CertificateRevocationListDer, ServerName, UnixTime};
 use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, UnknownStatusPolicy};
 
-use crate::alias::Arc;
+use crate::alias_old::Arc;
 use crate::crypto::{CryptoProvider, WebPkiSupportedAlgorithms};
 use crate::log::trace;
 use crate::verify::{
@@ -310,7 +310,7 @@ mod tests {
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use super::{provider, VerifierBuilderError, WebPkiServerVerifier};
-    use crate::alias::Arc;
+    use crate::alias_old::Arc;
     use crate::RootCertStore;
 
     fn load_crls(crls_der: &[&[u8]]) -> Vec<CertificateRevocationListDer<'static>> {

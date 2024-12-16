@@ -8,7 +8,7 @@ pub(crate) use aws_lc_rs as ring_like;
 use pki_types::PrivateKeyDer;
 use webpki::aws_lc_rs as webpki_algs;
 
-use crate::alias::Arc;
+use crate::alias_old::Arc;
 use crate::crypto::{CryptoProvider, KeyProvider, SecureRandom};
 use crate::enums::SignatureScheme;
 use crate::rand::GetRandomFailed;

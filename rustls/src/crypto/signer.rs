@@ -5,7 +5,7 @@ use core::fmt::Debug;
 
 use pki_types::{AlgorithmIdentifier, CertificateDer, SubjectPublicKeyInfoDer};
 
-use crate::alias::Arc;
+use crate::alias_old::Arc;
 use crate::enums::{SignatureAlgorithm, SignatureScheme};
 use crate::error::{Error, InconsistentKeys};
 use crate::server::ParsedCertificate;
