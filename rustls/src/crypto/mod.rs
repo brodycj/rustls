@@ -233,33 +233,36 @@ impl CryptoProvider {
     /// Call this early in your process to configure which provider is used for
     /// the provider.  The configuration should happen before any use of
     /// [`ClientConfig::builder()`] or [`ServerConfig::builder()`].
-    pub fn install_default(self) -> Result<(), Arc<Self>> {
-        static_default::install_default(self)
-    }
+    // XXX XXX TODO XXX
+    // pub fn install_default(self) -> Result<(), Arc<Self>> {
+    //     static_default::install_default(self)
+    // }
 
     /// Returns the default `CryptoProvider` for this process.
     ///
     /// This will be `None` if no default has been set yet.
-    pub fn get_default() -> Option<&'static Arc<Self>> {
-        static_default::get_default()
-    }
+    // XXX XXX XXX
+    // pub fn get_default() -> Option<&'static Arc<Self>> {
+    //     static_default::get_default()
+    // }
 
     /// An internal function that:
     ///
     /// - gets the pre-installed default, or
     /// - installs one `from_crate_features()`, or else
     /// - panics about the need to call [`CryptoProvider::install_default()`]
-    pub(crate) fn get_default_or_install_from_crate_features() -> &'static Arc<Self> {
-        if let Some(provider) = Self::get_default() {
-            return provider;
-        }
+    // XXX XXX XXX
+    // pub(crate) fn get_default_or_install_from_crate_features() -> &'static Arc<Self> {
+    //     if let Some(provider) = Self::get_default() {
+    //         return provider;
+    //     }
 
-        let provider = Self::from_crate_features()
-            .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point");
-        // Ignore the error resulting from us losing a race, and accept the outcome.
-        let _ = provider.install_default();
-        Self::get_default().unwrap()
-    }
+    //     let provider = Self::from_crate_features()
+    //         .expect("no process-level CryptoProvider available -- call CryptoProvider::install_default() before this point");
+    //     // Ignore the error resulting from us losing a race, and accept the outcome.
+    //     let _ = provider.install_default();
+    //     Self::get_default().unwrap()
+    // }
 
     /// Returns a provider named unambiguously by rustls crate features.
     ///
@@ -268,23 +271,25 @@ impl CryptoProvider {
     /// In all cases the application should explicitly specify the provider to use
     /// with [`CryptoProvider::install_default`].
     fn from_crate_features() -> Option<Self> {
-        #[cfg(all(
-            feature = "ring",
-            not(feature = "aws_lc_rs"),
-            not(feature = "custom-provider")
-        ))]
-        {
-            return Some(ring::default_provider());
-        }
+        // XXX TODO XXX
+        // #[cfg(all(
+        //     feature = "ring",
+        //     not(feature = "aws_lc_rs"),
+        //     not(feature = "custom-provider")
+        // ))]
+        // {
+        //     return Some(ring::default_provider());
+        // }
 
-        #[cfg(all(
-            feature = "aws_lc_rs",
-            not(feature = "ring"),
-            not(feature = "custom-provider")
-        ))]
-        {
-            return Some(aws_lc_rs::default_provider());
-        }
+        // XXX TODO XXX
+        // #[cfg(all(
+        //     feature = "aws_lc_rs",
+        //     not(feature = "ring"),
+        //     not(feature = "custom-provider")
+        // ))]
+        // {
+        //     return Some(aws_lc_rs::default_provider());
+        // }
 
         #[allow(unreachable_code)]
         None
@@ -701,49 +706,50 @@ pub fn default_fips_provider() -> CryptoProvider {
     aws_lc_rs::default_provider()
 }
 
-mod static_default {
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    use alloc::boxed::Box;
-    #[cfg(all(not(feature = "critical-section"), feature = "std"))]
-    use std::sync::OnceLock;
+// XXX TODO XXX
+// mod static_default {
+//     #[cfg(not(any(feature = "critical-section", feature = "std")))]
+//     use alloc::boxed::Box;
+//     #[cfg(all(not(feature = "critical-section"), feature = "std"))]
+//     use std::sync::OnceLock;
 
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    use once_cell::race::OnceBox;
-    #[cfg(feature = "critical-section")]
-    use once_cell::sync::OnceCell;
+//     #[cfg(not(any(feature = "critical-section", feature = "std")))]
+//     use once_cell::race::OnceBox;
+//     #[cfg(feature = "critical-section")]
+//     use once_cell::sync::OnceCell;
 
-    use super::CryptoProvider;
-    use crate::alias_old::Arc;
+//     use super::CryptoProvider;
+//     use crate::alias_old::Arc;
 
-    #[cfg(any(feature = "critical-section", feature = "std"))]
-    pub(crate) fn install_default(
-        default_provider: CryptoProvider,
-    ) -> Result<(), Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.set(Arc::new(default_provider))
-    }
+//     #[cfg(any(feature = "critical-section", feature = "std"))]
+//     pub(crate) fn install_default(
+//         default_provider: CryptoProvider,
+//     ) -> Result<(), Arc<CryptoProvider>> {
+//         PROCESS_DEFAULT_PROVIDER.set(Arc::new(default_provider))
+//     }
 
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    pub(crate) fn install_default(
-        default_provider: CryptoProvider,
-    ) -> Result<(), Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER
-            .set(Box::new(Arc::new(default_provider)))
-            .map_err(|e| *e)
-    }
+//     #[cfg(not(any(feature = "critical-section", feature = "std")))]
+//     pub(crate) fn install_default(
+//         default_provider: CryptoProvider,
+//     ) -> Result<(), Arc<CryptoProvider>> {
+//         PROCESS_DEFAULT_PROVIDER
+//             .set(Box::new(Arc::new(default_provider)))
+//             .map_err(|e| *e)
+//     }
 
-    pub(crate) fn get_default() -> Option<&'static Arc<CryptoProvider>> {
-        PROCESS_DEFAULT_PROVIDER.get()
-    }
+//     pub(crate) fn get_default() -> Option<&'static Arc<CryptoProvider>> {
+//         PROCESS_DEFAULT_PROVIDER.get()
+//     }
 
-    // NOTE: Always using third-party `OnceCell` with `critical-section` to make testing with `cargo test` easier
-    // (as `cargo test` always seems to enable the `std` feature)
-    #[cfg(feature = "critical-section")]
-    static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
-    #[cfg(all(not(feature = "critical-section"), feature = "std"))]
-    static PROCESS_DEFAULT_PROVIDER: OnceLock<Arc<CryptoProvider>> = OnceLock::new();
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
-    static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
-}
+//     // NOTE: Always using third-party `OnceCell` with `critical-section` to make testing with `cargo test` easier
+//     // (as `cargo test` always seems to enable the `std` feature)
+//     #[cfg(feature = "critical-section")]
+//     static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
+//     #[cfg(all(not(feature = "critical-section"), feature = "std"))]
+//     static PROCESS_DEFAULT_PROVIDER: OnceLock<Arc<CryptoProvider>> = OnceLock::new();
+//     #[cfg(not(any(feature = "critical-section", feature = "std")))]
+//     static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
+// }
 
 #[cfg(test)]
 mod tests {

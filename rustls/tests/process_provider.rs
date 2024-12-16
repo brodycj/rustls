@@ -34,19 +34,22 @@ fn test_process_provider() {
 }
 
 fn test_explicit_choice_required() {
-    assert!(CryptoProvider::get_default().is_none());
-    provider::default_provider()
-        .install_default()
-        .expect("cannot install");
-    CryptoProvider::get_default().expect("provider missing");
-    provider::default_provider()
-        .install_default()
-        .expect_err("install succeeded a second time");
-    CryptoProvider::get_default().expect("provider missing");
+    // XXX TODO XXX
+    panic!("XXX TODO XXX");
+    // assert!(CryptoProvider::get_default().is_none());
+    // provider::default_provider()
+    //     .install_default()
+    //     .expect("cannot install");
+    // CryptoProvider::get_default().expect("provider missing");
+    // provider::default_provider()
+    //     .install_default()
+    //     .expect_err("install succeeded a second time");
+    // CryptoProvider::get_default().expect("provider missing");
 
     // XXX TODO XXX XXX
     // does not panic
     // finish_client_config(KeyType::Rsa2048, ClientConfig::builder());
+    panic!("XXX TODO XXX")
 }
 
 // XXX XXX

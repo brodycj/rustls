@@ -272,10 +272,11 @@ impl WebPkiClientVerifier {
     ///
     /// For more information, see the [`ClientCertVerifierBuilder`] documentation.
     pub fn builder(roots: Arc<RootCertStore>) -> ClientCertVerifierBuilder {
-        Self::builder_with_provider(
-            roots,
-            Arc::clone(CryptoProvider::get_default_or_install_from_crate_features()),
-        )
+        panic!("XXX TODO XXX XXX")
+        // Self::builder_with_provider(
+        //     roots,
+        //     Arc::clone(CryptoProvider::get_default_or_install_from_crate_features()),
+        // )
     }
 
     /// Create a builder for the `webpki` client certificate verifier configuration using

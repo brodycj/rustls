@@ -1,3 +1,5 @@
+use core::panic;
+
 use alloc::vec::Vec;
 
 use pki_types::{CertificateDer, CertificateRevocationListDer, ServerName, UnixTime};
@@ -151,10 +153,11 @@ impl WebPkiServerVerifier {
     ///
     /// For more information, see the [`ServerCertVerifierBuilder`] documentation.
     pub fn builder(roots: Arc<RootCertStore>) -> ServerCertVerifierBuilder {
-        Self::builder_with_provider(
-            roots,
-            Arc::clone(CryptoProvider::get_default_or_install_from_crate_features()),
-        )
+        panic!("XXX TODO XXX")
+        // Self::builder_with_provider(
+        //     roots,
+        //     Arc::clone(CryptoProvider::get_default_or_install_from_crate_features()),
+        // )
     }
 
     /// Create a builder for the `webpki` server certificate verifier configuration using
