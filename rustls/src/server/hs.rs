@@ -291,7 +291,7 @@ impl ExtensionProcessing {
 }
 
 pub(super) struct ExpectClientHello {
-    pub(super) config: ArcAlias<ServerConfig>,
+    pub(super) config: Box<ServerConfig>,
     pub(super) extra_exts: Vec<ServerExtension>,
     pub(super) transcript: HandshakeHashOrBuffer,
     #[cfg(feature = "tls12")]
@@ -303,7 +303,7 @@ pub(super) struct ExpectClientHello {
 }
 
 impl ExpectClientHello {
-    pub(super) fn new(config: ArcAlias<ServerConfig>, extra_exts: Vec<ServerExtension>) -> Self {
+    pub(super) fn new(config: Box<ServerConfig>, extra_exts: Vec<ServerExtension>) -> Self {
         let mut transcript_buffer = HandshakeHashBuffer::new();
 
         if config.verifier.offer_client_auth() {

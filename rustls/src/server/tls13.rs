@@ -64,7 +64,7 @@ mod client_hello {
     }
 
     pub(in crate::server) struct CompleteClientHelloHandling {
-        pub(in crate::server) config: ArcAlias<ServerConfig>,
+        pub(in crate::server) config: Box<ServerConfig>,
         pub(in crate::server) transcript: HandshakeHash,
         pub(in crate::server) suite: &'static Tls13CipherSuite,
         pub(in crate::server) randoms: ConnectionRandoms,
@@ -877,7 +877,7 @@ impl State<ServerConnectionData> for ExpectAndSkipRejectedEarlyData {
 }
 
 struct ExpectCertificateOrCompressedCertificate {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -944,7 +944,7 @@ impl State<ServerConnectionData> for ExpectCertificateOrCompressedCertificate {
 }
 
 struct ExpectCompressedCertificate {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -1042,7 +1042,7 @@ impl State<ServerConnectionData> for ExpectCompressedCertificate {
 }
 
 struct ExpectCertificate {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -1126,7 +1126,7 @@ impl State<ServerConnectionData> for ExpectCertificate {
 }
 
 struct ExpectCertificateVerify {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -1187,7 +1187,7 @@ impl State<ServerConnectionData> for ExpectCertificateVerify {
 //     followed by a terminating handshake EndOfEarlyData message ---
 
 struct ExpectEarlyData {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,
@@ -1276,7 +1276,7 @@ fn get_server_session_value(
 }
 
 struct ExpectFinished {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     transcript: HandshakeHash,
     suite: &'static Tls13CipherSuite,
     key_schedule: KeyScheduleTrafficWithClientFinishedPending,

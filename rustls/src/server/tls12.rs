@@ -49,7 +49,7 @@ mod client_hello {
     use crate::verify::DigitallySignedStruct;
 
     pub(in crate::server) struct CompleteClientHelloHandling {
-        pub(in crate::server) config: ArcAlias<ServerConfig>,
+        pub(in crate::server) config: Box<ServerConfig>,
         pub(in crate::server) transcript: HandshakeHash,
         pub(in crate::server) session_id: SessionId,
         pub(in crate::server) suite: &'static Tls12CipherSuite,
@@ -459,7 +459,7 @@ mod client_hello {
 
 // --- Process client's Certificate for client auth ---
 struct ExpectCertificate {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     transcript: HandshakeHash,
     randoms: ConnectionRandoms,
     session_id: SessionId,
@@ -540,7 +540,7 @@ impl State<ServerConnectionData> for ExpectCertificate {
 
 // --- Process client's KeyExchange ---
 struct ExpectClientKx<'a> {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     transcript: HandshakeHash,
     randoms: ConnectionRandoms,
     session_id: SessionId,
@@ -640,7 +640,7 @@ impl State<ServerConnectionData> for ExpectClientKx<'_> {
 
 // --- Process client's certificate proof ---
 struct ExpectCertificateVerify<'a> {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,
@@ -722,7 +722,7 @@ impl State<ServerConnectionData> for ExpectCertificateVerify<'_> {
 
 // --- Process client's ChangeCipherSpec ---
 struct ExpectCcs {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,
@@ -865,7 +865,7 @@ fn emit_finished(
 }
 
 struct ExpectFinished {
-    config: ArcAlias<ServerConfig>,
+    config: Box<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,

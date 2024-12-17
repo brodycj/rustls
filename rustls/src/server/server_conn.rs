@@ -584,7 +584,7 @@ mod connection {
     impl ServerConnection {
         /// Make a new ServerConnection.  `config` controls how
         /// we behave in the TLS protocol.
-        pub fn new(config: ArcAlias<ServerConfig>) -> Result<Self, Error> {
+        pub fn new(config: Box<ServerConfig>) -> Result<Self, Error> {
             Ok(Self {
                 inner: ConnectionCommon::from(ConnectionCore::for_server(config, Vec::new())?),
             })
@@ -888,7 +888,7 @@ pub struct UnbufferedServerConnection {
 
 impl UnbufferedServerConnection {
     /// Make a new ServerConnection. `config` controls how we behave in the TLS protocol.
-    pub fn new(config: ArcAlias<ServerConfig>) -> Result<Self, Error> {
+    pub fn new(config: Box<ServerConfig>) -> Result<Self, Error> {
         Ok(Self {
             inner: UnbufferedConnectionCommon::from(ConnectionCore::for_server(
                 config,
@@ -953,7 +953,7 @@ impl Accepted {
     #[cfg(feature = "std")]
     pub fn into_connection(
         mut self,
-        config: ArcAlias<ServerConfig>,
+        config: Box<ServerConfig>,
     ) -> Result<ServerConnection, (Error, AcceptedAlert)> {
         if let Err(err) = self
             .connection
@@ -1118,7 +1118,7 @@ impl Debug for EarlyDataState {
 
 impl ConnectionCore<ServerConnectionData> {
     pub(crate) fn for_server(
-        config: ArcAlias<ServerConfig>,
+        config: Box<ServerConfig>,
         extra_exts: Vec<ServerExtension>,
     ) -> Result<Self, Error> {
         let mut common = CommonState::new(Side::Server);

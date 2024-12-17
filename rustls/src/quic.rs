@@ -17,6 +17,7 @@ use crate::tls13::Tls13CipherSuite;
 
 #[cfg(feature = "std")]
 mod connection {
+    use alloc::boxed::Box;
     use alloc::vec;
     use alloc::vec::Vec;
     use core::fmt::{self, Debug};
@@ -236,7 +237,7 @@ mod connection {
         /// This differs from `ServerConnection::new()` in that it takes an extra `params` argument,
         /// which contains the TLS-encoded transport parameters to send.
         pub fn new(
-            config: ArcAlias<ServerConfig>,
+            config: Box<ServerConfig>,
             quic_version: Version,
             params: Vec<u8>,
         ) -> Result<Self, Error> {
