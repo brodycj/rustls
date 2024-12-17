@@ -432,7 +432,7 @@ mod alias_old {
     // pub(crate) use portable_atomic_util::Arc;
 
     #[cfg(not(feature = "critical-section"))]
-    pub(crate) use alloc::sync::Arc;
+    pub(crate) type Arc<T> = alloc::sync::Arc<T>;
 }
 
 // XXX TODO FIX MOD NAME WHEN READY (XXX TODO ALL ALIAS IN SINGLE CORRECTLY NAMED MOD WHEN READY)
