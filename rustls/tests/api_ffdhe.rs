@@ -332,7 +332,7 @@ fn server_avoids_cipher_suite_with_no_common_kx_groups() {
         )
         .into();
 
-        let (mut client, mut server) = make_pair_for_arc_configs(&client_config, &server_config);
+        let (mut client, mut server) = make_pair_for_config_refs(&client_config, &server_config);
         do_handshake(&mut client, &mut server);
         assert_eq!(
             server

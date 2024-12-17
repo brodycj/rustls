@@ -8,7 +8,7 @@ mod common;
 
 use common::{
     do_handshake_until_both_error, do_handshake_until_error, make_client_config_with_versions,
-    make_client_config_with_versions_with_auth, make_pair_for_arc_configs, server_config_builder,
+    make_client_config_with_versions_with_auth, make_pair_for_config_refs, server_config_builder,
     server_name, ErrorFromPeer, KeyType, MockClientVerifier, ALL_KEY_TYPES,
 };
 
@@ -49,12 +49,12 @@ fn client_verifier_works() {
     for kt in ALL_KEY_TYPES.iter() {
         let client_verifier = MockClientVerifier::new(ver_ok, *kt);
         let server_config = server_config_with_verifier(*kt, client_verifier);
-        let server_config = Arc::new(server_config);
+        let server_config = Box::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&Arc::new(client_config.clone()), &server_config);
+                make_pair_for_config_refs(&Arc::new(client_config.clone()), &server_config);
             let err = do_handshake_until_error(&mut client, &mut server);
             assert_eq!(err, Ok(()));
         }
@@ -68,12 +68,12 @@ fn client_verifier_no_schemes() {
         let mut client_verifier = MockClientVerifier::new(ver_ok, *kt);
         client_verifier.offered_schemes = Some(vec![]);
         let server_config = server_config_with_verifier(*kt, client_verifier);
-        let server_config = Arc::new(server_config);
+        let server_config = Box::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&Arc::new(client_config.clone()), &server_config);
+                make_pair_for_config_refs(&Arc::new(client_config.clone()), &server_config);
             let err = do_handshake_until_error(&mut client, &mut server);
             assert_eq!(
                 err,
@@ -91,11 +91,11 @@ fn client_verifier_no_auth_yes_root() {
     for kt in ALL_KEY_TYPES.iter() {
         let client_verifier = MockClientVerifier::new(ver_unreachable, *kt);
         let server_config = server_config_with_verifier(*kt, client_verifier);
-        let server_config = Arc::new(server_config);
+        let server_config = Box::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions(*kt, &[version]);
-            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
+            let mut server = ServerConnection::new(Box::clone(&server_config)).unwrap();
             let mut client =
                 ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
             let errs = do_handshake_until_both_error(&mut client, &mut server);
@@ -118,11 +118,11 @@ fn client_verifier_fails_properly() {
     for kt in ALL_KEY_TYPES.iter() {
         let client_verifier = MockClientVerifier::new(ver_err, *kt);
         let server_config = server_config_with_verifier(*kt, client_verifier);
-        let server_config = Arc::new(server_config);
+        let server_config = Box::new(server_config);
 
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
-            let mut server = ServerConnection::new(Arc::clone(&server_config)).unwrap();
+            let mut server = ServerConnection::new(Box::clone(&server_config)).unwrap();
             let mut client =
                 ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
             let err = do_handshake_until_error(&mut client, &mut server);

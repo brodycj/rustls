@@ -730,16 +730,18 @@ pub fn make_pair_for_configs(
     client_config: ClientConfig,
     server_config: ServerConfig,
 ) -> (ClientConnection, ServerConnection) {
-    make_pair_for_arc_configs(&Arc::new(client_config), &Arc::new(server_config))
+    make_pair_for_config_refs(&Arc::new(client_config), &Box::new(server_config))
 }
 
-pub fn make_pair_for_arc_configs(
+pub fn make_pair_for_config_refs(
     client_config: &Arc<ClientConfig>,
-    server_config: &Arc<ServerConfig>,
+    server_config: &Box<ServerConfig>,
 ) -> (ClientConnection, ServerConnection) {
     (
         ClientConnection::new(Arc::clone(client_config), server_name("localhost")).unwrap(),
-        ServerConnection::new(Arc::clone(server_config)).unwrap(),
+        // ServerConnection::new(Arc::clone(server_config)).unwrap(),
+        // XXX TBD ??? ???:
+        ServerConnection::new(server_config.clone()).unwrap()
     )
 }
 

@@ -9,7 +9,7 @@ mod common;
 use common::{
     client_config_builder, client_config_builder_with_versions, do_handshake,
     do_handshake_until_both_error, do_handshake_until_error, make_client_config_with_versions,
-    make_pair_for_arc_configs, make_server_config, server_config_builder, transfer_altered,
+    make_pair_for_config_refs, make_server_config, server_config_builder, transfer_altered,
     Altered, ErrorFromPeer, KeyType, MockServerVerifier, ALL_KEY_TYPES,
 };
 use pki_types::{CertificateDer, ServerName};
@@ -33,7 +33,7 @@ fn client_can_override_certificate_verification() {
     for kt in ALL_KEY_TYPES.iter() {
         let verifier = Arc::new(MockServerVerifier::accepts_anything());
 
-        let server_config = Arc::new(make_server_config(*kt));
+        let server_config = Box::new(make_server_config(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
@@ -42,7 +42,7 @@ fn client_can_override_certificate_verification() {
                 .set_certificate_verifier(verifier.clone());
 
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
+                make_pair_for_config_refs(&Arc::new(client_config), &server_config);
             do_handshake(&mut client, &mut server);
         }
     }
@@ -55,7 +55,7 @@ fn client_can_override_certificate_verification_and_reject_certificate() {
             Error::InvalidMessage(InvalidMessage::HandshakePayloadTooLarge),
         ));
 
-        let server_config = Arc::new(make_server_config(*kt));
+        let server_config = Box::new(make_server_config(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
@@ -64,7 +64,7 @@ fn client_can_override_certificate_verification_and_reject_certificate() {
                 .set_certificate_verifier(verifier.clone());
 
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
+                make_pair_for_config_refs(&Arc::new(client_config), &server_config);
             let errs = do_handshake_until_both_error(&mut client, &mut server);
             assert_eq!(
                 errs,
@@ -92,10 +92,10 @@ fn client_can_override_certificate_verification_and_reject_tls12_signatures() {
             .dangerous()
             .set_certificate_verifier(verifier);
 
-        let server_config = Arc::new(make_server_config(*kt));
+        let server_config = Box::new(make_server_config(*kt));
 
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
+            make_pair_for_config_refs(&Arc::new(client_config), &server_config);
         let errs = do_handshake_until_both_error(&mut client, &mut server);
         assert_eq!(
             errs,
@@ -121,10 +121,10 @@ fn client_can_override_certificate_verification_and_reject_tls13_signatures() {
             .dangerous()
             .set_certificate_verifier(verifier);
 
-        let server_config = Arc::new(make_server_config(*kt));
+        let server_config = Box::new(make_server_config(*kt));
 
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
+            make_pair_for_config_refs(&Arc::new(client_config), &server_config);
         let errs = do_handshake_until_both_error(&mut client, &mut server);
         assert_eq!(
             errs,
@@ -143,7 +143,7 @@ fn client_can_override_certificate_verification_and_offer_no_signature_schemes()
     for kt in ALL_KEY_TYPES.iter() {
         let verifier = Arc::new(MockServerVerifier::offers_no_signature_schemes());
 
-        let server_config = Arc::new(make_server_config(*kt));
+        let server_config = Box::new(make_server_config(*kt));
 
         for version in rustls::ALL_VERSIONS {
             let mut client_config = make_client_config_with_versions(*kt, &[version]);
@@ -152,7 +152,7 @@ fn client_can_override_certificate_verification_and_offer_no_signature_schemes()
                 .set_certificate_verifier(verifier.clone());
 
             let (mut client, mut server) =
-                make_pair_for_arc_configs(&Arc::new(client_config), &server_config);
+                make_pair_for_config_refs(&Arc::new(client_config), &server_config);
             let errs = do_handshake_until_both_error(&mut client, &mut server);
             assert_eq!(
                 errs,
@@ -169,7 +169,7 @@ fn client_can_override_certificate_verification_and_offer_no_signature_schemes()
 
 #[test]
 fn cas_extension_in_client_hello_if_server_verifier_requests_it() {
-    let server_config = Arc::new(make_server_config(KeyType::Rsa2048));
+    let server_config = Box::new(make_server_config(KeyType::Rsa2048));
 
     let mut root_cert_store = RootCertStore::empty();
     root_cert_store
@@ -213,7 +213,7 @@ fn cas_extension_in_client_hello_if_server_verifier_requests_it() {
             Altered::InPlace
         };
 
-        let (client, server) = make_pair_for_arc_configs(&client_config, &server_config);
+        let (client, server) = make_pair_for_config_refs(&client_config, &server_config);
         let (mut client, mut server) = (client.into(), server.into());
         transfer_altered(&mut client, expect_cas_extension, &mut server);
     }
@@ -239,7 +239,7 @@ fn client_can_request_certain_trusted_cas() {
             .collect(),
     );
 
-    let server_config = Arc::new(
+    let server_config = Box::new(
         server_config_builder()
             .with_no_client_auth()
             .with_cert_resolver(Arc::new(cert_resolver.clone())),
@@ -274,7 +274,7 @@ fn client_can_request_certain_trusted_cas() {
             .with_no_client_auth();
 
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&Arc::new(cas_sending_client_config), &server_config);
+            make_pair_for_config_refs(&Arc::new(cas_sending_client_config), &server_config);
         do_handshake(&mut client, &mut server);
 
         let cas_unaware_client_config = client_config_builder()
@@ -283,7 +283,7 @@ fn client_can_request_certain_trusted_cas() {
             .with_no_client_auth();
 
         let (mut client, mut server) =
-            make_pair_for_arc_configs(&Arc::new(cas_unaware_client_config), &server_config);
+            make_pair_for_config_refs(&Arc::new(cas_unaware_client_config), &server_config);
 
         cas_unaware_error_count += do_handshake_until_error(&mut client, &mut server)
             .inspect_err(|e| {
