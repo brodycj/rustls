@@ -2,7 +2,7 @@ use pki_types::PrivateKeyDer;
 pub(crate) use ring as ring_like;
 use webpki::ring as webpki_algs;
 
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::crypto::{CryptoProvider, KeyProvider, SecureRandom};
 use crate::enums::SignatureScheme;
 use crate::rand::GetRandomFailed;
@@ -56,7 +56,7 @@ impl KeyProvider for Ring {
     fn load_private_key(
         &self,
         key_der: PrivateKeyDer<'static>,
-    ) -> Result<Arc<dyn SigningKey>, Error> {
+    ) -> Result<ArcAlias<dyn SigningKey>, Error> {
         sign::any_supported_type(&key_der)
     }
 }

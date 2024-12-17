@@ -10,7 +10,7 @@ use std::io;
 use pki_types::{DnsName, UnixTime};
 
 use super::hs;
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::alias_new_1::Rc;
 use crate::builder::ConfigBuilder;
 use crate::common_state::{CommonState, Side};
@@ -125,7 +125,7 @@ pub trait ResolvesServerCert: Debug + Send + Sync {
     /// ClientHello information.
     ///
     /// Return `None` to abort the handshake.
-    fn resolve(&self, client_hello: ClientHello<'_>) -> Option<Arc<sign::CertifiedKey>>;
+    fn resolve(&self, client_hello: ClientHello<'_>) -> Option<ArcAlias<sign::CertifiedKey>>;
 
     /// Return true when the server only supports raw public keys.
     fn only_raw_public_keys(&self) -> bool {
@@ -269,15 +269,15 @@ pub struct ServerConfig {
     pub max_fragment_size: Option<usize>,
 
     /// How to store client sessions.
-    pub session_storage: Arc<dyn StoresServerSessions>,
+    pub session_storage: ArcAlias<dyn StoresServerSessions>,
 
     /// How to produce tickets.
-    pub ticketer: Arc<dyn ProducesTickets>,
+    pub ticketer: ArcAlias<dyn ProducesTickets>,
 
     /// How to choose a server cert and key. This is usually set by
     /// [ConfigBuilder::with_single_cert] or [ConfigBuilder::with_cert_resolver].
     /// For async applications, see also [Acceptor].
-    pub cert_resolver: Arc<dyn ResolvesServerCert>,
+    pub cert_resolver: ArcAlias<dyn ResolvesServerCert>,
 
     /// Protocol names we support, most preferred first.
     /// If empty we don't do ALPN at all.
@@ -288,11 +288,11 @@ pub struct ServerConfig {
     pub(super) versions: versions::EnabledVersions,
 
     /// How to verify client certificates.
-    pub(super) verifier: Arc<dyn verify::ClientCertVerifier>,
+    pub(super) verifier: ArcAlias<dyn verify::ClientCertVerifier>,
 
     /// How to output key material for debugging.  The default
     /// does nothing.
-    pub key_log: Arc<dyn KeyLog>,
+    pub key_log: ArcAlias<dyn KeyLog>,
 
     /// Allows traffic secrets to be extracted after the handshake,
     /// e.g. for kTLS setup.
@@ -378,7 +378,7 @@ pub struct ServerConfig {
     ///
     /// This is optional: [`compress::CompressionCache::Disabled`] gives
     /// a cache that does no caching.
-    pub cert_compression_cache: Arc<compress::CompressionCache>,
+    pub cert_compression_cache: ArcAlias<compress::CompressionCache>,
 
     /// How to decompress the clients's certificate chain.
     ///
@@ -539,7 +539,7 @@ mod connection {
     use std::io;
 
     use super::{Accepted, Accepting, EarlyDataState, ServerConfig, ServerConnectionData};
-    use crate::alias_old::Arc;
+    use crate::alias_old::ArcAlias;
     use crate::common_state::{CommonState, Context, Side};
     use crate::conn::{ConnectionCommon, ConnectionCore};
     use crate::error::Error;
@@ -584,7 +584,7 @@ mod connection {
     impl ServerConnection {
         /// Make a new ServerConnection.  `config` controls how
         /// we behave in the TLS protocol.
-        pub fn new(config: Arc<ServerConfig>) -> Result<Self, Error> {
+        pub fn new(config: ArcAlias<ServerConfig>) -> Result<Self, Error> {
             Ok(Self {
                 inner: ConnectionCommon::from(ConnectionCore::for_server(config, Vec::new())?),
             })
@@ -888,7 +888,7 @@ pub struct UnbufferedServerConnection {
 
 impl UnbufferedServerConnection {
     /// Make a new ServerConnection. `config` controls how we behave in the TLS protocol.
-    pub fn new(config: Arc<ServerConfig>) -> Result<Self, Error> {
+    pub fn new(config: ArcAlias<ServerConfig>) -> Result<Self, Error> {
         Ok(Self {
             inner: UnbufferedConnectionCommon::from(ConnectionCore::for_server(
                 config,
@@ -953,7 +953,7 @@ impl Accepted {
     #[cfg(feature = "std")]
     pub fn into_connection(
         mut self,
-        config: Arc<ServerConfig>,
+        config: ArcAlias<ServerConfig>,
     ) -> Result<ServerConnection, (Error, AcceptedAlert)> {
         if let Err(err) = self
             .connection
@@ -1118,7 +1118,7 @@ impl Debug for EarlyDataState {
 
 impl ConnectionCore<ServerConnectionData> {
     pub(crate) fn for_server(
-        config: Arc<ServerConfig>,
+        config: ArcAlias<ServerConfig>,
         extra_exts: Vec<ServerExtension>,
     ) -> Result<Self, Error> {
         let mut common = CommonState::new(Side::Server);

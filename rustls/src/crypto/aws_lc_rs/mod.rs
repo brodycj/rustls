@@ -8,7 +8,7 @@ pub(crate) use aws_lc_rs as ring_like;
 use pki_types::PrivateKeyDer;
 use webpki::aws_lc_rs as webpki_algs;
 
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::crypto::{CryptoProvider, KeyProvider, SecureRandom};
 use crate::enums::SignatureScheme;
 use crate::rand::GetRandomFailed;
@@ -83,7 +83,7 @@ impl KeyProvider for AwsLcRs {
     fn load_private_key(
         &self,
         key_der: PrivateKeyDer<'static>,
-    ) -> Result<Arc<dyn SigningKey>, Error> {
+    ) -> Result<ArcAlias<dyn SigningKey>, Error> {
         sign::any_supported_type(&key_der)
     }
 
@@ -257,7 +257,7 @@ pub(super) fn fips() -> bool {
 pub(super) fn unspecified_err(_e: aws_lc_rs::error::Unspecified) -> Error {
     #[cfg(feature = "std")]
     {
-        Error::Other(OtherError(Arc::new(_e)))
+        Error::Other(OtherError(ArcAlias::new(_e)))
     }
     #[cfg(not(feature = "std"))]
     {

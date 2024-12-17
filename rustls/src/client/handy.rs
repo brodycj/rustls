@@ -1,6 +1,6 @@
 use pki_types::ServerName;
 
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::enums::SignatureScheme;
 use crate::error::Error;
 use crate::msgs::handshake::CertificateChain;
@@ -202,7 +202,7 @@ impl client::ResolvesClientCert for FailResolveClientCert {
         &self,
         _root_hint_subjects: &[&[u8]],
         _sigschemes: &[SignatureScheme],
-    ) -> Option<Arc<sign::CertifiedKey>> {
+    ) -> Option<ArcAlias<sign::CertifiedKey>> {
         None
     }
 
@@ -212,14 +212,14 @@ impl client::ResolvesClientCert for FailResolveClientCert {
 }
 
 #[derive(Debug)]
-pub(super) struct AlwaysResolvesClientCert(Arc<sign::CertifiedKey>);
+pub(super) struct AlwaysResolvesClientCert(ArcAlias<sign::CertifiedKey>);
 
 impl AlwaysResolvesClientCert {
     pub(super) fn new(
-        private_key: Arc<dyn sign::SigningKey>,
+        private_key: ArcAlias<dyn sign::SigningKey>,
         chain: CertificateChain<'static>,
     ) -> Result<Self, Error> {
-        Ok(Self(Arc::new(sign::CertifiedKey::new(
+        Ok(Self(ArcAlias::new(sign::CertifiedKey::new(
             chain.0,
             private_key,
         ))))
@@ -231,8 +231,8 @@ impl client::ResolvesClientCert for AlwaysResolvesClientCert {
         &self,
         _root_hint_subjects: &[&[u8]],
         _sigschemes: &[SignatureScheme],
-    ) -> Option<Arc<sign::CertifiedKey>> {
-        Some(Arc::clone(&self.0))
+    ) -> Option<ArcAlias<sign::CertifiedKey>> {
+        Some(ArcAlias::clone(&self.0))
     }
 
     fn has_certs(&self) -> bool {
@@ -245,10 +245,10 @@ impl client::ResolvesClientCert for AlwaysResolvesClientCert {
 ///
 /// [RFC 7250]: https://tools.ietf.org/html/rfc7250
 #[derive(Clone, Debug)]
-pub struct AlwaysResolvesClientRawPublicKeys(Arc<sign::CertifiedKey>);
+pub struct AlwaysResolvesClientRawPublicKeys(ArcAlias<sign::CertifiedKey>);
 impl AlwaysResolvesClientRawPublicKeys {
     /// Create a new `AlwaysResolvesClientRawPublicKeys` instance.
-    pub fn new(certified_key: Arc<sign::CertifiedKey>) -> Self {
+    pub fn new(certified_key: ArcAlias<sign::CertifiedKey>) -> Self {
         Self(certified_key)
     }
 }
@@ -258,8 +258,8 @@ impl client::ResolvesClientCert for AlwaysResolvesClientRawPublicKeys {
         &self,
         _root_hint_subjects: &[&[u8]],
         _sigschemes: &[SignatureScheme],
-    ) -> Option<Arc<sign::CertifiedKey>> {
-        Some(Arc::clone(&self.0))
+    ) -> Option<ArcAlias<sign::CertifiedKey>> {
+        Some(ArcAlias::clone(&self.0))
     }
 
     fn only_raw_public_keys(&self) -> bool {
@@ -284,7 +284,7 @@ mod tests {
 
     use super::provider::cipher_suite;
     use super::NoClientSessionStorage;
-    use crate::alias_old::Arc;
+    use crate::alias_old::ArcAlias;
     use crate::client::ClientSessionStore;
     use crate::msgs::base::PayloadU16;
     use crate::msgs::enums::NamedGroup;
@@ -317,7 +317,7 @@ mod tests {
                 Tls12ClientSessionValue::new(
                     tls12_suite,
                     SessionId::empty(),
-                    Arc::new(PayloadU16::empty()),
+                    ArcAlias::new(PayloadU16::empty()),
                     &[],
                     CertificateChain::default(),
                     now,
@@ -337,7 +337,7 @@ mod tests {
             name.clone(),
             Tls13ClientSessionValue::new(
                 tls13_suite,
-                Arc::new(PayloadU16::empty()),
+                ArcAlias::new(PayloadU16::empty()),
                 &[],
                 CertificateChain::default(),
                 now,

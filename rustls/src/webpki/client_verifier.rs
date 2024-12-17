@@ -4,7 +4,7 @@ use pki_types::{CertificateDer, CertificateRevocationListDer, UnixTime};
 use webpki::{CertRevocationList, ExpirationPolicy, RevocationCheckDepth, UnknownStatusPolicy};
 
 use super::{pki_error, VerifierBuilderError};
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 #[cfg(doc)]
 use crate::crypto;
 use crate::crypto::{CryptoProvider, WebPkiSupportedAlgorithms};
@@ -25,7 +25,7 @@ use crate::{DistinguishedName, Error, RootCertStore, SignatureScheme};
 /// For more information, see the [`WebPkiClientVerifier`] documentation.
 #[derive(Debug, Clone)]
 pub struct ClientCertVerifierBuilder {
-    roots: Arc<RootCertStore>,
+    roots: ArcAlias<RootCertStore>,
     root_hint_subjects: Vec<DistinguishedName>,
     crls: Vec<CertificateRevocationListDer<'static>>,
     revocation_check_depth: RevocationCheckDepth,
@@ -37,7 +37,7 @@ pub struct ClientCertVerifierBuilder {
 
 impl ClientCertVerifierBuilder {
     pub(crate) fn new(
-        roots: Arc<RootCertStore>,
+        roots: ArcAlias<RootCertStore>,
         supported_algs: WebPkiSupportedAlgorithms,
     ) -> Self {
         Self {
@@ -169,12 +169,12 @@ impl ClientCertVerifierBuilder {
     /// This function will return a [`VerifierBuilderError`] if:
     /// 1. No trust anchors have been provided.
     /// 2. DER encoded CRLs have been provided that can not be parsed successfully.
-    pub fn build(self) -> Result<Arc<dyn ClientCertVerifier>, VerifierBuilderError> {
+    pub fn build(self) -> Result<ArcAlias<dyn ClientCertVerifier>, VerifierBuilderError> {
         if self.roots.is_empty() {
             return Err(VerifierBuilderError::NoRootAnchors);
         }
 
-        Ok(Arc::new(WebPkiClientVerifier::new(
+        Ok(ArcAlias::new(WebPkiClientVerifier::new(
             self.roots,
             self.root_hint_subjects,
             parse_crls(self.crls)?,
@@ -250,7 +250,7 @@ impl ClientCertVerifierBuilder {
 /// [^1]: <https://github.com/rustls/webpki>
 #[derive(Debug)]
 pub struct WebPkiClientVerifier {
-    roots: Arc<RootCertStore>,
+    roots: ArcAlias<RootCertStore>,
     root_hint_subjects: Vec<DistinguishedName>,
     crls: Vec<CertRevocationList<'static>>,
     revocation_check_depth: RevocationCheckDepth,
@@ -271,7 +271,7 @@ impl WebPkiClientVerifier {
     /// Use [`Self::builder_with_provider`] if you wish to specify an explicit provider.
     ///
     /// For more information, see the [`ClientCertVerifierBuilder`] documentation.
-    pub fn builder(roots: Arc<RootCertStore>) -> ClientCertVerifierBuilder {
+    pub fn builder(roots: ArcAlias<RootCertStore>) -> ClientCertVerifierBuilder {
         panic!("XXX TODO XXX XXX")
         // Self::builder_with_provider(
         //     roots,
@@ -290,8 +290,8 @@ impl WebPkiClientVerifier {
     ///
     /// For more information, see the [`ClientCertVerifierBuilder`] documentation.
     pub fn builder_with_provider(
-        roots: Arc<RootCertStore>,
-        provider: Arc<CryptoProvider>,
+        roots: ArcAlias<RootCertStore>,
+        provider: ArcAlias<CryptoProvider>,
     ) -> ClientCertVerifierBuilder {
         ClientCertVerifierBuilder::new(roots, provider.signature_verification_algorithms)
     }
@@ -301,8 +301,8 @@ impl WebPkiClientVerifier {
     ///
     /// This is in contrast to using `WebPkiClientVerifier::builder().allow_unauthenticated().build()`,
     /// which will produce a verifier that will offer client authentication, but not require it.
-    pub fn no_client_auth() -> Arc<dyn ClientCertVerifier> {
-        Arc::new(NoClientAuth {})
+    pub fn no_client_auth() -> ArcAlias<dyn ClientCertVerifier> {
+        ArcAlias::new(NoClientAuth {})
     }
 
     /// Construct a new `WebpkiClientVerifier`.
@@ -320,7 +320,7 @@ impl WebPkiClientVerifier {
     ///   clients can connect.
     /// * `supported_algs` specifies which signature verification algorithms should be used.
     pub(crate) fn new(
-        roots: Arc<RootCertStore>,
+        roots: ArcAlias<RootCertStore>,
         root_hint_subjects: Vec<DistinguishedName>,
         crls: Vec<CertRevocationList<'static>>,
         revocation_check_depth: RevocationCheckDepth,
@@ -439,7 +439,7 @@ mod tests {
     use pki_types::{CertificateDer, CertificateRevocationListDer};
 
     use super::{provider, WebPkiClientVerifier};
-    use crate::alias_old::Arc;
+    use crate::alias_old::ArcAlias;
     use crate::server::VerifierBuilderError;
     use crate::RootCertStore;
 
@@ -457,7 +457,7 @@ mod tests {
         ])
     }
 
-    fn load_roots(roots_der: &[&[u8]]) -> Arc<RootCertStore> {
+    fn load_roots(roots_der: &[&[u8]]) -> ArcAlias<RootCertStore> {
         let mut roots = RootCertStore::empty();
         roots_der.iter().for_each(|der| {
             roots
@@ -467,7 +467,7 @@ mod tests {
         roots.into()
     }
 
-    fn test_roots() -> Arc<RootCertStore> {
+    fn test_roots() -> ArcAlias<RootCertStore> {
         load_roots(&[
             include_bytes!("../../../test-ca/ecdsa-p256/ca.der").as_slice(),
             include_bytes!("../../../test-ca/rsa-2048/ca.der").as_slice(),

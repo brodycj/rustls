@@ -431,8 +431,9 @@ mod alias_old {
     // #[cfg(feature = "critical-section")]
     // pub(crate) use portable_atomic_util::Arc;
 
+    // XXX TODO REVIEW INSTANCES OF THIS & REPLACE AS NEEDED:
     #[cfg(not(feature = "critical-section"))]
-    pub(crate) type Arc<T> = alloc::sync::Arc<T>;
+    pub(crate) type ArcAlias<T> = alloc::sync::Arc<T>;
 }
 
 // XXX TODO FIX MOD NAME WHEN READY (XXX TODO ALL ALIAS IN SINGLE CORRECTLY NAMED MOD WHEN READY)
@@ -717,7 +718,7 @@ pub mod util {
         ///
         /// This is to help rustls library users and custom providers use the correct `Arc` type,
         /// regardless of whether `critical-section` feature is enabled or not.
-        pub type Arc<T> = crate::alias_old::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
+        pub type Arc<T> = crate::alias_old::ArcAlias<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
     }
 }
 

@@ -5,7 +5,7 @@ use core::fmt::Debug;
 
 use pki_types::{AlgorithmIdentifier, CertificateDer, SubjectPublicKeyInfoDer};
 
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::enums::{SignatureAlgorithm, SignatureScheme};
 use crate::error::{Error, InconsistentKeys};
 use crate::server::ParsedCertificate;
@@ -100,7 +100,7 @@ pub struct CertifiedKey {
     pub cert: Vec<CertificateDer<'static>>,
 
     /// The certified key.
-    pub key: Arc<dyn SigningKey>,
+    pub key: ArcAlias<dyn SigningKey>,
 
     /// An optional OCSP response from the certificate issuer,
     /// attesting to its continued validity.
@@ -112,7 +112,7 @@ impl CertifiedKey {
     ///
     /// The cert chain must not be empty. The first certificate in the chain
     /// must be the end-entity certificate.
-    pub fn new(cert: Vec<CertificateDer<'static>>, key: Arc<dyn SigningKey>) -> Self {
+    pub fn new(cert: Vec<CertificateDer<'static>>, key: ArcAlias<dyn SigningKey>) -> Self {
         Self {
             cert,
             key,

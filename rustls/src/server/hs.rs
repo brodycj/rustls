@@ -7,7 +7,7 @@ use pki_types::DnsName;
 use super::server_conn::ServerConnectionData;
 #[cfg(feature = "tls12")]
 use super::tls12;
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::common_state::{
     KxState, Protocol, RawKeyNegotationResult, RawKeyNegotiationParams, State,
 };
@@ -291,7 +291,7 @@ impl ExtensionProcessing {
 }
 
 pub(super) struct ExpectClientHello {
-    pub(super) config: Arc<ServerConfig>,
+    pub(super) config: ArcAlias<ServerConfig>,
     pub(super) extra_exts: Vec<ServerExtension>,
     pub(super) transcript: HandshakeHashOrBuffer,
     #[cfg(feature = "tls12")]
@@ -303,7 +303,7 @@ pub(super) struct ExpectClientHello {
 }
 
 impl ExpectClientHello {
-    pub(super) fn new(config: Arc<ServerConfig>, extra_exts: Vec<ServerExtension>) -> Self {
+    pub(super) fn new(config: ArcAlias<ServerConfig>, extra_exts: Vec<ServerExtension>) -> Self {
         let mut transcript_buffer = HandshakeHashBuffer::new();
 
         if config.verifier.offer_client_auth() {

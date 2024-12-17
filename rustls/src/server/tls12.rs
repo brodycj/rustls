@@ -10,7 +10,7 @@ use subtle::ConstantTimeEq;
 use super::common::ActiveCertifiedKey;
 use super::hs::{self, ServerContext};
 use super::server_conn::{ProducesTickets, ServerConfig, ServerConnectionData};
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::check::inappropriate_message;
 use crate::common_state::{CommonState, HandshakeFlightTls12, HandshakeKind, Side, State};
 use crate::conn::ConnectionRandoms;
@@ -49,7 +49,7 @@ mod client_hello {
     use crate::verify::DigitallySignedStruct;
 
     pub(in crate::server) struct CompleteClientHelloHandling {
-        pub(in crate::server) config: Arc<ServerConfig>,
+        pub(in crate::server) config: ArcAlias<ServerConfig>,
         pub(in crate::server) transcript: HandshakeHash,
         pub(in crate::server) session_id: SessionId,
         pub(in crate::server) suite: &'static Tls12CipherSuite,
@@ -459,7 +459,7 @@ mod client_hello {
 
 // --- Process client's Certificate for client auth ---
 struct ExpectCertificate {
-    config: Arc<ServerConfig>,
+    config: ArcAlias<ServerConfig>,
     transcript: HandshakeHash,
     randoms: ConnectionRandoms,
     session_id: SessionId,
@@ -540,7 +540,7 @@ impl State<ServerConnectionData> for ExpectCertificate {
 
 // --- Process client's KeyExchange ---
 struct ExpectClientKx<'a> {
-    config: Arc<ServerConfig>,
+    config: ArcAlias<ServerConfig>,
     transcript: HandshakeHash,
     randoms: ConnectionRandoms,
     session_id: SessionId,
@@ -640,7 +640,7 @@ impl State<ServerConnectionData> for ExpectClientKx<'_> {
 
 // --- Process client's certificate proof ---
 struct ExpectCertificateVerify<'a> {
-    config: Arc<ServerConfig>,
+    config: ArcAlias<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,
@@ -722,7 +722,7 @@ impl State<ServerConnectionData> for ExpectCertificateVerify<'_> {
 
 // --- Process client's ChangeCipherSpec ---
 struct ExpectCcs {
-    config: Arc<ServerConfig>,
+    config: ArcAlias<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,
@@ -865,7 +865,7 @@ fn emit_finished(
 }
 
 struct ExpectFinished {
-    config: Arc<ServerConfig>,
+    config: ArcAlias<ServerConfig>,
     secrets: ConnectionSecrets,
     transcript: HandshakeHash,
     session_id: SessionId,

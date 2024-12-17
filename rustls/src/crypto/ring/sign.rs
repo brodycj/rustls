@@ -11,7 +11,7 @@ use webpki::alg_id;
 
 use super::ring_like::rand::{SecureRandom, SystemRandom};
 use super::ring_like::signature::{self, EcdsaKeyPair, Ed25519KeyPair, KeyPair, RsaKeyPair};
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::crypto::signer::{public_key_to_spki, Signer, SigningKey};
 use crate::enums::{SignatureAlgorithm, SignatureScheme};
 use crate::error::Error;
@@ -19,9 +19,9 @@ use crate::x509::{wrap_concat_in_sequence, wrap_in_octet_string};
 
 /// Parse `der` as any supported key encoding/type, returning
 /// the first which works.
-pub fn any_supported_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
+pub fn any_supported_type(der: &PrivateKeyDer<'_>) -> Result<ArcAlias<dyn SigningKey>, Error> {
     if let Ok(rsa) = RsaSigningKey::new(der) {
-        return Ok(Arc::new(rsa));
+        return Ok(ArcAlias::new(rsa));
     }
 
     if let Ok(ecdsa) = any_ecdsa_type(der) {
@@ -43,13 +43,13 @@ pub fn any_supported_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>
 ///
 /// Both SEC1 (PEM section starting with 'BEGIN EC PRIVATE KEY') and PKCS8
 /// (PEM section starting with 'BEGIN PRIVATE KEY') encodings are supported.
-pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
+pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<ArcAlias<dyn SigningKey>, Error> {
     if let Ok(ecdsa_p256) = EcdsaSigningKey::new(
         der,
         SignatureScheme::ECDSA_NISTP256_SHA256,
         &signature::ECDSA_P256_SHA256_ASN1_SIGNING,
     ) {
-        return Ok(Arc::new(ecdsa_p256));
+        return Ok(ArcAlias::new(ecdsa_p256));
     }
 
     if let Ok(ecdsa_p384) = EcdsaSigningKey::new(
@@ -57,7 +57,7 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
         SignatureScheme::ECDSA_NISTP384_SHA384,
         &signature::ECDSA_P384_SHA384_ASN1_SIGNING,
     ) {
-        return Ok(Arc::new(ecdsa_p384));
+        return Ok(ArcAlias::new(ecdsa_p384));
     }
 
     Err(Error::General(
@@ -71,9 +71,9 @@ pub fn any_ecdsa_type(der: &PrivateKeyDer<'_>) -> Result<Arc<dyn SigningKey>, Er
 /// in browsers.  It is also not supported by the WebPKI, because the
 /// CA/Browser Forum Baseline Requirements do not support it for publicly
 /// trusted certificates.
-pub fn any_eddsa_type(der: &PrivatePkcs8KeyDer<'_>) -> Result<Arc<dyn SigningKey>, Error> {
+pub fn any_eddsa_type(der: &PrivatePkcs8KeyDer<'_>) -> Result<ArcAlias<dyn SigningKey>, Error> {
     // TODO: Add support for Ed448
-    Ok(Arc::new(Ed25519SigningKey::new(
+    Ok(ArcAlias::new(Ed25519SigningKey::new(
         der,
         SignatureScheme::ED25519,
     )?))
@@ -85,7 +85,7 @@ pub fn any_eddsa_type(der: &PrivatePkcs8KeyDer<'_>) -> Result<Arc<dyn SigningKey
 /// the public, stable, API.
 #[doc(hidden)]
 pub struct RsaSigningKey {
-    key: Arc<RsaKeyPair>,
+    key: ArcAlias<RsaKeyPair>,
 }
 
 static ALL_RSA_SCHEMES: &[SignatureScheme] = &[
@@ -115,7 +115,7 @@ impl RsaSigningKey {
         })?;
 
         Ok(Self {
-            key: Arc::new(key_pair),
+            key: ArcAlias::new(key_pair),
         })
     }
 }
@@ -125,7 +125,7 @@ impl SigningKey for RsaSigningKey {
         ALL_RSA_SCHEMES
             .iter()
             .find(|scheme| offered.contains(scheme))
-            .map(|scheme| RsaSigner::new(Arc::clone(&self.key), *scheme))
+            .map(|scheme| RsaSigner::new(ArcAlias::clone(&self.key), *scheme))
     }
 
     fn public_key(&self) -> Option<SubjectPublicKeyInfoDer<'_>> {
@@ -149,13 +149,13 @@ impl Debug for RsaSigningKey {
 }
 
 struct RsaSigner {
-    key: Arc<RsaKeyPair>,
+    key: ArcAlias<RsaKeyPair>,
     scheme: SignatureScheme,
     encoding: &'static dyn signature::RsaEncoding,
 }
 
 impl RsaSigner {
-    fn new(key: Arc<RsaKeyPair>, scheme: SignatureScheme) -> Box<dyn Signer> {
+    fn new(key: ArcAlias<RsaKeyPair>, scheme: SignatureScheme) -> Box<dyn Signer> {
         let encoding: &dyn signature::RsaEncoding = match scheme {
             SignatureScheme::RSA_PKCS1_SHA256 => &signature::RSA_PKCS1_SHA256,
             SignatureScheme::RSA_PKCS1_SHA384 => &signature::RSA_PKCS1_SHA384,
@@ -210,7 +210,7 @@ impl Debug for RsaSigner {
 ///
 /// Currently this is only implemented for ECDSA keys.
 struct EcdsaSigningKey {
-    key: Arc<EcdsaKeyPair>,
+    key: ArcAlias<EcdsaKeyPair>,
     scheme: SignatureScheme,
 }
 
@@ -235,7 +235,7 @@ impl EcdsaSigningKey {
         };
 
         Ok(Self {
-            key: Arc::new(key_pair),
+            key: ArcAlias::new(key_pair),
             scheme,
         })
     }
@@ -286,7 +286,7 @@ impl SigningKey for EcdsaSigningKey {
     fn choose_scheme(&self, offered: &[SignatureScheme]) -> Option<Box<dyn Signer>> {
         if offered.contains(&self.scheme) {
             Some(Box::new(EcdsaSigner {
-                key: Arc::clone(&self.key),
+                key: ArcAlias::clone(&self.key),
                 scheme: self.scheme,
             }))
         } else {
@@ -318,7 +318,7 @@ impl Debug for EcdsaSigningKey {
 }
 
 struct EcdsaSigner {
-    key: Arc<EcdsaKeyPair>,
+    key: ArcAlias<EcdsaKeyPair>,
     scheme: SignatureScheme,
 }
 
@@ -356,7 +356,7 @@ impl Debug for EcdsaSigner {
 ///
 /// Currently this is only implemented for Ed25519 keys.
 struct Ed25519SigningKey {
-    key: Arc<Ed25519KeyPair>,
+    key: ArcAlias<Ed25519KeyPair>,
     scheme: SignatureScheme,
 }
 
@@ -366,7 +366,7 @@ impl Ed25519SigningKey {
     fn new(der: &PrivatePkcs8KeyDer<'_>, scheme: SignatureScheme) -> Result<Self, Error> {
         match Ed25519KeyPair::from_pkcs8_maybe_unchecked(der.secret_pkcs8_der()) {
             Ok(key_pair) => Ok(Self {
-                key: Arc::new(key_pair),
+                key: ArcAlias::new(key_pair),
                 scheme,
             }),
             Err(e) => Err(Error::General(format!(
@@ -380,7 +380,7 @@ impl SigningKey for Ed25519SigningKey {
     fn choose_scheme(&self, offered: &[SignatureScheme]) -> Option<Box<dyn Signer>> {
         if offered.contains(&self.scheme) {
             Some(Box::new(Ed25519Signer {
-                key: Arc::clone(&self.key),
+                key: ArcAlias::clone(&self.key),
                 scheme: self.scheme,
             }))
         } else {
@@ -406,7 +406,7 @@ impl Debug for Ed25519SigningKey {
 }
 
 struct Ed25519Signer {
-    key: Arc<Ed25519KeyPair>,
+    key: ArcAlias<Ed25519KeyPair>,
     scheme: SignatureScheme,
 }
 

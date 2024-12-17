@@ -8,7 +8,7 @@ use pki_types::{ServerName, UnixTime};
 
 use super::handy::NoClientSessionStorage;
 use super::hs;
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::alias_new_1::Rc;
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
@@ -121,7 +121,7 @@ pub trait ResolvesClientCert: fmt::Debug + Send + Sync {
         &self,
         root_hint_subjects: &[&[u8]],
         sigschemes: &[SignatureScheme],
-    ) -> Option<Arc<sign::CertifiedKey>>;
+    ) -> Option<ArcAlias<sign::CertifiedKey>>;
 
     /// Return true if the client only supports raw public keys.
     ///
@@ -185,7 +185,7 @@ pub struct ClientConfig {
     pub max_fragment_size: Option<usize>,
 
     /// How to decide what client auth certificate/keys to use.
-    pub client_auth_cert_resolver: Arc<dyn ResolvesClientCert>,
+    pub client_auth_cert_resolver: ArcAlias<dyn ResolvesClientCert>,
 
     /// Whether to send the Server Name Indication (SNI) extension
     /// during the client handshake.
@@ -195,7 +195,7 @@ pub struct ClientConfig {
 
     /// How to output key material for debugging.  The default
     /// does nothing.
-    pub key_log: Arc<dyn KeyLog>,
+    pub key_log: ArcAlias<dyn KeyLog>,
 
     /// Allows traffic secrets to be extracted after the handshake,
     /// e.g. for kTLS setup.
@@ -233,7 +233,7 @@ pub struct ClientConfig {
     pub(super) versions: versions::EnabledVersions,
 
     /// How to verify the server certificate chain.
-    pub(super) verifier: Arc<dyn verify::ServerCertVerifier>,
+    pub(super) verifier: ArcAlias<dyn verify::ServerCertVerifier>,
 
     /// How to decompress the server's certificate chain.
     ///
@@ -263,7 +263,7 @@ pub struct ClientConfig {
     ///
     /// This is optional: [`compress::CompressionCache::Disabled`] gives
     /// a cache that does no caching.
-    pub cert_compression_cache: Arc<compress::CompressionCache>,
+    pub cert_compression_cache: ArcAlias<compress::CompressionCache>,
 
     /// How to offer Encrypted Client Hello (ECH). The default is to not offer ECH.
     pub(super) ech_mode: Option<EchMode>,
@@ -438,7 +438,7 @@ impl ClientConfig {
 pub struct Resumption {
     /// How we store session data or tickets. The default is to use an in-memory
     /// [super::handy::ClientSessionMemoryCache].
-    pub(super) store: Arc<dyn ClientSessionStore>,
+    pub(super) store: ArcAlias<dyn ClientSessionStore>,
 
     /// What mechanism is used for resuming a TLS 1.2 session.
     pub(super) tls12_resumption: Tls12Resumption,
@@ -452,7 +452,7 @@ impl Resumption {
     #[cfg(feature = "std")]
     pub fn in_memory_sessions(num: usize) -> Self {
         Self {
-            store: Arc::new(super::handy::ClientSessionMemoryCache::new(num)),
+            store: ArcAlias::new(super::handy::ClientSessionMemoryCache::new(num)),
             tls12_resumption: Tls12Resumption::SessionIdOrTickets,
         }
     }
@@ -460,7 +460,7 @@ impl Resumption {
     /// Use a custom [`ClientSessionStore`] implementation to store sessions.
     ///
     /// By default, enables resuming a TLS 1.2 session with a session id or RFC 5077 ticket.
-    pub fn store(store: Arc<dyn ClientSessionStore>) -> Self {
+    pub fn store(store: ArcAlias<dyn ClientSessionStore>) -> Self {
         Self {
             store,
             tls12_resumption: Tls12Resumption::SessionIdOrTickets,
@@ -470,7 +470,7 @@ impl Resumption {
     /// Disable all use of session resumption.
     pub fn disabled() -> Self {
         Self {
-            store: Arc::new(NoClientSessionStorage),
+            store: ArcAlias::new(NoClientSessionStorage),
             tls12_resumption: Tls12Resumption::Disabled,
         }
     }
@@ -519,7 +519,7 @@ pub enum Tls12Resumption {
 pub(super) mod danger {
     use super::verify::ServerCertVerifier;
     use super::ClientConfig;
-    use crate::alias_old::Arc;
+    use crate::alias_old::ArcAlias;
 
     /// Accessor for dangerous configuration options.
     #[derive(Debug)]
@@ -530,7 +530,7 @@ pub(super) mod danger {
 
     impl DangerousClientConfig<'_> {
         /// Overrides the default `ServerCertVerifier` with something else.
-        pub fn set_certificate_verifier(&mut self, verifier: Arc<dyn ServerCertVerifier>) {
+        pub fn set_certificate_verifier(&mut self, verifier: ArcAlias<dyn ServerCertVerifier>) {
             self.cfg.verifier = verifier;
         }
     }
@@ -624,7 +624,7 @@ mod connection {
     use pki_types::ServerName;
 
     use super::ClientConnectionData;
-    use crate::alias_old::Arc;
+    use crate::alias_old::ArcAlias;
     use crate::client::EchStatus;
     use crate::common_state::Protocol;
     use crate::conn::{ConnectionCommon, ConnectionCore};
@@ -691,7 +691,7 @@ mod connection {
         /// Make a new ClientConnection.  `config` controls how
         /// we behave in the TLS protocol, `name` is the
         /// name of the server we want to talk to.
-        pub fn new(config: Arc<ClientConfig>, name: ServerName<'static>) -> Result<Self, Error> {
+        pub fn new(config: ArcAlias<ClientConfig>, name: ServerName<'static>) -> Result<Self, Error> {
             Ok(Self {
                 inner: ConnectionCore::for_client(config, name, Vec::new(), Protocol::Tcp)?.into(),
             })
@@ -809,7 +809,7 @@ pub use connection::{ClientConnection, WriteEarlyData};
 
 impl ConnectionCore<ClientConnectionData> {
     pub(crate) fn for_client(
-        config: Arc<ClientConfig>,
+        config: ArcAlias<ClientConfig>,
         name: ServerName<'static>,
         extra_exts: Vec<ClientExtension>,
         proto: Protocol,
@@ -848,7 +848,7 @@ pub struct UnbufferedClientConnection {
 impl UnbufferedClientConnection {
     /// Make a new ClientConnection. `config` controls how we behave in the TLS protocol, `name` is
     /// the name of the server we want to talk to.
-    pub fn new(config: Arc<ClientConfig>, name: ServerName<'static>) -> Result<Self, Error> {
+    pub fn new(config: ArcAlias<ClientConfig>, name: ServerName<'static>) -> Result<Self, Error> {
         Ok(Self {
             inner: ConnectionCore::for_client(config, name, Vec::new(), Protocol::Tcp)?.into(),
         })

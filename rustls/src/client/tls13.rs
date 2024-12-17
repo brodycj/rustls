@@ -7,7 +7,7 @@ use subtle::ConstantTimeEq;
 
 use super::client_conn::ClientConnectionData;
 use super::hs::ClientContext;
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::check::inappropriate_handshake_message;
 use crate::client::common::{ClientAuthDetails, ClientHelloDetails, ServerCertDetails};
 use crate::client::ech::{self, EchState, EchStatus};
@@ -64,7 +64,7 @@ static DISALLOWED_TLS13_EXTS: &[ExtensionType] = &[
 ];
 
 pub(super) fn handle_server_hello(
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     cx: &mut ClientContext<'_>,
     server_hello: &ServerHelloPayload,
     mut resuming_session: Option<persist::Tls13ClientSessionValue>,
@@ -223,7 +223,7 @@ impl KeyExchangeChoice {
     /// Decide between `our_key_share` or `our_key_share.hybrid_component()`
     /// based on the selection of the server expressed in `their_key_share`.
     fn new(
-        config: &Arc<ClientConfig>,
+        config: &ArcAlias<ClientConfig>,
         cx: &mut ClientContext<'_>,
         our_key_share: Box<dyn ActiveKeyExchange>,
         their_key_share: &KeyShareEntry,
@@ -440,7 +440,7 @@ fn validate_encrypted_extensions(
 }
 
 struct ExpectEncryptedExtensions {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     resuming_session: Option<persist::Tls13ClientSessionValue>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
@@ -578,7 +578,7 @@ impl State<ClientConnectionData> for ExpectEncryptedExtensions {
 }
 
 struct ExpectCertificateOrCompressedCertificateOrCertReq {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -670,7 +670,7 @@ impl State<ClientConnectionData> for ExpectCertificateOrCompressedCertificateOrC
 }
 
 struct ExpectCertificateOrCompressedCertificate {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -744,7 +744,7 @@ impl State<ClientConnectionData> for ExpectCertificateOrCompressedCertificate {
 }
 
 struct ExpectCertificateOrCertReq {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -820,7 +820,7 @@ impl State<ClientConnectionData> for ExpectCertificateOrCertReq {
 // Certificate. Unfortunately the CertificateRequest type changed in an annoying way
 // in TLS1.3.
 struct ExpectCertificateRequest {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -927,7 +927,7 @@ impl State<ClientConnectionData> for ExpectCertificateRequest {
 }
 
 struct ExpectCompressedCertificate {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -1031,7 +1031,7 @@ impl State<ClientConnectionData> for ExpectCompressedCertificate {
 }
 
 struct ExpectCertificate {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -1104,7 +1104,7 @@ impl State<ClientConnectionData> for ExpectCertificate {
 
 // --- TLS1.3 CertificateVerify ---
 struct ExpectCertificateVerify<'a> {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -1287,7 +1287,7 @@ fn emit_end_of_early_data_tls13(transcript: &mut HandshakeHash, common: &mut Com
 }
 
 struct ExpectFinished {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     server_name: ServerName<'static>,
     randoms: ConnectionRandoms,
     suite: &'static Tls13CipherSuite,
@@ -1414,8 +1414,8 @@ impl State<ClientConnectionData> for ExpectFinished {
         }
 
         let st = ExpectTraffic {
-            config: Arc::clone(&st.config),
-            session_storage: Arc::clone(&st.config.resumption.store),
+            config: ArcAlias::clone(&st.config),
+            session_storage: ArcAlias::clone(&st.config.resumption.store),
             server_name: st.server_name,
             suite: st.suite,
             transcript: st.transcript,
@@ -1440,8 +1440,8 @@ impl State<ClientConnectionData> for ExpectFinished {
 // In this state we can be sent tickets, key updates,
 // and application data.
 struct ExpectTraffic {
-    config: Arc<ClientConfig>,
-    session_storage: Arc<dyn ClientSessionStore>,
+    config: ArcAlias<ClientConfig>,
+    session_storage: ArcAlias<dyn ClientSessionStore>,
     server_name: ServerName<'static>,
     suite: &'static Tls13CipherSuite,
     transcript: HandshakeHash,
@@ -1473,7 +1473,7 @@ impl ExpectTraffic {
         #[allow(unused_mut)]
         let mut value = persist::Tls13ClientSessionValue::new(
             self.suite,
-            Arc::clone(&nst.ticket),
+            ArcAlias::clone(&nst.ticket),
             secret.as_ref(),
             cx.common
                 .peer_certificates

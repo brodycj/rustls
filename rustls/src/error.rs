@@ -627,7 +627,7 @@ mod other_error {
 
     use super::Error;
     #[cfg(feature = "std")]
-    use crate::alias_old::Arc;
+    use crate::alias_old::ArcAlias;
 
     /// Any other error that cannot be expressed by a more specific [`Error`] variant.
     ///
@@ -636,7 +636,7 @@ mod other_error {
     ///
     /// Enums holding this type will never compare equal to each other.
     #[derive(Debug, Clone)]
-    pub struct OtherError(#[cfg(feature = "std")] pub Arc<dyn StdError + Send + Sync>);
+    pub struct OtherError(#[cfg(feature = "std")] pub ArcAlias<dyn StdError + Send + Sync>);
 
     impl PartialEq<Self> for OtherError {
         fn eq(&self, _other: &Self) -> bool {
@@ -680,7 +680,7 @@ mod tests {
 
     use super::{CertRevocationListError, Error, InconsistentKeys, InvalidMessage, OtherError};
     #[cfg(feature = "std")]
-    use crate::alias_old::Arc;
+    use crate::alias_old::ArcAlias;
 
     #[test]
     fn certificate_error_equality() {
@@ -700,7 +700,7 @@ mod tests {
         );
         let other = Other(OtherError(
             #[cfg(feature = "std")]
-            Arc::from(Box::from("")),
+            ArcAlias::from(Box::from("")),
         ));
         assert_ne!(other, other);
         assert_ne!(BadEncoding, Expired);
@@ -724,7 +724,7 @@ mod tests {
         assert_eq!(UnsupportedRevocationReason, UnsupportedRevocationReason);
         let other = Other(OtherError(
             #[cfg(feature = "std")]
-            Arc::from(Box::from("")),
+            ArcAlias::from(Box::from("")),
         ));
         assert_ne!(other, other);
         assert_ne!(BadSignature, InvalidCrlNumber);
@@ -733,7 +733,7 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn other_error_equality() {
-        let other_error = OtherError(Arc::from(Box::from("")));
+        let other_error = OtherError(ArcAlias::from(Box::from("")));
         assert_ne!(other_error, other_error);
         let other: Error = other_error.into();
         assert_ne!(other, other);
@@ -771,7 +771,7 @@ mod tests {
             Error::InvalidCertRevocationList(CertRevocationListError::BadSignature),
             Error::Other(OtherError(
                 #[cfg(feature = "std")]
-                Arc::from(Box::from("")),
+                ArcAlias::from(Box::from("")),
             )),
         ];
 

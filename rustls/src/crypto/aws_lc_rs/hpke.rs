@@ -12,7 +12,7 @@ use aws_lc_rs::encoding::{AsBigEndian, Curve25519SeedBin, EcPrivateKeyBin};
 use zeroize::Zeroize;
 
 #[cfg(feature = "std")]
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::crypto::aws_lc_rs::hmac::{HMAC_SHA256, HMAC_SHA384, HMAC_SHA512};
 use crate::crypto::aws_lc_rs::unspecified_err;
 use crate::crypto::hpke::{
@@ -928,7 +928,7 @@ impl<const KDF_LEN: usize> Drop for KemSharedSecret<KDF_LEN> {
 fn key_rejected_err(_e: aws_lc_rs::error::KeyRejected) -> Error {
     #[cfg(feature = "std")]
     {
-        Error::Other(OtherError(Arc::new(_e)))
+        Error::Other(OtherError(ArcAlias::new(_e)))
     }
     #[cfg(not(feature = "std"))]
     {

@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use pki_types::{CertificateDer, PrivateKeyDer};
 
 use super::client_conn::Resumption;
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 use crate::builder::{ConfigBuilder, WantsVerifier};
 use crate::client::{handy, ClientConfig, EchMode, ResolvesClientCert};
 use crate::error::Error;
@@ -50,7 +50,7 @@ impl ConfigBuilder<ClientConfig, WantsVerifier> {
     /// ```
     pub fn with_root_certificates(
         self,
-        root_store: impl Into<Arc<webpki::RootCertStore>>,
+        root_store: impl Into<ArcAlias<webpki::RootCertStore>>,
     ) -> ConfigBuilder<ClientConfig, WantsClientCert> {
         let algorithms = self
             .provider
@@ -66,7 +66,7 @@ impl ConfigBuilder<ClientConfig, WantsVerifier> {
     /// [`webpki::WebPkiServerVerifier::builder_with_provider`] for more information.
     pub fn with_webpki_verifier(
         self,
-        verifier: Arc<WebPkiServerVerifier>,
+        verifier: ArcAlias<WebPkiServerVerifier>,
     ) -> ConfigBuilder<ClientConfig, WantsClientCert> {
         ConfigBuilder {
             state: WantsClientCert {
@@ -91,7 +91,7 @@ impl ConfigBuilder<ClientConfig, WantsVerifier> {
 pub(super) mod danger {
     use core::marker::PhantomData;
 
-    use crate::alias_old::Arc;
+    use crate::alias_old::ArcAlias;
     use crate::client::WantsClientCert;
     use crate::{verify, ClientConfig, ConfigBuilder, WantsVerifier};
 
@@ -106,7 +106,7 @@ pub(super) mod danger {
         /// Set a custom certificate verifier.
         pub fn with_custom_certificate_verifier(
             self,
-            verifier: Arc<dyn verify::ServerCertVerifier>,
+            verifier: ArcAlias<dyn verify::ServerCertVerifier>,
         ) -> ConfigBuilder<ClientConfig, WantsClientCert> {
             ConfigBuilder {
                 state: WantsClientCert {
@@ -129,7 +129,7 @@ pub(super) mod danger {
 #[derive(Clone)]
 pub struct WantsClientCert {
     versions: versions::EnabledVersions,
-    verifier: Arc<dyn verify::ServerCertVerifier>,
+    verifier: ArcAlias<dyn verify::ServerCertVerifier>,
     client_ech_mode: Option<EchMode>,
 }
 
@@ -154,18 +154,18 @@ impl ConfigBuilder<ClientConfig, WantsClientCert> {
             .load_private_key(key_der)?;
         let resolver =
             handy::AlwaysResolvesClientCert::new(private_key, CertificateChain(cert_chain))?;
-        Ok(self.with_client_cert_resolver(Arc::new(resolver)))
+        Ok(self.with_client_cert_resolver(ArcAlias::new(resolver)))
     }
 
     /// Do not support client auth.
     pub fn with_no_client_auth(self) -> ClientConfig {
-        self.with_client_cert_resolver(Arc::new(handy::FailResolveClientCert {}))
+        self.with_client_cert_resolver(ArcAlias::new(handy::FailResolveClientCert {}))
     }
 
     /// Sets a custom [`ResolvesClientCert`].
     pub fn with_client_cert_resolver(
         self,
-        client_auth_cert_resolver: Arc<dyn ResolvesClientCert>,
+        client_auth_cert_resolver: ArcAlias<dyn ResolvesClientCert>,
     ) -> ClientConfig {
         ClientConfig {
             provider: self.provider,
@@ -176,14 +176,14 @@ impl ConfigBuilder<ClientConfig, WantsClientCert> {
             versions: self.state.versions,
             enable_sni: true,
             verifier: self.state.verifier,
-            key_log: Arc::new(NoKeyLog {}),
+            key_log: ArcAlias::new(NoKeyLog {}),
             enable_secret_extraction: false,
             enable_early_data: false,
             #[cfg(feature = "tls12")]
             require_ems: cfg!(feature = "fips"),
             time_provider: self.time_provider,
             cert_compressors: compress::default_cert_compressors().to_vec(),
-            cert_compression_cache: Arc::new(compress::CompressionCache::default()),
+            cert_compression_cache: ArcAlias::new(compress::CompressionCache::default()),
             cert_decompressors: compress::default_cert_decompressors().to_vec(),
             ech_mode: self.state.client_ech_mode,
         }

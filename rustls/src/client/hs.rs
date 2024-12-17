@@ -9,7 +9,7 @@ use pki_types::ServerName;
 #[cfg(feature = "tls12")]
 use super::tls12;
 use super::Tls12Resumption;
-use crate::alias_old::Arc;
+use crate::alias_old::ArcAlias;
 #[cfg(feature = "logging")]
 use crate::bs_debug;
 use crate::check::inappropriate_handshake_message;
@@ -98,7 +98,7 @@ fn find_session(
 pub(super) fn start_handshake(
     server_name: ServerName<'static>,
     extra_exts: Vec<ClientExtension>,
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     cx: &mut ClientContext<'_>,
 ) -> NextStateOrError<'static> {
     let mut transcript_buffer = HandshakeHashBuffer::new();
@@ -205,7 +205,7 @@ struct ExpectServerHelloOrHelloRetryRequest {
 }
 
 struct ClientHelloInput {
-    config: Arc<ClientConfig>,
+    config: ArcAlias<ClientConfig>,
     resuming: Option<persist::Retrieved<ClientSessionValue>>,
     random: Random,
     #[cfg(feature = "tls12")]
