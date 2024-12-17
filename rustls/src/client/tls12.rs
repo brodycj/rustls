@@ -40,7 +40,7 @@ mod server_hello {
     use crate::msgs::handshake::{HasServerExtensions, ServerHelloPayload};
 
     pub(in crate::client) struct CompleteServerHelloHandling {
-        pub(in crate::client) config: ArcAlias<ClientConfig>,
+        pub(in crate::client) config: Box<ClientConfig>,
         pub(in crate::client) resuming_session: Option<persist::Tls12ClientSessionValue>,
         pub(in crate::client) server_name: ServerName<'static>,
         pub(in crate::client) randoms: ConnectionRandoms,
@@ -190,7 +190,7 @@ mod server_hello {
 }
 
 struct ExpectCertificate {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -255,7 +255,7 @@ impl State<ClientConnectionData> for ExpectCertificate {
 }
 
 struct ExpectCertificateStatusOrServerKx<'m> {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -345,7 +345,7 @@ impl State<ClientConnectionData> for ExpectCertificateStatusOrServerKx<'_> {
 }
 
 struct ExpectCertificateStatus<'a> {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -412,7 +412,7 @@ impl State<ClientConnectionData> for ExpectCertificateStatus<'_> {
 }
 
 struct ExpectServerKx<'a> {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -618,7 +618,7 @@ impl ServerKxDetails {
 // Existence of the CertificateRequest tells us the server is asking for
 // client auth.  Otherwise we go straight to ServerHelloDone.
 struct ExpectServerDoneOrCertReq<'a> {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -703,7 +703,7 @@ impl State<ClientConnectionData> for ExpectServerDoneOrCertReq<'_> {
 }
 
 struct ExpectCertificateRequest<'a> {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -785,7 +785,7 @@ impl State<ClientConnectionData> for ExpectCertificateRequest<'_> {
 }
 
 struct ExpectServerDone<'a> {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,
@@ -1039,7 +1039,7 @@ impl State<ClientConnectionData> for ExpectServerDone<'_> {
 }
 
 struct ExpectNewTicket {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     secrets: ConnectionSecrets,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
@@ -1090,7 +1090,7 @@ impl State<ClientConnectionData> for ExpectNewTicket {
 
 // -- Waiting for their CCS --
 struct ExpectCcs {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     secrets: ConnectionSecrets,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
@@ -1151,7 +1151,7 @@ impl State<ClientConnectionData> for ExpectCcs {
 }
 
 struct ExpectFinished {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming_session: Option<persist::Tls12ClientSessionValue>,
     session_id: SessionId,
     server_name: ServerName<'static>,

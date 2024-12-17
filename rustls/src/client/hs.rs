@@ -98,7 +98,7 @@ fn find_session(
 pub(super) fn start_handshake(
     server_name: ServerName<'static>,
     extra_exts: Vec<ClientExtension>,
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     cx: &mut ClientContext<'_>,
 ) -> NextStateOrError<'static> {
     let mut transcript_buffer = HandshakeHashBuffer::new();
@@ -205,7 +205,7 @@ struct ExpectServerHelloOrHelloRetryRequest {
 }
 
 struct ClientHelloInput {
-    config: ArcAlias<ClientConfig>,
+    config: Box<ClientConfig>,
     resuming: Option<persist::Retrieved<ClientSessionValue>>,
     random: Random,
     #[cfg(feature = "tls12")]

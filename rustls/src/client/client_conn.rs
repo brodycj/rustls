@@ -616,6 +616,7 @@ impl EarlyData {
 
 #[cfg(feature = "std")]
 mod connection {
+    use alloc::boxed::Box;
     use alloc::vec::Vec;
     use core::fmt;
     use core::ops::{Deref, DerefMut};
@@ -624,7 +625,6 @@ mod connection {
     use pki_types::ServerName;
 
     use super::ClientConnectionData;
-    use crate::alias_old::ArcAlias;
     use crate::client::EchStatus;
     use crate::common_state::Protocol;
     use crate::conn::{ConnectionCommon, ConnectionCore};
@@ -691,7 +691,7 @@ mod connection {
         /// Make a new ClientConnection.  `config` controls how
         /// we behave in the TLS protocol, `name` is the
         /// name of the server we want to talk to.
-        pub fn new(config: ArcAlias<ClientConfig>, name: ServerName<'static>) -> Result<Self, Error> {
+        pub fn new(config: Box<ClientConfig>, name: ServerName<'static>) -> Result<Self, Error> {
             Ok(Self {
                 inner: ConnectionCore::for_client(config, name, Vec::new(), Protocol::Tcp)?.into(),
             })
@@ -809,7 +809,7 @@ pub use connection::{ClientConnection, WriteEarlyData};
 
 impl ConnectionCore<ClientConnectionData> {
     pub(crate) fn for_client(
-        config: ArcAlias<ClientConfig>,
+        config: Box<ClientConfig>,
         name: ServerName<'static>,
         extra_exts: Vec<ClientExtension>,
         proto: Protocol,
@@ -848,7 +848,7 @@ pub struct UnbufferedClientConnection {
 impl UnbufferedClientConnection {
     /// Make a new ClientConnection. `config` controls how we behave in the TLS protocol, `name` is
     /// the name of the server we want to talk to.
-    pub fn new(config: ArcAlias<ClientConfig>, name: ServerName<'static>) -> Result<Self, Error> {
+    pub fn new(config: Box<ClientConfig>, name: ServerName<'static>) -> Result<Self, Error> {
         Ok(Self {
             inner: ConnectionCore::for_client(config, name, Vec::new(), Protocol::Tcp)?.into(),
         })

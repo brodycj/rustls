@@ -160,7 +160,7 @@ mod connection {
         /// This differs from `ClientConnection::new()` in that it takes an extra `params` argument,
         /// which contains the TLS-encoded transport parameters to send.
         pub fn new(
-            config: ArcAlias<ClientConfig>,
+            config: Box<ClientConfig>,
             quic_version: Version,
             name: ServerName<'static>,
             params: Vec<u8>,
