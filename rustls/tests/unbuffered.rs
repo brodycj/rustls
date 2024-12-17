@@ -206,7 +206,7 @@ fn handshake_config(
     editor(&mut client_config, &mut server_config);
 
     run(
-        Arc::new(client_config),
+        Box::new(client_config),
         &mut NO_ACTIONS.clone(),
         Box::new(server_config),
         &mut NO_ACTIONS.clone(),
@@ -227,7 +227,7 @@ fn app_data_client_to_server() {
         };
 
         let outcome = run(
-            Arc::new(client_config),
+            Box::new(client_config),
             &mut client_actions,
             Box::new(server_config),
             &mut NO_ACTIONS.clone(),
@@ -259,7 +259,7 @@ fn app_data_server_to_client() {
         };
 
         let outcome = run(
-            Arc::new(client_config),
+            Box::new(client_config),
             &mut NO_ACTIONS.clone(),
             Box::new(server_config),
             &mut server_actions,
@@ -287,7 +287,7 @@ fn early_data() {
 
     let mut client_config = make_client_config_with_versions(KeyType::Rsa2048, &[&TLS13]);
     client_config.enable_early_data = true;
-    let client_config = Arc::new(client_config);
+    let client_config = Box::new(client_config);
 
     // first handshake allows the second to be a resumption and use 0-RTT
     run(
@@ -351,7 +351,7 @@ fn early_data() {
 }
 
 fn run(
-    client_config: Arc<ClientConfig>,
+    client_config: Box<ClientConfig>,
     client_actions: &mut Actions,
     server_config: Box<ServerConfig>,
     server_actions: &mut Actions,
@@ -517,7 +517,7 @@ fn close_notify_client_to_server() {
         };
 
         let outcome = run(
-            Arc::new(client_config),
+            Box::new(client_config),
             &mut client_actions,
             Box::new(server_config),
             &mut NO_ACTIONS.clone(),
@@ -541,7 +541,7 @@ fn close_notify_server_to_client() {
         };
 
         let outcome = run(
-            Arc::new(client_config),
+            Box::new(client_config),
             &mut NO_ACTIONS.clone(),
             Box::new(server_config),
             &mut server_actions,
@@ -1358,7 +1358,7 @@ fn make_connection_pair(
     let client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
 
     let client =
-        UnbufferedClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+        UnbufferedClientConnection::new(Box::new(client_config), server_name("localhost")).unwrap();
     let server = UnbufferedServerConnection::new(Box::new(server_config)).unwrap();
     (client, server)
 }

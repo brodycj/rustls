@@ -54,7 +54,7 @@ fn client_verifier_works() {
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
             let (mut client, mut server) =
-                make_pair_for_config_refs(&Arc::new(client_config.clone()), &server_config);
+                make_pair_for_config_refs(&Box::new(client_config.clone()), &server_config);
             let err = do_handshake_until_error(&mut client, &mut server);
             assert_eq!(err, Ok(()));
         }
@@ -73,7 +73,7 @@ fn client_verifier_no_schemes() {
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
             let (mut client, mut server) =
-                make_pair_for_config_refs(&Arc::new(client_config.clone()), &server_config);
+                make_pair_for_config_refs(&Box::new(client_config.clone()), &server_config);
             let err = do_handshake_until_error(&mut client, &mut server);
             assert_eq!(
                 err,
@@ -97,7 +97,7 @@ fn client_verifier_no_auth_yes_root() {
             let client_config = make_client_config_with_versions(*kt, &[version]);
             let mut server = ServerConnection::new(Box::clone(&server_config)).unwrap();
             let mut client =
-                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+                ClientConnection::new(Box::new(client_config), server_name("localhost")).unwrap();
             let errs = do_handshake_until_both_error(&mut client, &mut server);
             assert_eq!(
                 errs,
@@ -124,7 +124,7 @@ fn client_verifier_fails_properly() {
             let client_config = make_client_config_with_versions_with_auth(*kt, &[version]);
             let mut server = ServerConnection::new(Box::clone(&server_config)).unwrap();
             let mut client =
-                ClientConnection::new(Arc::new(client_config), server_name("localhost")).unwrap();
+                ClientConnection::new(Box::new(client_config), server_name("localhost")).unwrap();
             let err = do_handshake_until_error(&mut client, &mut server);
             assert_eq!(
                 err,

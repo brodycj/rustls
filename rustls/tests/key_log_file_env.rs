@@ -47,7 +47,7 @@ fn exercise_key_log_file_for_client() {
             client_config.key_log = Arc::new(rustls::KeyLogFile::new());
 
             let (mut client, mut server) =
-                make_pair_for_config_refs(&Arc::new(client_config), &server_config);
+                make_pair_for_config_refs(&Box::new(client_config), &server_config);
 
             assert_eq!(5, client.writer().write(b"hello").unwrap());
 
@@ -71,7 +71,7 @@ fn exercise_key_log_file_for_server() {
         for version in rustls::ALL_VERSIONS {
             let client_config = make_client_config_with_versions(KeyType::Rsa2048, &[version]);
             let (mut client, mut server) =
-                make_pair_for_config_refs(&Arc::new(client_config), &server_config);
+                make_pair_for_config_refs(&Box::new(client_config), &server_config);
 
             assert_eq!(5, client.writer().write(b"hello").unwrap());
 

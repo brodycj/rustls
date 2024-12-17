@@ -42,7 +42,7 @@ fn client_can_override_certificate_verification() {
                 .set_certificate_verifier(verifier.clone());
 
             let (mut client, mut server) =
-                make_pair_for_config_refs(&Arc::new(client_config), &server_config);
+                make_pair_for_config_refs(&Box::new(client_config), &server_config);
             do_handshake(&mut client, &mut server);
         }
     }
@@ -64,7 +64,7 @@ fn client_can_override_certificate_verification_and_reject_certificate() {
                 .set_certificate_verifier(verifier.clone());
 
             let (mut client, mut server) =
-                make_pair_for_config_refs(&Arc::new(client_config), &server_config);
+                make_pair_for_config_refs(&Box::new(client_config), &server_config);
             let errs = do_handshake_until_both_error(&mut client, &mut server);
             assert_eq!(
                 errs,
@@ -95,7 +95,7 @@ fn client_can_override_certificate_verification_and_reject_tls12_signatures() {
         let server_config = Box::new(make_server_config(*kt));
 
         let (mut client, mut server) =
-            make_pair_for_config_refs(&Arc::new(client_config), &server_config);
+            make_pair_for_config_refs(&Box::new(client_config), &server_config);
         let errs = do_handshake_until_both_error(&mut client, &mut server);
         assert_eq!(
             errs,
@@ -124,7 +124,7 @@ fn client_can_override_certificate_verification_and_reject_tls13_signatures() {
         let server_config = Box::new(make_server_config(*kt));
 
         let (mut client, mut server) =
-            make_pair_for_config_refs(&Arc::new(client_config), &server_config);
+            make_pair_for_config_refs(&Box::new(client_config), &server_config);
         let errs = do_handshake_until_both_error(&mut client, &mut server);
         assert_eq!(
             errs,
@@ -152,7 +152,7 @@ fn client_can_override_certificate_verification_and_offer_no_signature_schemes()
                 .set_certificate_verifier(verifier.clone());
 
             let (mut client, mut server) =
-                make_pair_for_config_refs(&Arc::new(client_config), &server_config);
+                make_pair_for_config_refs(&Box::new(client_config), &server_config);
             let errs = do_handshake_until_both_error(&mut client, &mut server);
             assert_eq!(
                 errs,
@@ -191,7 +191,7 @@ fn cas_extension_in_client_hello_if_server_verifier_requests_it() {
     });
 
     for (protocol_version, cas_extension_expected) in [(&TLS12, false), (&TLS13, true)] {
-        let client_config = Arc::new(
+        let client_config = Box::new(
             client_config_builder_with_versions(&[protocol_version])
                 .dangerous()
                 .with_custom_certificate_verifier(cas_sending_server_verifier.clone())
@@ -274,7 +274,7 @@ fn client_can_request_certain_trusted_cas() {
             .with_no_client_auth();
 
         let (mut client, mut server) =
-            make_pair_for_config_refs(&Arc::new(cas_sending_client_config), &server_config);
+            make_pair_for_config_refs(&Box::new(cas_sending_client_config), &server_config);
         do_handshake(&mut client, &mut server);
 
         let cas_unaware_client_config = client_config_builder()
@@ -283,7 +283,7 @@ fn client_can_request_certain_trusted_cas() {
             .with_no_client_auth();
 
         let (mut client, mut server) =
-            make_pair_for_config_refs(&Arc::new(cas_unaware_client_config), &server_config);
+            make_pair_for_config_refs(&Box::new(cas_unaware_client_config), &server_config);
 
         cas_unaware_error_count += do_handshake_until_error(&mut client, &mut server)
             .inspect_err(|e| {
