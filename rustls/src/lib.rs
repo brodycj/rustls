@@ -422,12 +422,14 @@ mod test_macros;
 
 // XXX TODO REPLACE THIS:
 mod alias_old {
+    // XXX TBD SKIP FOR NOW:
     // NOTE: `Arc` from `portable_atomic_util` is ONLY used to support the `critical-section` feature (as documented above).
-    #[cfg(feature = "critical-section")]
-    extern crate portable_atomic_util;
+    // #[cfg(feature = "critical-section")]
+    // extern crate portable_atomic_util;
 
-    #[cfg(feature = "critical-section")]
-    pub(crate) use portable_atomic_util::Arc;
+    // XXX TBD SKIP FOR NOW:
+    // #[cfg(feature = "critical-section")]
+    // pub(crate) use portable_atomic_util::Arc;
 
     #[cfg(not(feature = "critical-section"))]
     pub(crate) use alloc::sync::Arc;
