@@ -702,28 +702,25 @@ pub fn default_fips_provider() -> CryptoProvider {
 }
 
 mod static_default {
-    // XXX TODO ADD CLEAR EXPLANATION OF SELECTION BETWEEN std::sync::OnceLock / once_cell::sync::OnceCell / once_cell::race::OnceBox
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    #[cfg(not(feature = "std"))]
     use alloc::boxed::Box;
-    #[cfg(all(not(feature = "critical-section"), feature = "std"))]
+    #[cfg(feature = "std")]
     use std::sync::OnceLock;
 
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    #[cfg(not(feature = "std"))]
     use once_cell::race::OnceBox;
-    #[cfg(feature = "critical-section")]
-    use once_cell::sync::OnceCell;
 
     use super::CryptoProvider;
     use crate::alias::Arc;
 
-    #[cfg(any(feature = "critical-section", feature = "std"))]
+    #[cfg(feature = "std")]
     pub(crate) fn install_default(
         default_provider: CryptoProvider,
     ) -> Result<(), Arc<CryptoProvider>> {
         PROCESS_DEFAULT_PROVIDER.set(Arc::new(default_provider))
     }
 
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    #[cfg(not(feature = "std"))]
     pub(crate) fn install_default(
         default_provider: CryptoProvider,
     ) -> Result<(), Arc<CryptoProvider>> {
@@ -736,14 +733,9 @@ mod static_default {
         PROCESS_DEFAULT_PROVIDER.get()
     }
 
-    // NOTE: Always using third-party `OnceCell` with `critical-section` to make testing with `cargo test` easier
-    // (as `cargo test` always seems to enable the `std` feature)
-    #[cfg(feature = "critical-section")]
-    static PROCESS_DEFAULT_PROVIDER: OnceCell<Arc<CryptoProvider>> = OnceCell::new();
-    #[cfg(all(not(feature = "critical-section"), feature = "std"))]
+    #[cfg(feature = "std")]
     static PROCESS_DEFAULT_PROVIDER: OnceLock<Arc<CryptoProvider>> = OnceLock::new();
-    // XXX TODO ADD MISSING CI TESTING WITH THIS PROVIDER (which is what requires once_cell "race" feature)
-    #[cfg(not(any(feature = "critical-section", feature = "std")))]
+    #[cfg(not(feature = "std"))]
     static PROCESS_DEFAULT_PROVIDER: OnceBox<Arc<CryptoProvider>> = OnceBox::new();
 }
 
