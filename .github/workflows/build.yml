@@ -194,13 +194,14 @@ jobs:
         run: cargo test --locked --release --no-run
         working-directory: rustls
 
-  over-write-atomic-sync-cross-build:
-    name: over-write atomic_sync - cross build with portable_atomic_util::Arc
+  over-write-atomic-sync-build-targets:
+    name: over-write atomic_sync - build targets with portable_atomic_util::Arc
     runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
-          # XXX TBD ADD DESKTOP TARGETS (ETC) ???
+          # 32-bit Android (Linux) target(s):
+          - armv7-linux-androideabi
           # this target does _not_ include the libstd crate in its sysroot
           # (to catch unwanted usage of libstd in any of its dependencies)
           - x86_64-unknown-none
@@ -208,6 +209,8 @@ jobs:
           # - https://github.com/rustls/rustls/issues/2068
           # - https://docs.esp-rs.org/book/installation/riscv.html
           - riscv32imc-unknown-none-elf
+          # additional 64-bit target(s):
+          - aarch64-linux-android
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
