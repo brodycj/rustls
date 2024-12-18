@@ -16,11 +16,11 @@ use common::{
 use pki_types::{CertificateDer, ServerName};
 
 use rustls::internal::atomic_sync::Arc;
-use rustls::internal::msgs::handshake::{ClientExtension, HandshakePayload};
-use rustls::internal::msgs::message::{Message, MessagePayload};
 
 use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
 use rustls::client::WebPkiServerVerifier;
+use rustls::internal::msgs::handshake::{ClientExtension, HandshakePayload};
+use rustls::internal::msgs::message::{Message, MessagePayload};
 use rustls::server::{ClientHello, ResolvesServerCert};
 use rustls::sign::CertifiedKey;
 use rustls::version::{TLS12, TLS13};
