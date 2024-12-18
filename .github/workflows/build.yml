@@ -255,9 +255,11 @@ jobs:
         with:
           target: x86_64-unknown-none
 
-      - name: cargo build (debug; default features)
+      - name: cargo build (debug; default features; unstable critical-section feature - using unstable --cfg option)
         run: cargo build --locked
         working-directory: rustls
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
         # this target does _not_ include the libstd crate in its sysroot
         # it will catch unwanted usage of libstd in _dependencies_
