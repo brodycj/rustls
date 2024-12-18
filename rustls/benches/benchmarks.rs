@@ -5,13 +5,10 @@ use rustls::crypto::ring as provider;
 
 #[path = "../tests/common/mod.rs"]
 mod test_utils;
-
 use std::io;
-
-use rustls::internal::atomic_sync::Arc;
+use std::sync::Arc;
 
 use rustls::ServerConnection;
-
 use test_utils::*;
 
 fn bench_ewouldblock(c: &mut Bencher) {
