@@ -194,20 +194,61 @@ jobs:
         run: cargo test --locked --release --no-run
         working-directory: rustls
 
-  # atomic_sync overwite job - XXX TODO UPDATE THIS JOB NAME
-  # XXX TODO SPLIT BETWEEN CROSS-TARGET BUILD & CARGO TEST-ING
-  features-unstable:
-    name: Features - unstable
+  atomic-sync-overwite-build:
+    name: atomic_sync overwite cross build with portable_atomic_util::Arc
     runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
-          # XXX XXX
+          # XXX TBD ADD DESKTOP TARGETS (ETC) ???
+          # this target does _not_ include the libstd crate in its sysroot
+          # (to catch unwanted usage of libstd in any of its dependencies)
           - x86_64-unknown-none
           # ESP32-C2 target with no atomic ptr ref:
           # - https://github.com/rustls/rustls/issues/2068
           # - https://docs.esp-rs.org/book/installation/riscv.html
           - riscv32imc-unknown-none-elf
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # XXX TODO ADD EXPLANATION
+      # XXX ADD NOTE: `cargo add once_cell --no-default-features` not possible due to workspace config in top-level CARGO TOML
+      - run: cargo add once_cell -F alloc,race,critical-section -p rustls
+      - run: cargo add portable-atomic --no-default-features -F critical-section -p rustls
+      - run: cargo add portable-atomic-util --no-default-features -F alloc -p rustls
+
+      # XXX TODO ADD EXPLANATION FOR THIS OVERWRITE
+      - run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
+
+      - name: Install rust-toolchain - nightly
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          target: ${{ matrix.target }}
+
+      - name: cargo build (debug; no default features; no-std; using unstable --cfg portable_atomic_unstable_coerce_unsized option)
+        run: cargo build --locked --no-default-features --target ${{ matrix.target }}
+        working-directory: rustls
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+
+  # atomic_sync overwite build & test job - XXX TODO UPDATE THIS JOB NAME
+  # XXX TODO SPLIT BETWEEN CROSS-TARGET BUILD & CARGO TEST-ING
+  features-unstable:
+    name: Features - unstable
+    runs-on: ubuntu-latest
+    # XXX GONE (MOVED):
+    # strategy:
+    #   matrix:
+    #     target:
+    #       # XXX XXX
+    #       - x86_64-unknown-none
+    #       # ESP32-C2 target with no atomic ptr ref:
+    #       # - https://github.com/rustls/rustls/issues/2068
+    #       # - https://docs.esp-rs.org/book/installation/riscv.html
+    #       - riscv32imc-unknown-none-elf
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -234,14 +275,15 @@ jobs:
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-        # XXX TBD ??? ???:
-        # this target does _not_ include the libstd crate in its sysroot
-        # it will catch unwanted usage of libstd in _dependencies_
-      - name: cargo build (debug; no default features; no-std; using unstable --cfg option)
-        run: cargo build --locked --no-default-features --target ${{ matrix.target }}
-        working-directory: rustls
-        env:
-          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+      # XXX GONE (MOVED):
+      #   # XXX TBD ??? ???:
+      #   # this target does _not_ include the libstd crate in its sysroot
+      #   # it will catch unwanted usage of libstd in _dependencies_
+      # - name: cargo build (debug; no default features; no-std; using unstable --cfg option)
+      #   run: cargo build --locked --no-default-features --target ${{ matrix.target }}
+      #   working-directory: rustls
+      #   env:
+      #     RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
       - name: cargo test (debug; no default features; std; using unstable --cfg option)
         run: cargo test --locked --no-default-features --features std
