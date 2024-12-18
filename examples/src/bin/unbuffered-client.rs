@@ -4,8 +4,7 @@
 use std::error::Error;
 use std::io::{Read, Write};
 use std::net::TcpStream;
-
-use rustls::util::alias::Arc;
+use std::sync::Arc;
 
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
 use rustls::unbuffered::{

@@ -6,8 +6,7 @@ use std::error::Error;
 use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
-
-use rustls::util::alias::Arc;
+use std::sync::Arc;
 
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
