@@ -12,6 +12,8 @@ use std::{mem, thread};
 
 use clap::{Parser, ValueEnum};
 
+use rustls::internal::atomic_sync::Arc;
+
 use rustls::client::{Resumption, UnbufferedClientConnection};
 use rustls::crypto::CryptoProvider;
 use rustls::pki_types::pem::PemObject;
@@ -21,7 +23,6 @@ use rustls::server::{
     WebPkiClientVerifier,
 };
 use rustls::unbuffered::{ConnectionState, EncryptError, InsufficientSizeError, UnbufferedStatus};
-use rustls::util::alias::Arc;
 use rustls::{
     CipherSuite, ClientConfig, ClientConnection, ConnectionCommon, Error, HandshakeKind,
     RootCertStore, ServerConfig, ServerConnection, SideData,

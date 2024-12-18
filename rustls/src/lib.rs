@@ -174,7 +174,7 @@
 //! ```rust
 //! # #[cfg(feature = "aws_lc_rs")] {
 //! # use rustls;
-//! # use rustls::util::alias::Arc;
+//! # use rustls::internal::atomic_sync::Arc;
 //! # use webpki;
 //! # rustls::crypto::aws_lc_rs::default_provider().install_default();
 //! # let root_store = rustls::RootCertStore::from_iter(
@@ -450,6 +450,11 @@ mod webpki;
 #[allow(missing_docs)]
 #[doc(hidden)]
 pub mod internal {
+    pub mod atomic_sync {
+        // XXX TBD ??? ??? ???:
+        pub type Arc<T> = crate::alias::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
+    }
+
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {
         pub mod base {
@@ -670,16 +675,6 @@ pub mod quic;
 #[cfg(any(feature = "std", feature = "hashbrown"))] // < XXX: incorrect feature gate
 /// APIs for implementing TLS tickets
 pub mod ticketer;
-
-// XXX TBD GONE - XXX TBD INTERNAL ALIAS INSTEAD TO HELP WITH UNIT TESTS
-/// Utility module
-pub mod util {
-    /// External type alias
-    pub mod alias {
-        /// XXX XXX GONE
-        pub type Arc<T> = crate::alias::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
-    }
-}
 
 /// This is the rustls manual.
 pub mod manual;

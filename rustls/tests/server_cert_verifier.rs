@@ -12,19 +12,23 @@ use common::{
     make_pair_for_arc_configs, make_server_config, server_config_builder, transfer_altered,
     Altered, ErrorFromPeer, KeyType, MockServerVerifier, ALL_KEY_TYPES,
 };
+
 use pki_types::{CertificateDer, ServerName};
-use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
-use rustls::client::WebPkiServerVerifier;
+
+use rustls::internal::atomic_sync::Arc;
 use rustls::internal::msgs::handshake::{ClientExtension, HandshakePayload};
 use rustls::internal::msgs::message::{Message, MessagePayload};
+
+use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
+use rustls::client::WebPkiServerVerifier;
 use rustls::server::{ClientHello, ResolvesServerCert};
 use rustls::sign::CertifiedKey;
-use rustls::util::alias::Arc;
 use rustls::version::{TLS12, TLS13};
 use rustls::{
     AlertDescription, CertificateError, DigitallySignedStruct, DistinguishedName, Error,
     InvalidMessage, RootCertStore,
 };
+
 use x509_parser::prelude::FromDer;
 use x509_parser::x509::X509Name;
 

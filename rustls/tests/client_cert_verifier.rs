@@ -12,8 +12,9 @@ use common::{
     server_name, ErrorFromPeer, KeyType, MockClientVerifier, ALL_KEY_TYPES,
 };
 
+use rustls::internal::atomic_sync::Arc;
+
 use rustls::server::danger::ClientCertVerified;
-use rustls::util::alias::Arc;
 use rustls::{
     AlertDescription, ClientConnection, Error, InvalidMessage, ServerConfig, ServerConnection,
 };

@@ -8,7 +8,7 @@ mod test_utils;
 
 use std::io;
 
-use rustls::util::alias::Arc;
+use rustls::internal::atomic_sync::Arc;
 
 use rustls::ServerConnection;
 

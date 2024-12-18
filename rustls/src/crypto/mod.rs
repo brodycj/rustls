@@ -124,7 +124,7 @@ pub use crate::suites::CipherSuiteCommon;
 ///
 /// ```
 /// # #[cfg(feature = "aws_lc_rs")] {
-/// # use rustls::util::alias::Arc;
+/// # use rustls::internal::atomic_sync::Arc;
 /// # mod fictious_hsm_api { pub fn load_private_key(key_der: pki_types::PrivateKeyDer<'static>) -> ! { unreachable!(); } }
 /// use rustls::crypto::aws_lc_rs;
 ///

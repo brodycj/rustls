@@ -34,7 +34,7 @@ use common::{
     transfer, KeyType,
 };
 
-use rustls::util::alias::Arc;
+use rustls::internal::atomic_sync::Arc;
 
 #[test]
 fn exercise_key_log_file_for_client() {
