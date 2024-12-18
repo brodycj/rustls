@@ -446,8 +446,10 @@ mod webpki;
 #[doc(hidden)]
 pub mod internal {
     pub mod atomic_sync {
-        // XXX TBD ??? ??? ???:
-        pub type Arc<T> = crate::atomic_sync::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
+        // NOTE: This type alias allows non-public, over-writable use of alloc::sync::Arc in internal atomic_sync module;
+        // cargo doc will show correct reference to Rust type: https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html
+        // See `Arc` references for example in: https://docs.rs/rustls/latest/rustls/client/struct.ClientConfig.html
+        pub type Arc<T> = crate::atomic_sync::Arc<T>;
     }
 
     /// Low-level TLS message parsing and encoding functions.
