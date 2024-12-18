@@ -215,6 +215,12 @@ jobs:
         with:
           persist-credentials: false
 
+      # XXX TODO ADD EXPLANATION
+      # XXX ADD NOTE: `cargo add once_cell --no-default-features` not possible due to workspace config in top-level CARGO TOML
+      - run: cargo add once_cell -F alloc,race,critical-section -p rustls
+      - run: cargo add portable-atomic --no-default-features -F critical-section -p rustls
+      - run: cargo add portable-atomic-util --no-default-features -F alloc -p rustls
+
       # XXX TODO ADD EXPLANATION FOR THIS OVERWRITE
       - run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
 
