@@ -256,7 +256,7 @@ jobs:
           target: x86_64-unknown-none
 
       - name: cargo build (debug; default features; unstable critical-section feature - using unstable --cfg option)
-        run: cargo build --locked
+        run: cargo build --locked --features critical-section
         working-directory: rustls
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
