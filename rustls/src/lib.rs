@@ -273,10 +273,6 @@
 //! Here's a list of what features are exposed by the rustls crate and what
 //! they mean.
 //!
-//! - `std` (enabled by default): XXX TODO ADD THIS - XXX TODO SHOULD ADD THIS IN SEPARATE PR
-//!
-//! XXX TODO CHECK FOR ANY OTHER FEATURES MISSING FROM THIS CRATE FEATURES DOCUMENTATION
-//!
 //! - `aws_lc_rs` (enabled by default): makes the rustls crate depend on the [`aws-lc-rs`] crate.
 //!   Use `rustls::crypto::aws_lc_rs::default_provider().install_default()` to
 //!   use it as the default `CryptoProvider`, or provide it explicitly
@@ -319,23 +315,6 @@
 //!
 //! - `zlib`: uses the `zlib-rs` crate for RFC8879 certificate compression support.
 //!
-//! - `critical-section` (unstable): uses `Arc` from `portable-atomic-util` together with
-//!   `portable-atomic` and `once-cell` with `critical-section` option to
-//!   enable support for targets with no atomic ptr functionality.
-//!   See the following notes and caveats:
-//!
-//!   This option requires use of `--cfg` option with `portable_atomic_unstable_coerce_unsized`
-//!   together with Rust nightly when building in order to build properly
-//!   (see documentation in `portable-atomic-util` for more details).
-//!
-//!   As stated in the `portable-atomic` crate documentation, this option also requires a
-//!   "suitable critical section implementation" (see `critical-section` documentation).
-//!   Note that with this feature enabled, `rustls` will use both `once-cell` & `portable-atomic`
-//!   with `critical-section` feature enabled.
-//!
-//!   XXX TODO DOCUMENT INTERACTION WITH once_cell
-//!
-//!   XXX TODO ADD NOTES FOR util::alias
 
 // Require docs for public APIs, deny unsafe code, etc.
 #![forbid(unsafe_code, unused_must_use)]
@@ -697,11 +676,7 @@ pub mod ticketer;
 pub mod util {
     /// External type alias
     pub mod alias {
-        /// Alias to the correct `Arc` type: alias to `portable_atomic_util::Arc` in case `critical-section`
-        /// feature is enabled, otherwise alias to `alloc::sync::Arc`.
-        ///
-        /// This is to help rustls library users and custom providers use the correct `Arc` type,
-        /// regardless of whether `critical-section` feature is enabled or not.
+        /// XXX XXX GONE
         pub type Arc<T> = crate::alias::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
     }
 }
