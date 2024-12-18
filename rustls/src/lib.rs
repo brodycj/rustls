@@ -452,7 +452,7 @@ mod webpki;
 pub mod internal {
     pub mod atomic_sync {
         // XXX TBD ??? ??? ???:
-        pub type Arc<T> = crate::alias::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
+        pub type Arc<T> = crate::atomic_sync::Arc<T>; // NOTE that simply doing pub use ...::Arc seems to affect links to standard Arc throughout the docs
     }
 
     /// Low-level TLS message parsing and encoding functions.
