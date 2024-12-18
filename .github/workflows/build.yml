@@ -254,8 +254,6 @@ jobs:
 
       - name: Install rust-toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
-        with:
-          target: ${{ matrix.target }}
 
       - name: cargo build (debug; default features; using unstable --cfg portable_atomic_unstable_coerce_unsized option)
         run: cargo build --locked
