@@ -238,22 +238,34 @@ jobs:
         run: cargo test --locked --release --no-run
         working-directory: rustls
 
+  # atomic_sync overwite job - XXX TODO UPDATE THIS JOB NAME
+  # XXX TODO REMOVE NOW USELESS critical-section feature
+  # XXX TODO SPLIT BETWEEN CROSS-TARGET BUILD & CARGO TEST-ING
   features-unstable:
     name: Features - unstable
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          # XXX XXX
+          - x86_64-unknown-none
+          # ESP32-C2 target with no atomic ptr ref:
+          # - https://github.com/rustls/rustls/issues/2068
+          # - https://docs.esp-rs.org/book/installation/riscv.html
+          - riscv32imc-unknown-none-elf
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      # XXX TODO ADD EXPLANATION
+      # XXX TODO ADD EXPLANATION FOR THIS OVERWRITE
       - run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
 
       - name: Install rust-toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
         with:
-          target: x86_64-unknown-none
+          target: ${{ matrix.target }}
 
       - name: cargo build (debug; default features; unstable critical-section feature - using unstable --cfg option)
         run: cargo build --locked --features critical-section
@@ -261,10 +273,11 @@ jobs:
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
+        # XXX TBD ??? ???:
         # this target does _not_ include the libstd crate in its sysroot
         # it will catch unwanted usage of libstd in _dependencies_
       - name: cargo build (debug; no default features; no-std; unstable critical-section feature - using unstable --cfg option)
-        run: cargo build --locked --no-default-features --features critical-section --target x86_64-unknown-none
+        run: cargo build --locked --no-default-features --features critical-section --target ${{ matrix.target }}
         working-directory: rustls
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
