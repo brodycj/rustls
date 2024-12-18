@@ -11,7 +11,7 @@ use pki_types::{
     SubjectPublicKeyInfoDer, UnixTime,
 };
 
-use rustls::internal::atomic_sync::Arc;
+use rustls::internal::alias::atomic_sync::Arc;
 
 use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
 use rustls::client::{

@@ -2,7 +2,7 @@
 
 use std::num::NonZeroUsize;
 
-use rustls::internal::atomic_sync::Arc;
+use rustls::internal::alias::atomic_sync::Arc;
 
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
 use rustls::server::{ServerConnectionData, UnbufferedServerConnection};

@@ -12,7 +12,7 @@ use common::{
     server_name, ErrorFromPeer, KeyType, MockClientVerifier, ALL_KEY_TYPES,
 };
 
-use rustls::internal::atomic_sync::Arc;
+use rustls::internal::alias::atomic_sync::Arc;
 
 use rustls::server::danger::ClientCertVerified;
 use rustls::{

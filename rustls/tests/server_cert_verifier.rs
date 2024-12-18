@@ -15,7 +15,7 @@ use common::{
 
 use pki_types::{CertificateDer, ServerName};
 
-use rustls::internal::atomic_sync::Arc;
+use rustls::internal::alias::atomic_sync::Arc;
 
 use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
 use rustls::client::WebPkiServerVerifier;
