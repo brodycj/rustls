@@ -54,16 +54,6 @@ tls12 = []
 read_buf = ["rustversion", "std"]
 fips = ["aws_lc_rs", "aws-lc-rs?/fips"]
 zlib = ["dep:zlib-rs"]
-# XXX TODO ADD COMMENT(S) FOR STABLE VS UNSTABLE FEATURES
-critical-section = [
-    # XXX GONE
-    # "dep:critical-section",
-    # "dep:portable-atomic",
-    # "dep:portable-atomic-util",
-    # "once_cell/critical-section",
-    # "portable-atomic/critical-section",
-    # "portable-atomic-util/alloc",
-]
 
 [dev-dependencies]
 base64 = { workspace = true }

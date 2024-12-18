@@ -195,7 +195,6 @@ jobs:
         working-directory: rustls
 
   # atomic_sync overwite job - XXX TODO UPDATE THIS JOB NAME
-  # XXX TODO REMOVE NOW USELESS critical-section feature
   # XXX TODO SPLIT BETWEEN CROSS-TARGET BUILD & CARGO TEST-ING
   features-unstable:
     name: Features - unstable
@@ -229,8 +228,8 @@ jobs:
         with:
           target: ${{ matrix.target }}
 
-      - name: cargo build (debug; default features; unstable critical-section feature - using unstable --cfg option)
-        run: cargo build --locked --features critical-section
+      - name: cargo build (debug; default features; using unstable --cfg option)
+        run: cargo build --locked
         working-directory: rustls
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
@@ -238,19 +237,19 @@ jobs:
         # XXX TBD ??? ???:
         # this target does _not_ include the libstd crate in its sysroot
         # it will catch unwanted usage of libstd in _dependencies_
-      - name: cargo build (debug; no default features; no-std; unstable critical-section feature - using unstable --cfg option)
-        run: cargo build --locked --no-default-features --features critical-section --target ${{ matrix.target }}
+      - name: cargo build (debug; no default features; no-std; using unstable --cfg option)
+        run: cargo build --locked --no-default-features --target ${{ matrix.target }}
         working-directory: rustls
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-      - name: cargo test (debug; no default features; unstable critical-section feature - using unstable --cfg option)
-        run: cargo test --locked --no-default-features --features critical-section,std
+      - name: cargo test (debug; no default features; std; using unstable --cfg option)
+        run: cargo test --locked --no-default-features --features std
         working-directory: rustls
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-      - name: cargo test (release; no run; all features including unstable feature(s) - using unstable --cfg option)
+      - name: cargo test (release; no run; all features; using unstable --cfg option)
         run: cargo test --locked --release --no-run --all-features
         working-directory: rustls
         env:
