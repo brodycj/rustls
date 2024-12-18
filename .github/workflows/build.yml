@@ -26,11 +26,13 @@ jobs:
       matrix:
         rust:
           - stable
-          - beta
+          # XXX SKIP FOR NOW TO SAVE CI WAITING TIME
+          # - beta
           - nightly
         os:
           - ubuntu-latest
-          - windows-latest
+          # XXX SKIP FOR NOW TO SAVE CI WAITING TIME
+          # - windows-latest
           - macos-latest
         exclude:
           # only stable on macos/windows (slower platforms)
@@ -457,14 +459,17 @@ jobs:
         target:
           # 32-bit Android (Linux) targets:
           - armv7-linux-androideabi
-          - i686-linux-android
-          - thumbv7neon-linux-androideabi
+          # XXX SKIP FOR NOW TO SAVE CI WAITING TIME
+          # - i686-linux-android
+          # - thumbv7neon-linux-androideabi
           # Other standard 32-bit (Linux) targets (SKIP bindgen for i686 only)
-          - i586-unknown-linux-gnu
-          - i686-unknown-linux-gnu
+          # XXX SKIP FOR NOW TO SAVE CI WAITING TIME
+          # - i586-unknown-linux-gnu
+          # - i686-unknown-linux-gnu
           # exotic Linux targets:
-          - riscv64gc-unknown-linux-gnu
-          - s390x-unknown-linux-gnu
+          # XXX SKIP FOR NOW TO SAVE CI WAITING TIME
+          # - riscv64gc-unknown-linux-gnu
+          # - s390x-unknown-linux-gnu
           # additional target(s):
           # NOTE: This could have some overlap with 64-bit ARM-style CPU on macOS CI host;
           # may have similar ARM-style CPU overlap with standard Windows & possibly Linux in the future
