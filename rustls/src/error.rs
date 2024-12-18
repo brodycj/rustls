@@ -627,7 +627,7 @@ mod other_error {
 
     use super::Error;
     #[cfg(feature = "std")]
-    use crate::alias::Arc;
+    use crate::atomic_sync::Arc;
 
     /// Any other error that cannot be expressed by a more specific [`Error`] variant.
     ///
@@ -680,7 +680,7 @@ mod tests {
 
     use super::{CertRevocationListError, Error, InconsistentKeys, InvalidMessage, OtherError};
     #[cfg(feature = "std")]
-    use crate::alias::Arc;
+    use crate::atomic_sync::Arc;
 
     #[test]
     fn certificate_error_equality() {

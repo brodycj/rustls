@@ -9,7 +9,7 @@ use pki_types::ServerName;
 #[cfg(feature = "tls12")]
 use super::tls12;
 use super::Tls12Resumption;
-use crate::alias::Arc;
+use crate::atomic_sync::Arc;
 #[cfg(feature = "logging")]
 use crate::bs_debug;
 use crate::check::inappropriate_handshake_message;

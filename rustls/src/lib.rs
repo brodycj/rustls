@@ -404,11 +404,6 @@ mod test_macros;
 // XXX TBD EXPLANATION - ??? ??? ???
 mod atomic_sync;
 
-// XXX TODO REMOVE IN FAVOR OF: atomic_sync
-mod alias {
-    pub(crate) use crate::atomic_sync::Arc;
-}
-
 #[macro_use]
 mod msgs;
 mod common_state;

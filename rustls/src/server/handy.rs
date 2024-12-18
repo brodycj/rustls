@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
-use crate::alias::Arc;
+use crate::atomic_sync::Arc;
 use crate::server::ClientHello;
 use crate::{server, sign};
 
@@ -29,7 +29,7 @@ mod cache {
     use alloc::vec::Vec;
     use core::fmt::{Debug, Formatter};
 
-    use crate::alias::Arc;
+    use crate::atomic_sync::Arc;
     use crate::lock::Mutex;
     use crate::{limited_cache, server};
 
@@ -230,7 +230,7 @@ mod sni_resolver {
 
     use pki_types::{DnsName, ServerName};
 
-    use crate::alias::Arc;
+    use crate::atomic_sync::Arc;
     use crate::error::Error;
     use crate::hash_map::HashMap;
     use crate::server::ClientHello;

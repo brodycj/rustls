@@ -7,7 +7,7 @@ use pki_types::{ServerName, UnixTime};
 
 use super::handy::NoClientSessionStorage;
 use super::hs;
-use crate::alias::Arc;
+use crate::atomic_sync::Arc;
 use crate::builder::ConfigBuilder;
 use crate::client::{EchMode, EchStatus};
 use crate::common_state::{CommonState, Protocol, Side};
@@ -513,7 +513,7 @@ pub enum Tls12Resumption {
 pub(super) mod danger {
     use super::verify::ServerCertVerifier;
     use super::ClientConfig;
-    use crate::alias::Arc;
+    use crate::atomic_sync::Arc;
 
     /// Accessor for dangerous configuration options.
     #[derive(Debug)]
@@ -618,7 +618,7 @@ mod connection {
     use pki_types::ServerName;
 
     use super::ClientConnectionData;
-    use crate::alias::Arc;
+    use crate::atomic_sync::Arc;
     use crate::client::EchStatus;
     use crate::common_state::Protocol;
     use crate::conn::{ConnectionCommon, ConnectionCore};

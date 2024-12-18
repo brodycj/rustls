@@ -3,7 +3,7 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 
-use crate::alias::Arc;
+use crate::atomic_sync::Arc;
 use crate::client::EchMode;
 use crate::crypto::CryptoProvider;
 use crate::error::Error;

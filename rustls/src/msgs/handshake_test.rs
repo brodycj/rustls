@@ -21,7 +21,7 @@ use super::handshake::{
     ServerDhParams, ServerEcdhParams, ServerExtension, ServerHelloPayload, ServerKeyExchange,
     ServerKeyExchangeParams, ServerKeyExchangePayload, SessionId, UnknownExtension,
 };
-use crate::alias::Arc;
+use crate::atomic_sync::Arc;
 use crate::enums::{
     CertificateCompressionAlgorithm, CipherSuite, HandshakeType, ProtocolVersion, SignatureScheme,
 };
