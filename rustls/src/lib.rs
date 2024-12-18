@@ -422,16 +422,12 @@ mod log {
 #[macro_use]
 mod test_macros;
 
+// XXX TBD EXPLANATION - ??? ??? ???
+mod atomic_sync;
+
+// XXX TODO REMOVE IN FAVOR OF: atomic_sync
 mod alias {
-    // NOTE: `Arc` from `portable_atomic_util` is ONLY used to support the `critical-section` feature (as documented above).
-    #[cfg(feature = "critical-section")]
-    extern crate portable_atomic_util;
-
-    #[cfg(feature = "critical-section")]
-    pub(crate) use portable_atomic_util::Arc;
-
-    #[cfg(not(feature = "critical-section"))]
-    pub(crate) use alloc::sync::Arc;
+    pub(crate) use crate::atomic_sync::Arc;
 }
 
 #[macro_use]
@@ -696,6 +692,7 @@ pub mod quic;
 /// APIs for implementing TLS tickets
 pub mod ticketer;
 
+// XXX TBD GONE - XXX TBD INTERNAL ALIAS INSTEAD TO HELP WITH UNIT TESTS
 /// Utility module
 pub mod util {
     /// External type alias
