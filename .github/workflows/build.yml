@@ -194,8 +194,8 @@ jobs:
         run: cargo test --locked --release --no-run
         working-directory: rustls
 
-  over-write-atomic-sync-build-targets:
-    name: over-write atomic_sync - build targets with portable_atomic_util::Arc
+  overwrite-atomic-sync-build-targets:
+    name: overwrite atomic_sync - build targets with portable_atomic_util::Arc
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -231,8 +231,8 @@ jobs:
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
-  over-write-atomic-sync-test:
-    name: over-write atomic_sync - build & test with portable_atomic_util::Arc
+  overwrite-atomic-sync-test:
+    name: overwrite atomic_sync - build & test with portable_atomic_util::Arc
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources

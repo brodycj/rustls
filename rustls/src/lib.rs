@@ -401,7 +401,7 @@ mod log {
 #[macro_use]
 mod test_macros;
 
-// For top-level `Arc` type import - may be over-written to use a custom `Arc` implementation
+// For top-level `Arc` type import - may be overwritten to use a custom `Arc` implementation
 // such as `portable_atomic_util::Arc`.
 mod atomic_sync;
 
