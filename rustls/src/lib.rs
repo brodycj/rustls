@@ -401,7 +401,8 @@ mod log {
 #[macro_use]
 mod test_macros;
 
-// rustls Arc type import, may over-write this module to use custom Arc implementation such as portable_atomic_util::Arc
+// For top-level `Arc` type import - may be over-written to use a custom `Arc` implementation
+// such as `portable_atomic_util::Arc`.
 mod atomic_sync;
 
 #[macro_use]
@@ -447,10 +448,9 @@ mod webpki;
 pub mod internal {
     pub mod alias {
         pub mod atomic_sync {
-            // NOTE: This type alias allows non-public, over-writable use of alloc::sync::Arc in internal atomic_sync module
-            // (available for integration & documentation tests);
-            // cargo doc will show correct reference to Rust type: https://doc.rust-lang.org/nightly/alloc/sync/struct.Arc.html
-            // See `Arc` references for example in: https://docs.rs/rustls/latest/rustls/client/struct.ClientConfig.html
+            // NOTE: This type alias exports alias to non-public `Arc` import in top-level `atomic_sync` module.
+            // As stated above, that import be over-written in a fork to use another implementation
+            // of `Arc` such as `portable_atomic_util::Arc`.
             pub type Arc<T> = crate::atomic_sync::Arc<T>;
         }
     }
