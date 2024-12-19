@@ -401,7 +401,7 @@ mod log {
 #[macro_use]
 mod test_macros;
 
-// XXX TBD EXPLANATION - ??? ??? ???
+// rustls Arc type import, may over-write this module to use custom Arc implementation such as portable_atomic_util::Arc
 mod atomic_sync;
 
 #[macro_use]
