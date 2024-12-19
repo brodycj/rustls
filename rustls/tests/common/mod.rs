@@ -34,7 +34,7 @@ use webpki::anchor_from_trusted_cert;
 
 use super::provider;
 
-// XXX XXX XXX
+// Import `Arc` here for tests - can be overwritten to test with another Arc  such as `portable_atomic_util::Arc`
 pub use std::sync::Arc;
 
 macro_rules! embed_files {
