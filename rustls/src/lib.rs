@@ -174,8 +174,8 @@
 //! ```rust
 //! # #[cfg(feature = "aws_lc_rs")] {
 //! # use rustls;
-//! # use rustls::internal::alias::atomic_sync::Arc;
 //! # use webpki;
+//! # use std::sync::Arc;
 //! # rustls::crypto::aws_lc_rs::default_provider().install_default();
 //! # let root_store = rustls::RootCertStore::from_iter(
 //! #  webpki_roots::TLS_SERVER_ROOTS
