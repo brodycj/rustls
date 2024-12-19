@@ -222,15 +222,8 @@ jobs:
         with:
           target: ${{ matrix.target }}
 
-      - name: Install dependencies to use once_cell & portable_atomic_util::Arc with critical-section
-        # (cannot use once_cell with `--no-default-features` here due to workspace config in top-level Cargo.toml))
-        run: |
-          cargo add once_cell -F alloc,race,critical-section -p rustls
-          cargo add portable-atomic --no-default-features -F critical-section -p rustls
-          cargo add portable-atomic-util --no-default-features -F alloc -p rustls
-
-      - name: Over-write rustls/src/atomic_sync.rs to use Arc from portable-atomic-util
-        run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
+      - name: Use `Arc` from `portable-atomic`
+        run: ./admin/use-portable-atomic-arc
 
       - name: cargo build (debug; no default features; no-std; using unstable --cfg portable_atomic_unstable_coerce_unsized option)
         run: cargo build --locked --no-default-features --target ${{ matrix.target }}
@@ -250,21 +243,8 @@ jobs:
       - name: Install rust-toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
 
-      # While it *should* be possible to use portable_atomic_util::Arc without critical-section for testing here,
-      # using once_cell & portable_atomic_util::Arc with critical-section should be more consistent with
-      # possible build for targets with no atomic ptr.
-      - name: Install dependencies to use once_cell & portable_atomic_util::Arc with critical-section
-        # (cannot use once_cell with `--no-default-features` here due to workspace config in top-level Cargo.toml))
-        run: |
-          cargo add once_cell -F alloc,race,critical-section -p rustls
-          cargo add portable-atomic --no-default-features -F critical-section -p rustls
-          cargo add portable-atomic-util --no-default-features -F alloc -p rustls
-
-      - name: Over-write rustls/src/atomic_sync.rs to use Arc from portable-atomic-util
-        run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
-
-      - name: Over-write Arc import in rustls/tests/common/mod.rs to use Arc from portable-atomic-util
-        run: sed -i.orig "s/pub use std::sync::Arc;/extern crate portable_atomic_util;pub use portable_atomic_util::Arc;/g" rustls/tests/common/mod.rs
+      - name: Use `Arc` from `portable-atomic` & update import in `rustls/tests`
+        run: ./admin/use-portable-atomic-arc
 
       - name: cargo build (debug; default features; using unstable --cfg portable_atomic_unstable_coerce_unsized option)
         run: cargo build --locked
@@ -490,23 +470,8 @@ jobs:
 
       # ############################################################################
       # TEST with portable_atomic_util::Arc - MUST COME AT THE END OF THIS CI JOB
-      # ---
-      # While it *should* be possible to use portable_atomic_util::Arc without critical-section for testing here,
-      # using once_cell & portable_atomic_util::Arc with critical-section should be more consistent with
-      # possible build for targets with no atomic ptr.
-      - name: Install dependencies to use once_cell & portable_atomic_util::Arc with critical-section
-        # (cannot use once_cell with `--no-default-features` here due to workspace config in top-level Cargo.toml))
-        run: |
-          cargo add once_cell -F alloc,race,critical-section -p rustls
-          cargo add portable-atomic --no-default-features -F critical-section -p rustls
-          cargo add portable-atomic-util --no-default-features -F alloc -p rustls
-      # ---
-      - name: Over-write rustls/src/atomic_sync.rs to use Arc from portable-atomic-util
-        run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
-      # ---
-      - name: Over-write Arc import in rustls/tests/common/mod.rs to use Arc from portable-atomic-util
-        run: sed -i.orig "s/pub use std::sync::Arc;/extern crate portable_atomic_util;pub use portable_atomic_util::Arc;/g" rustls/tests/common/mod.rs
-      # ---
+      - name: Use `Arc` from `portable-atomic` & update import in `rustls/tests`
+        run: ./admin/use-portable-atomic-arc
       - name: cross test with --cfg portable_atomic_unstable_coerce_unsized
         run: cross test --package rustls --target ${{ matrix.target }}
         env:
