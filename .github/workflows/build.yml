@@ -474,7 +474,7 @@ jobs:
         with:
           persist-credentials: false
 
-      # Rust nightly toolchain is needed for XXX XXX
+      # Rust nightly toolchain is needed for test with portable_atomic_util::Arc (see below)
       - name: Install rust-toolchain - nightly
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cross (cross-rs) from GitHub
@@ -484,17 +484,25 @@ jobs:
         run: cargo add --dev --features bindgen 'aws-lc-sys@>0.20' --package rustls --verbose && cargo install bindgen-cli --verbose
       - run: cross test --package rustls --target ${{ matrix.target }}
 
-      # XXX XXX XXX - XXX TODO ADD NOTE THAT THIS NEEDS TO BE AT THE END OF THE JOB STEPS
-      # XXX TODO ADD EXPLANATION
-      # XXX ADD NOTE: `cargo add once_cell --no-default-features` not possible due to workspace config in top-level CARGO TOML
-      - run: cargo add once_cell -F alloc,race,critical-section -p rustls
-      - run: cargo add portable-atomic --no-default-features -F critical-section -p rustls
-      - run: cargo add portable-atomic-util --no-default-features -F alloc -p rustls
+      # ############################################################################
+      # TEST with portable_atomic_util::Arc - MUST COME AT THE END OF THIS CI JOB
       # ---
-      # XXX TODO ADD EXPLANATION FOR THIS OVERWRITE
-      - run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
+      # While it *should* be possible to use portable_atomic_util::Arc without critical-section for testing here,
+      # using once_cell & portable_atomic_util::Arc with critical-section should be more consistent with
+      # possible build for targets with no atomic ptr.
+      - name: Install dependencies to use once_cell & portable_atomic_util::Arc with critical-section
+        # (cannot use once_cell with `--no-default-features` here due to workspace config in top-level Cargo.toml))
+        run: |
+          cargo add once_cell -F alloc,race,critical-section -p rustls
+          cargo add portable-atomic --no-default-features -F critical-section -p rustls
+          cargo add portable-atomic-util --no-default-features -F alloc -p rustls
       # ---
-      - run: cross test --package rustls --target ${{ matrix.target }}
+      - name: Over-write rustls/src/atomic_sync.rs to use Arc from portable-atomic-util
+        # (tests & doc tests will use portable_atomic_util::Arc via rustls::internal::alias::atomic_sync)
+        run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
+      # ---
+      - name: cross test with --cfg portable_atomic_unstable_coerce_unsized
+        run: cross test --package rustls --target ${{ matrix.target }}
         env:
           RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
