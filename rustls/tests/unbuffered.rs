@@ -1,7 +1,6 @@
 #![allow(clippy::duplicate_mod)]
 
 use std::num::NonZeroUsize;
-use std::sync::Arc;
 
 use rustls::client::{ClientConnectionData, EarlyDataError, UnbufferedClientConnection};
 use rustls::server::{ServerConnectionData, UnbufferedServerConnection};
@@ -17,6 +16,8 @@ use rustls::{
 use super::*;
 
 mod common;
+// implied by wildcard import below:
+// use common::Arc;
 use common::*;
 
 const MAX_ITERATIONS: usize = 100;
