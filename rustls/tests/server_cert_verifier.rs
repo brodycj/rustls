@@ -10,12 +10,10 @@ use common::{
     client_config_builder, client_config_builder_with_versions, do_handshake,
     do_handshake_until_both_error, do_handshake_until_error, make_client_config_with_versions,
     make_pair_for_arc_configs, make_server_config, server_config_builder, transfer_altered,
-    Altered, ErrorFromPeer, KeyType, MockServerVerifier, ALL_KEY_TYPES,
+    Altered, Arc, ErrorFromPeer, KeyType, MockServerVerifier, ALL_KEY_TYPES,
 };
 
 use pki_types::{CertificateDer, ServerName};
-
-use rustls::internal::alias::atomic_sync::Arc;
 
 use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
 use rustls::client::WebPkiServerVerifier;

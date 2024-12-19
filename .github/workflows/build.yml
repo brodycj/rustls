@@ -261,8 +261,10 @@ jobs:
           cargo add portable-atomic-util --no-default-features -F alloc -p rustls
 
       - name: Over-write rustls/src/atomic_sync.rs to use Arc from portable-atomic-util
-        # (tests will use portable_atomic_util::Arc via rustls::internal::alias::atomic_sync)
         run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
+
+      - name: Over-write Arc import in rustls/tests/common/mod.rs to use Arc from portable-atomic-util
+        run: sed -i.orig "s/pub use std::sync::Arc;/extern crate portable_atomic_util;pub use portable_atomic_util::Arc;/g" rustls/tests/common/mod.rs
 
       - name: cargo build (debug; default features; using unstable --cfg portable_atomic_unstable_coerce_unsized option)
         run: cargo build --locked
@@ -500,8 +502,10 @@ jobs:
           cargo add portable-atomic-util --no-default-features -F alloc -p rustls
       # ---
       - name: Over-write rustls/src/atomic_sync.rs to use Arc from portable-atomic-util
-        # (tests will use portable_atomic_util::Arc via rustls::internal::alias::atomic_sync)
         run: echo "extern crate portable_atomic_util;pub(crate) use portable_atomic_util::Arc;" > rustls/src/atomic_sync.rs
+      # ---
+      - name: Over-write Arc import in rustls/tests/common/mod.rs to use Arc from portable-atomic-util
+        run: sed -i.orig "s/pub use std::sync::Arc;/extern crate portable_atomic_util;pub use portable_atomic_util::Arc;/g" rustls/tests/common/mod.rs
       # ---
       - name: cross test with --cfg portable_atomic_unstable_coerce_unsized
         run: cross test --package rustls --target ${{ matrix.target }}

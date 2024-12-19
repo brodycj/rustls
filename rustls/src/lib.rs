@@ -446,15 +446,6 @@ mod webpki;
 #[allow(missing_docs)]
 #[doc(hidden)]
 pub mod internal {
-    pub mod alias {
-        pub mod atomic_sync {
-            // NOTE: This type alias exports alias to non-public `Arc` import in top-level `atomic_sync` module.
-            // As stated above, that import be over-written in a fork to use another implementation
-            // of `Arc` such as `portable_atomic_util::Arc`.
-            pub type Arc<T> = crate::atomic_sync::Arc<T>;
-        }
-    }
-
     /// Low-level TLS message parsing and encoding functions.
     pub mod msgs {
         pub mod base {

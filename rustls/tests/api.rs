@@ -11,8 +11,6 @@ use std::{fmt, mem};
 
 use pki_types::{CertificateDer, IpAddr, ServerName, UnixTime};
 
-use rustls::internal::alias::atomic_sync::Arc;
-
 use rustls::client::{verify_server_cert_signed_by_trust_anchor, ResolvesClientCert, Resumption};
 use rustls::crypto::{ActiveKeyExchange, CryptoProvider, SharedSecret, SupportedKxGroup};
 use rustls::internal::msgs::base::Payload;
@@ -45,6 +43,8 @@ use rustls::{
 use super::*;
 
 mod common;
+// implied by wildcard import below:
+// use common::Arc;
 use common::*;
 use provider::cipher_suite;
 use provider::sign::RsaSigningKey;

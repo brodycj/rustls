@@ -31,10 +31,8 @@ use super::*;
 mod common;
 use common::{
     do_handshake, make_client_config_with_versions, make_pair_for_arc_configs, make_server_config,
-    transfer, KeyType,
+    transfer, Arc, KeyType,
 };
-
-use rustls::internal::alias::atomic_sync::Arc;
 
 #[test]
 fn exercise_key_log_file_for_client() {

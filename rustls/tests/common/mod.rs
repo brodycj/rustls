@@ -11,8 +11,6 @@ use pki_types::{
     SubjectPublicKeyInfoDer, UnixTime,
 };
 
-use rustls::internal::alias::atomic_sync::Arc;
-
 use rustls::client::danger::{HandshakeSignatureValid, ServerCertVerified, ServerCertVerifier};
 use rustls::client::{
     AlwaysResolvesClientRawPublicKeys, ServerCertVerifierBuilder, WebPkiServerVerifier,
@@ -35,6 +33,9 @@ use rustls::{
 use webpki::anchor_from_trusted_cert;
 
 use super::provider;
+
+// XXX XXX XXX
+pub use std::sync::Arc;
 
 macro_rules! embed_files {
     (
