@@ -192,6 +192,30 @@ jobs:
         run: cargo test --locked --release --no-run
         working-directory: rustls
 
+  portable-build:
+    name: Portable build test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install nightly toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        # with:
+        #   target: riscv32imc-esp-espidf # with no atomic ptr
+
+      - run: rustup target add riscv32imc-esp-espidf
+
+      # WORKAROUND FIRST BUILD ISSUE FOR NOW
+      - run: cargo add once_cell -F critical-section -p rustls
+      - run: cargo add portable-atomic -F critical-section -p rustls
+
+      - name: cargo build (debug; no default features; no-std) # no std; no built-in provider; XXX TBD hashbrown - ???
+        run: cargo build --locked --no-default-features --target riscv32imc-esp-espidf
+        working-directory: rustls
+
   bogo:
     name: BoGo test suite
     runs-on: ubuntu-latest
