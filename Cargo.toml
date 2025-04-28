@@ -31,7 +31,7 @@ exclude = [
 ]
 
 default-members = [
-  # ---
+  # build & test these by default:
   "examples",
   "rustls",
 ]
