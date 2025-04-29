@@ -1,0 +1,29 @@
+[default]
+extend-ignore-re = [
+  ".*Encrypter.*",
+  ".*encrypter.*",
+  ".*_nd",
+  "pn_*",
+  "EDE_*",
+  "PN",
+  "Josh Aas",
+  "hel.*lo",
+  "mis-*",
+  "thr",
+  "ture dat",
+  # TODO resolve these in rustls/src
+  "negotation",
+  "Negotation",
+]
+
+[files]
+extend-exclude = [
+  # ---
+  "*.cert",
+  "*.chain",
+  "*.fullchain",
+  "*.pem",
+  "*.svg",
+  "rfc*.json",
+  "website/templates/macros.html",
+]
